@@ -555,7 +555,7 @@ void VDP::scheduleHScan(EmuTime time)
 
 	// Calculate moment in time line match occurs.
 	horizontalScanOffset = displayStart - (100 + 102)
-		+ ((controlRegs[19] - controlRegs[23]) & 0xFF) * TICKS_PER_LINE
+		+ ((controlRegs[19] - (isILNS() ? 0 : controlRegs[23])) & 0xFF) * TICKS_PER_LINE
 		+ getRightBorder();
 	// Display line counter continues into the next frame.
 	// Note that this implementation is not 100% accurate, since the

@@ -105,7 +105,7 @@ inline void SpriteChecker::checkSprites1(int minLine, int maxLine)
 	// Calculate display line.
 	// This is the line sprites are checked at; the line they are displayed
 	// at is one lower.
-	int displayDelta = vdp.getVerticalScroll() - vdp.getLineZero();
+	int displayDelta = (vdp.isSVNS() ? 0 : vdp.getVerticalScroll()) - vdp.getLineZero();
 
 	// Get sprites for this line and detect 5th sprite if any.
 	bool limitSprites = limitSpritesSetting.getBoolean();
@@ -116,6 +116,7 @@ inline void SpriteChecker::checkSprites1(int minLine, int maxLine)
 	uint8_t patternIndexMask = size == 16 ? 0xFC : 0xFF;
 	int fifthSpriteNum  = -1;  // no 5th sprite detected yet
 	int fifthSpriteLine = 999; // larger than any possible valid line
+	int maxVisible = vdp.isS16() ? 16 : 4;
 
 	int sprite = 0;
 	for (/**/; sprite < 32; ++sprite) {
@@ -133,7 +134,7 @@ inline void SpriteChecker::checkSprites1(int minLine, int maxLine)
 			}
 
 			auto visibleIndex = spriteCount[line];
-			if (visibleIndex == 4) {
+			if (visibleIndex == maxVisible) {
 				// Find earliest line where this condition occurs.
 				if (line < fifthSpriteLine) {
 					fifthSpriteLine = line;
@@ -198,7 +199,7 @@ inline void SpriteChecker::checkSprites1(int minLine, int maxLine)
 	bool can0collide = vdp.canSpriteColor0Collide();
 	for (auto line : xrange(minLine, maxLine)) {
 		int minXCollision = 999;
-		for (int i = std::min<int>(4, spriteCount[line]); --i >= 1; /**/) {
+		for (int i = std::min<int>(maxVisible, spriteCount[line]); --i >= 1; /**/) {
 			auto color1 = spriteBuffer[line][i].colorAttrib & 0xf;
 			if (!can0collide && (color1 == 0)) continue;
 			int x_i = spriteBuffer[line][i].x;
@@ -267,7 +268,7 @@ inline void SpriteChecker::checkSprites2(int minLine, int maxLine)
 	// Calculate display line.
 	// This is the line sprites are checked at; the line they are displayed
 	// at is one lower.
-	int displayDelta = vdp.getVerticalScroll() - vdp.getLineZero();
+	int displayDelta = (vdp.isSVNS() ? 0 : vdp.getVerticalScroll()) - vdp.getLineZero();
 
 	// Get sprites for this line and detect 5th sprite if any.
 	bool limitSprites = limitSpritesSetting.getBoolean();
@@ -277,6 +278,7 @@ inline void SpriteChecker::checkSprites2(int minLine, int maxLine)
 	int patternIndexMask = (size == 16) ? 0xFC : 0xFF;
 	int ninthSpriteNum  = -1;  // no 9th sprite detected yet
 	int ninthSpriteLine = 999; // larger than any possible valid line
+	int maxVisible = vdp.isS16() ? 16 : 8;
 
 	// Because it gave a measurable performance boost, we duplicated the
 	// code for planar and non-planar modes.
@@ -300,7 +302,7 @@ inline void SpriteChecker::checkSprites2(int minLine, int maxLine)
 				}
 
 				auto visibleIndex = spriteCount[line];
-				if (visibleIndex == 8) {
+				if (visibleIndex == maxVisible) {
 					// Find earliest line where this condition occurs.
 					if (line < ninthSpriteLine) {
 						ninthSpriteLine = line;
@@ -345,7 +347,7 @@ inline void SpriteChecker::checkSprites2(int minLine, int maxLine)
 				}
 
 				auto visibleIndex = spriteCount[line];
-				if (visibleIndex == 8) {
+				if (visibleIndex == maxVisible) {
 					// Find earliest line where this condition occurs.
 					if (line < ninthSpriteLine) {
 						ninthSpriteLine = line;
@@ -432,7 +434,7 @@ inline void SpriteChecker::checkSprites2(int minLine, int maxLine)
 	for (auto line : xrange(minLine, maxLine)) {
 		int minXCollision = 999; // no collision
 		std::span<SpriteInfo, 32 + 1> visibleSprites = spriteBuffer[line];
-		for (int i = std::min<int>(8, spriteCount[line]); --i >= 1; /**/) {
+		for (int i = std::min<int>(maxVisible, spriteCount[line]); --i >= 1; /**/) {
 			auto colorAttrib1 = visibleSprites[i].colorAttrib;
 			if (!can0collide && ((colorAttrib1 & 0xf) == 0)) continue;
 			// If CC or IC is set, this sprite cannot collide.
