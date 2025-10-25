@@ -209,6 +209,10 @@ public:
 		return (version & VM_V9968) != 0;
 	}
 
+	[[nodiscard]] bool hasISR() const {
+		return (version & VM_V9968) != 0;
+	}
+
 	/** Get the (fixed) palette for this MSX1 VDP.
 	  * Don't use this if it's not an MSX1 VDP!
 	  * @return an array of 16 RGB triplets
@@ -1232,6 +1236,10 @@ private:
 	/** Manages horizontal scanning interrupt request.
 	  */
 	OptionalIRQHelper irqHorizontal;
+
+	/** Manages vdp command end interrupt request.
+	  */
+	OptionalIRQHelper irqCommandEnd;
 
 	/** Time of last set DISPLAY_START sync point.
 	  */

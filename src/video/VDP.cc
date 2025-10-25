@@ -95,6 +95,7 @@ VDP::VDP(const DeviceConfig& config)
 	, frameStartTime(getCurrentTime())
 	, irqVertical  (getMotherBoard(), getName() + ".IRQvertical",   config)
 	, irqHorizontal(getMotherBoard(), getName() + ".IRQhorizontal", config)
+	, irqCommandEnd(getMotherBoard(), getName() + ".IRQCommandEnd", config)
 	, displayStartSyncTime(getCurrentTime())
 	, vScanSyncTime(getCurrentTime())
 	, hScanSyncTime(getCurrentTime())
@@ -208,6 +209,9 @@ VDP::VDP(const DeviceConfig& config)
 	}
 	if (hasS16()) {
 		controlValueMasks[20] |= 0x80;
+	}
+	if (hasISR()) {
+		controlValueMasks[21] |= 0x80;
 	}
 
 	resetInit(); // must be done early to avoid UMRs
@@ -324,6 +328,7 @@ void VDP::resetInit()
 	// Update IRQ to reflect new register values.
 	irqVertical.reset();
 	irqHorizontal.reset();
+	irqCommandEnd.reset();
 
 	// From appendix 8 of the V9938 data book (page 148).
 	const std::array<uint16_t, 256> V9938_PALETTE = {
@@ -488,6 +493,10 @@ void VDP::execCpuVramAccess(EmuTime time)
 void VDP::execSyncCmdDone(EmuTime time)
 {
 	cmdEngine->sync(time);
+
+	if (controlRegs[21] & 0x80) {
+		irqCommandEnd.set();
+	}
 }
 
 // TODO: This approach assumes that an overscan-like approach can be used
@@ -685,7 +694,7 @@ void VDP::writeIO(uint16_t port, uint8_t value, EmuTime time_)
 	}
 
 	assert(isInsideFrame(time));
-	switch (port & (isMSX1VDP() ? 0x01 : 0x03)) {
+	switch (port & (hasISR() ? 0x07 : (isMSX1VDP() ? 0x01 : 0x03))) {
 	case 0: // VRAM data write
 		vramWrite(value, time);
 		registerDataStored = false;
@@ -785,6 +794,24 @@ void VDP::writeIO(uint16_t port, uint8_t value, EmuTime time_)
 		if ((regNr & 0x80) == 0) {
 			// Auto-increment.
 			controlRegs[17] = (regNr + 1) & 0x3F;
+		}
+		break;
+	}
+	case 4: {	// interrupt clear register
+		if (hasISR()) {
+			if (value & 0x01) {
+				// clear H bit
+				statusReg0 &= ~0x80;
+				irqVertical.reset();
+			}
+			if (value & 0x02) {
+				// clear FH bit
+				irqHorizontal.reset();
+			}
+			if (value & 0x04) {
+				// clear CEI bit
+				irqCommandEnd.reset();
+			}
 		}
 		break;
 	}
@@ -1056,7 +1083,7 @@ uint8_t VDP::readIO(uint16_t port, EmuTime time_)
 
 	registerDataStored = false; // Abort any port #1 writes in progress.
 
-	switch (port & (isMSX1VDP() ? 0x01 : 0x03)) {
+	switch (port & (hasISR() ? 0x07 : (isMSX1VDP() ? 0x01 : 0x03))) {
 	case 0: // VRAM data read
 		return vramRead(time);
 	case 1: // Status register read
@@ -1065,6 +1092,14 @@ uint8_t VDP::readIO(uint16_t port, EmuTime time_)
 	case 2:
 	case 3:
 		return 0xFF;
+	case 4: {
+		if (hasISR()) {
+			return ((statusReg0 & 0x80) ? 0x01 : 0x00)					// F
+				   | ((peekStatusReg(1, time) & 0x01) ? 0x02 : 0x00)	// FH
+				   | (irqCommandEnd.getState() ? 0x04 : 0x00);			// CEI
+		}
+		return 0xFF;
+	}
 	default:
 		UNREACHABLE;
 	}
