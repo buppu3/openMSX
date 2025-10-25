@@ -102,6 +102,38 @@ public:
 	 */
 	[[nodiscard]] PostProcessor* getPostProcessor() const;
 
+	[[nodiscard]] bool isHS() const {
+		return hasHS() & ((controlRegs[20] & 0x01) != 0);
+	}
+
+	[[nodiscard]] bool isSVNS() const {
+		return hasSVNS() & ((controlRegs[20] & 0x02) != 0);
+	}
+
+	[[nodiscard]] bool isILNS() const {
+		return hasILNS() & ((controlRegs[20] & 0x04) != 0);
+	}
+
+	[[nodiscard]] bool isSP3() const {
+		return hasSP3() & ((controlRegs[20] & 0x08) != 0);
+	}
+
+	[[nodiscard]] bool isEPAL() const {
+		return hasEPAL() & ((controlRegs[20] & 0x10) != 0);
+	}
+
+	[[nodiscard]] bool isECOM() const {
+		return hasECOM() & ((controlRegs[20] & 0x20) != 0);
+	}
+
+	[[nodiscard]] bool isEVR() const {
+		return hasEVR() & ((controlRegs[20] & 0x40) != 0);
+	}
+
+	[[nodiscard]] bool isS16() const {
+		return hasS16() & ((controlRegs[20] & 0x80) != 0);
+	}
+
 	/** Is this an MSX1 VDP?
 	  * @return True if this is an MSX1 VDP
 	  *   False otherwise.
@@ -143,6 +175,38 @@ public:
 	  */
 	[[nodiscard]] bool hasYJK() const {
 		return (version & VM_YJK) != 0;
+	}
+
+	[[nodiscard]] bool hasHS() const {
+		return (version & VM_V9968) != 0;
+	}
+
+	[[nodiscard]] bool hasSVNS() const {
+		return (version & VM_V9968) != 0;
+	}
+
+	[[nodiscard]] bool hasILNS() const {
+		return (version & VM_V9968) != 0;
+	}
+
+	[[nodiscard]] bool hasSP3() const {
+		return (version & VM_V9968) != 0;
+	}
+
+	[[nodiscard]] bool hasEPAL() const {
+		return (version & VM_V9968) != 0;
+	}
+
+	[[nodiscard]] bool hasECOM() const {
+		return (version & VM_V9968) != 0;
+	}
+
+	[[nodiscard]] bool hasEVR() const {
+		return (version & VM_V9968) != 0;
+	}
+
+	[[nodiscard]] bool hasS16() const {
+		return (version & VM_V9968) != 0;
 	}
 
 	/** Get the (fixed) palette for this MSX1 VDP.
@@ -280,7 +344,7 @@ public:
 	[[nodiscard]] uint16_t getPalette(unsigned index) const {
 		return palette[index];
 	}
-	[[nodiscard]] std::span<const uint16_t, 16> getPalette() const {
+	[[nodiscard]] std::span<const uint16_t, 256> getPalette() const {
 		return palette;
 	}
 
@@ -754,9 +818,10 @@ private:
 	static constexpr unsigned VM_TOSHIBA_PALETTE  =  32; // set-> has Toshiba palette
 	static constexpr unsigned VM_YJK              =  64; // set-> has YJK (MSX2+)
 	static constexpr unsigned VM_YM2220_PALETTE   = 128; // set-> has YM2220 palette
+	static constexpr unsigned VM_V9968            = 256; // set-> has YJK (MSX2+)
 
 	/** VDP version: the VDP model being emulated. */
-	enum VdpVersion : uint8_t {
+	enum VdpVersion : uint16_t {
 		/** MSX1 VDP, NTSC version.
 		  * TMS9918A has NTSC encoding built in,
 		  * while TMS9928A has color difference output;
@@ -795,6 +860,9 @@ private:
 
 		/** MSX2+ and turbo R VDP. */
 		V9958      = VM_YJK,
+
+		/** MSX2+ and turbo R VDP. */
+		V9968      = VM_YJK | VM_V9968,
 	};
 
 	struct SyncBase : public Schedulable {
@@ -1247,7 +1315,7 @@ private:
 
 	/** V9938 palette.
 	  */
-	std::array<uint16_t, 16> palette;
+	std::array<uint16_t, 256> palette;
 
 	/** Is the current scan position inside the display area?
 	  */
@@ -1307,6 +1375,7 @@ private:
 	/** Does the data latch have palette data (port #9A) stored?
 	  */
 	bool paletteDataStored;
+	uint8_t paletteDataPointer;
 
 	/** VRAM is read as soon as VRAM pointer changes.
 	  * TODO: Is this actually what happens?

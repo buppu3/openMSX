@@ -34,7 +34,7 @@ public:
 	  * @param pal The initial palette. Can later be changed via setPallette().
 	  */
 	explicit SpriteConverter(SpriteChecker& spriteChecker_,
-	                         std::span<const Pixel, 16> pal)
+	                         std::span<const Pixel, 256> pal)
 		: spriteChecker(spriteChecker_)
 		, palette(pal)
 	{
@@ -61,7 +61,7 @@ public:
 	  * will be used while drawing.
 	  * @param newPalette 16-entry array containing the sprite palette.
 	  */
-	void setPalette(std::span<const Pixel, 16> newPalette)
+	void setPalette(std::span<const Pixel, 256> newPalette)
 	{
 		palette = newPalette;
 	}
@@ -209,7 +209,7 @@ private:
 
 	/** The current sprite palette.
 	  */
-	std::span<const Pixel, 16> palette;
+	std::span<const Pixel, 256> palette;
 
 	/** VDP transparency setting (R#8, bit5).
 	  */

@@ -38,7 +38,8 @@ public:
 	  *   are immediately picked up by convertLine.
 	  *   Used when YJK filter is active.
 	  */
-	BitmapConverter(std::span<const Pixel, 16 * 2> palette16,
+	BitmapConverter(std::span<const Pixel, 256>    palette16,
+	                std::span<const Pixel, 16>     palette16odd,
 	                std::span<const Pixel, 256>    palette256,
 	                std::span<const Pixel, 32768>  palette32768);
 
@@ -80,6 +81,11 @@ public:
 		dPaletteValid = false;
 	}
 
+	void setEPAL(bool enable)
+	{
+		enableEPAL = enable;
+	}
+
 private:
 	void calcDPalette();
 
@@ -102,13 +108,15 @@ private:
 	void renderBogus(   std::span<Pixel, 256> buf) const;
 
 private:
-	std::span<const Pixel, 16 * 2> palette16;
+	std::span<const Pixel, 256>    palette16;
+	std::span<const Pixel, 16>     palette16odd;
 	std::span<const Pixel, 256>    palette256;
 	std::span<const Pixel, 32768>  palette32768;
 
 	std::array<DPixel, 16 * 16> dPalette;
 	DisplayMode mode;
 	bool dPaletteValid = false;
+	bool enableEPAL = false;
 };
 
 } // namespace openmsx

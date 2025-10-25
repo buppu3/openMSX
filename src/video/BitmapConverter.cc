@@ -13,10 +13,12 @@
 namespace openmsx {
 
 BitmapConverter::BitmapConverter(
-		std::span<const Pixel, 16 * 2> palette16_,
+		std::span<const Pixel, 256>    palette16_,
+		std::span<const Pixel, 16>     palette16odd_,
 		std::span<const Pixel, 256>    palette256_,
 		std::span<const Pixel, 32768>  palette32768_)
 	: palette16(palette16_)
+	, palette16odd(palette16odd_)
 	, palette256(palette256_)
 	, palette32768(palette32768_)
 {
@@ -149,10 +151,10 @@ void BitmapConverter::renderGraphic5(
 	Pixel* __restrict pixelPtr = buf.data();
 	for (auto i : xrange(128)) {
 		unsigned data = vramPtr0[i];
-		pixelPtr[4 * i + 0] = palette16[ 0 +  (data >> 6)     ];
-		pixelPtr[4 * i + 1] = palette16[16 + ((data >> 4) & 3)];
-		pixelPtr[4 * i + 2] = palette16[ 0 + ((data >> 2) & 3)];
-		pixelPtr[4 * i + 3] = palette16[16 + ((data >> 0) & 3)];
+		pixelPtr[4 * i + 0] = palette16   [ (data >> 6)     ];
+		pixelPtr[4 * i + 1] = palette16odd[((data >> 4) & 3)];
+		pixelPtr[4 * i + 2] = palette16   [((data >> 2) & 3)];
+		pixelPtr[4 * i + 3] = palette16odd[((data >> 0) & 3)];
 	}
 }
 
@@ -208,9 +210,16 @@ void BitmapConverter::renderGraphic7(
 	std::span<const uint8_t, 128> vramPtr1) const
 {
 	Pixel* __restrict pixelPtr = buf.data();
-	for (auto i : xrange(128)) {
-		pixelPtr[2 * i + 0] = palette256[vramPtr0[i]];
-		pixelPtr[2 * i + 1] = palette256[vramPtr1[i]];
+	if (enableEPAL) {
+		for (auto i : xrange(128)) {
+			pixelPtr[2 * i + 0] = palette16[vramPtr0[i]];
+			pixelPtr[2 * i + 1] = palette16[vramPtr1[i]];
+		}
+	} else {
+		for (auto i : xrange(128)) {
+			pixelPtr[2 * i + 0] = palette256[vramPtr0[i]];
+			pixelPtr[2 * i + 1] = palette256[vramPtr1[i]];
+		}
 	}
 }
 

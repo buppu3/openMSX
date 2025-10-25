@@ -628,7 +628,7 @@ static void draw8(uint8_t pattern, uint32_t fgCol, uint32_t bgCol, std::span<uin
 	out[7] = (pattern & 0x01) ? fgCol : bgCol;
 }
 
-void ImGuiCharacter::renderPatterns(int mode, std::span<const uint32_t, 16> palette,
+void ImGuiCharacter::renderPatterns(int mode, std::span<const uint32_t, 256> palette,
                                     int fgCol, int bgCol, int fgBlink, int bgBlink,
                                     VramTable& pat, VramTable& col, int lines, std::span<uint32_t> output)
 {

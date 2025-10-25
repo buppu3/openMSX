@@ -28,8 +28,8 @@ public:
 	void paint(MSXMotherBoard* motherBoard) override;
 
 private:
-	void renderBitmap(std::span<const uint8_t> vram, std::span<const uint32_t, 16> palette16,
-	                  int mode, int lines, int page, uint32_t* output) const;
+	void renderBitmap(std::span<const uint8_t> vram, std::span<const uint32_t, 256> palette16,
+	                  bool isEPAL, int mode, int lines, int page, uint32_t* output) const;
 
 public:
 	bool show = true;

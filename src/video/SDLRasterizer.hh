@@ -142,17 +142,20 @@ private:
 	  *       up-to-date) in Graphics5 mode.
 	  * palBg has entry 0 set to black.
 	  */
-	std::array<Pixel, 16 * 2> palFg;
-	std::array<Pixel, 16> palBg;
+	std::array<Pixel, 256> palFg;
+	std::array<Pixel, 16>  palFgOdd;
+	std::array<Pixel, 256> palBg;
 
 	/** Host colors corresponding to each Graphic 7 sprite color.
 	  */
-	std::array<Pixel, 16> palGraphic7Sprites;
+	std::array<Pixel, 256> palGraphic7Sprites;
 
 	/** Precalculated host colors corresponding to each possible V9938 color.
 	  * Used by updatePalette to adjust palFg and palBg.
 	  */
 	std::array<std::array<std::array<Pixel, 8>, 8>, 8> V9938_COLORS;
+
+	std::array<std::array<std::array<Pixel, 32>, 32>, 32> V9968_COLORS;
 
 	/** Host colors corresponding to the 256 color palette of Graphic7.
 	  * Used by BitmapConverter.

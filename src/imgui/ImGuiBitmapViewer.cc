@@ -520,7 +520,7 @@ void ImGuiBitmapViewer::paint(MSXMotherBoard* motherBoard)
 		if (color0 < 16) palette[0] = palette[color0];
 
 		MemBuffer<uint32_t> pixels(512 * 256 * 4); // max size: screen 6/7, show all pages
-		renderBitmap(vram.getData(), palette, mode, height, page,
+		renderBitmap(vram.getData(), palette, vdp->isEPAL(), mode, height, page,
 				pixels.data());
 		if (!bitmapTex) {
 			bitmapTex.emplace(false, false); // no interpolation, no wrapping
@@ -684,8 +684,8 @@ void ImGuiBitmapViewer::paint(MSXMotherBoard* motherBoard)
 }
 
 // TODO avoid code duplication with src/video/BitmapConverter
-void ImGuiBitmapViewer::renderBitmap(std::span<const uint8_t> vram, std::span<const uint32_t, 16> palette16,
-                                     int mode, int lines, int page, uint32_t* output) const
+void ImGuiBitmapViewer::renderBitmap(std::span<const uint8_t> vram, std::span<const uint32_t, 256> palette16,
+                                     bool isEPAL, int mode, int lines, int page, uint32_t* output) const
 {
 	auto yjk2rgb = [](int y, int j, int k) -> std::tuple<int, int, int> {
 		// Note the formula for 'blue' differs from the 'traditional' formula
@@ -744,22 +744,33 @@ void ImGuiBitmapViewer::renderBitmap(std::span<const uint8_t> vram, std::span<co
 		break;
 
 	case SCR8: {
-		auto toColor = [](uint8_t value) {
-			int r = (value & 0x1c) >> 2;
-			int g = (value & 0xe0) >> 5;
-			int b = (value & 0x03) >> 0;
-			int rr = (r << 5) | (r << 2) | (r >> 1);
-			int gg = (g << 5) | (g << 2) | (g >> 1);
-			int bb = (b << 6) | (b << 4) | (b << 2) | (b << 0);
-			int aa = 255;
-			return (rr << 0) | (gg << 8) | (bb << 16) | (aa << 24);
-		};
-		for (auto y : xrange(lines)) {
-			auto* line = &output[256 * y];
-			for (auto x : xrange(128)) {
-				line[2 * x + 0] = toColor(vram[addr + 0x00000]);
-				line[2 * x + 1] = toColor(vram[addr + 0x10000]);
-				++addr;
+		if (isEPAL) {
+			for (auto y : xrange(lines)) {
+				auto* line = &output[256 * y];
+				for (auto x : xrange(128)) {
+					line[2 * x + 0] = palette16[vram[addr + 0x00000]];
+					line[2 * x + 1] = palette16[vram[addr + 0x10000]];
+					++addr;
+				}
+			}
+		} else {
+			auto toColor = [](uint8_t value) {
+				int r = (value & 0x1c) >> 2;
+				int g = (value & 0xe0) >> 5;
+				int b = (value & 0x03) >> 0;
+				int rr = (r << 5) | (r << 2) | (r >> 1);
+				int gg = (g << 5) | (g << 2) | (g >> 1);
+				int bb = (b << 6) | (b << 4) | (b << 2) | (b << 0);
+				int aa = 255;
+				return (rr << 0) | (gg << 8) | (bb << 16) | (aa << 24);
+			};
+			for (auto y : xrange(lines)) {
+				auto* line = &output[256 * y];
+				for (auto x : xrange(128)) {
+					line[2 * x + 0] = toColor(vram[addr + 0x00000]);
+					line[2 * x + 1] = toColor(vram[addr + 0x10000]);
+					++addr;
+				}
 			}
 		}
 		break;

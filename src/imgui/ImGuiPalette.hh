@@ -22,7 +22,7 @@ public:
 	void loadLine(std::string_view name, zstring_view value) override;
 	void paint(MSXMotherBoard* motherBoard) override;
 
-	std::array<uint32_t, 16> getPalette(const VDP* vdp) const;
+	std::array<uint32_t, 256> getPalette(const VDP* vdp) const;
 
 public:
 	im::WindowStatus window;
@@ -34,7 +34,7 @@ private:
 	static constexpr int PALETTE_FIXED = 2;
 	int selectedColor = 0;
 
-	std::array<uint16_t, 16> customPalette; // palette in MSX format: 0GRB nibbles
+	std::array<uint16_t, 256> customPalette; // palette in MSX format: 0GRB nibbles
 
 	static constexpr auto persistentElements = std::tuple{
 		PersistentElement   {"show",    &ImGuiPalette::window},

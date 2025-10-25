@@ -21,7 +21,7 @@ public:
 	void paint(MSXMotherBoard* motherBoard) override;
 
 private:
-	static void renderPatterns(int mode, std::span<const uint32_t, 16> palette,
+	static void renderPatterns(int mode, std::span<const uint32_t, 256> palette,
 	                           int fgCol, int bgCol, int fgBlink, int bgBlink,
 	                           VramTable& pat, VramTable& col, int lines, std::span<uint32_t> output);
 	void initHexDigits();

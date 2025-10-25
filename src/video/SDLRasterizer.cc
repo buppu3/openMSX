@@ -99,18 +99,29 @@ SDLRasterizer::SDLRasterizer(
 	, postProcessor(std::move(postProcessor_))
 	, workFrame(std::make_unique<RawFrame>(640, 240))
 	, renderSettings(display.getRenderSettings())
-	, characterConverter(vdp, subspan<16>(palFg), palBg)
-	, bitmapConverter(palFg, PALETTE256, V9958_COLORS)
+	, characterConverter(vdp, subspan<16>(palFg), subspan<16>(palBg))
+	, bitmapConverter(palFg, palFgOdd, PALETTE256, V9958_COLORS)
 	, spriteConverter(vdp.getSpriteChecker(), palBg)
 {
 	// Init the palette.
 	precalcPalette();
 
 	// Initialize palette (avoid UMR)
-	if (!vdp.isMSX1VDP()) {
+	if (vdp.hasEPAL()) {
+		for (auto i : xrange(256)) {
+			palFg[i] = palBg[i] =
+				V9968_COLORS[0][0][0];
+		}
 		for (auto i : xrange(16)) {
-			palFg[i] = palFg[i + 16] = palBg[i] =
+			palFgOdd[i] = V9968_COLORS[0][0][0];
+		}
+	} else if (!vdp.isMSX1VDP()) {
+		for (auto i : xrange(256)) {
+			palFg[i] = palBg[i] =
 				V9938_COLORS[0][0][0];
+		}
+		for (auto i : xrange(16)) {
+			palFgOdd[i] = V9938_COLORS[0][0][0];
 		}
 	}
 
@@ -153,7 +164,7 @@ void SDLRasterizer::resetPalette()
 {
 	if (!vdp.isMSX1VDP()) {
 		// Reset the palette.
-		for (auto i : xrange(16)) {
+		for (auto i : xrange(256)) {
 			setPalette(i, vdp.getPalette(i));
 		}
 	}
@@ -190,13 +201,14 @@ void SDLRasterizer::setDisplayMode(DisplayMode mode)
 {
 	if (mode.isBitmapMode()) {
 		bitmapConverter.setDisplayMode(mode);
+		bitmapConverter.setEPAL(vdp.isEPAL());
 	} else {
 		characterConverter.setDisplayMode(mode);
 	}
 	precalcColorIndex0(mode, vdp.getTransparency(),
 	                   vdp.isSuperimposing(), vdp.getBackgroundColor());
 	spriteConverter.setDisplayMode(mode);
-	spriteConverter.setPalette(mode.getByte() == DisplayMode::GRAPHIC7
+	spriteConverter.setPalette((mode.getByte() == DisplayMode::GRAPHIC7 && !vdp.isEPAL())
 	                           ? palGraphic7Sprites : palBg);
 
 }
@@ -204,10 +216,12 @@ void SDLRasterizer::setDisplayMode(DisplayMode mode)
 void SDLRasterizer::setPalette(unsigned index, int grb)
 {
 	// Update SDL colors in palette.
-	Pixel newColor = V9938_COLORS[(grb >> 4) & 7][grb >> 8][grb & 7];
-	palFg[index     ] = newColor;
-	palFg[index + 16] = newColor;
-	palBg[index     ] = newColor;
+	Pixel newColor = vdp.hasEPAL()
+					 ? V9968_COLORS[(grb >> 5) & 31][(grb >> 10) & 31][grb & 31]
+					 : V9938_COLORS[(grb >> 4) & 7][grb >> 8][grb & 7];
+	palFg   [index] = newColor;
+	palBg   [index] = newColor;
+	if (index < 16) palFgOdd[index] = newColor;
 	bitmapConverter.palette16Changed();
 
 	precalcColorIndex0(vdp.getDisplayMode(), vdp.getTransparency(),
@@ -248,7 +262,7 @@ void SDLRasterizer::precalcPalette()
 		const auto palette = vdp.getMSX1Palette();
 		for (auto i : xrange(16)) {
 			const auto rgb = palette[i];
-			palFg[i] = palFg[i + 16] = palBg[i] =
+			palFg[i] = palFgOdd[i] = palBg[i] =
 				screen.mapRGB(
 					renderSettings.transformRGB(
 						vec3(rgb[0], rgb[1], rgb[2]) * (1.0f / 255.0f)));
@@ -297,6 +311,17 @@ void SDLRasterizer::precalcPalette()
 					}
 				}
 			}
+			// Precalculate palette for V9968 colors.
+			// Based on comparing red and green gradients, using palette and
+			// YJK, in SCREEN11 on a real turbo R.
+			for (auto r5 : xrange(32)) {
+				for (auto g5 : xrange(32)) {
+					for (auto b5 : xrange(32)) {
+						V9968_COLORS[r5][g5][b5] =
+							V9958_COLORS[(r5 << 10) + (g5 << 5) + b5];
+					}
+				}
+			}
 		} else {
 			// Precalculate palette for V9938 colors.
 			if (renderSettings.isColorMatrixIdentity()) {
@@ -329,19 +354,76 @@ void SDLRasterizer::precalcPalette()
 					}
 				}
 			}
+
+			// Precalculate palette for V9968 colors.
+			if (renderSettings.isColorMatrixIdentity()) {
+				std::array<int, 32> intensity;
+				for (auto [i, r] : enumerate(intensity)) {
+					r = narrow_cast<int>(255.0f * renderSettings.transformComponent(narrow<float>(i) * (1.0f / 31.0f)));
+				}
+				for (auto r : xrange(32)) {
+					for (auto g : xrange(32)) {
+						for (auto b : xrange(32)) {
+							V9968_COLORS[r][g][b] =
+								screen.mapRGB255(ivec3(
+									intensity[r],
+									intensity[g],
+									intensity[b]));
+						}
+					}
+				}
+			} else {
+				for (auto r : xrange(32)) {
+					for (auto g : xrange(32)) {
+						for (auto b : xrange(32)) {
+							vec3 rgb{narrow<float>(r),
+							         narrow<float>(g),
+							         narrow<float>(b)};
+							V9968_COLORS[r][g][b] =
+								screen.mapRGB(
+									renderSettings.transformRGB(rgb * (1.0f / 31.0f)));
+						}
+					}
+				}
+			}
 		}
 		// Precalculate Graphic 7 bitmap palette.
-		for (auto i : xrange(256)) {
-			PALETTE256[i] = V9938_COLORS
-				[(i & 0x1C) >> 2]
-				[(i & 0xE0) >> 5]
-				[(i & 0x03) == 3 ? 7 : (i & 0x03) * 2];
+		if (vdp.hasEPAL()) {
+			for (auto i : xrange(256)) {
+				uint8_t g = (i >> 5) & 7;
+				uint8_t r = (i >> 2) & 7;
+				uint8_t b = (i >> 0) & 3;
+				g = (g << 2) | (g >> 1);
+				r = (r << 2) | (r >> 1);
+				b = (b << 3) | (b << 1) | (b >> 1);
+				PALETTE256[i] = V9968_COLORS[r][g][b];
+			}
+		} else {
+			for (auto i : xrange(256)) {
+				PALETTE256[i] = V9938_COLORS
+					[(i & 0x1C) >> 2]
+					[(i & 0xE0) >> 5]
+					[(i & 0x03) == 3 ? 7 : (i & 0x03) * 2];
+			}
 		}
 		// Precalculate Graphic 7 sprite palette.
-		for (auto i : xrange(16)) {
-			uint16_t grb = Renderer::GRAPHIC7_SPRITE_PALETTE[i];
-			palGraphic7Sprites[i] =
-				V9938_COLORS[(grb >> 4) & 7][grb >> 8][grb & 7];
+		if (vdp.hasEPAL()) {
+			for (auto i : xrange(256)) {
+				uint16_t grb = Renderer::GRAPHIC7_SPRITE_PALETTE[i & 15];
+				uint8_t g = (grb >> 8) & 7;
+				uint8_t r = (grb >> 4) & 7;
+				uint8_t b = (grb >> 0) & 7;
+				g = (g << 2) | (g >> 1);
+				r = (r << 2) | (r >> 1);
+				b = (b << 2) | (b >> 1);
+				palGraphic7Sprites[i] = V9968_COLORS[r][g][b];
+			}
+		} else {
+			for (auto i : xrange(256)) {
+				uint16_t grb = Renderer::GRAPHIC7_SPRITE_PALETTE[i & 15];
+				palGraphic7Sprites[i] =
+					V9938_COLORS[(grb >> 4) & 7][grb >> 8][grb & 7];
+			}
 		}
 	}
 }
@@ -366,10 +448,10 @@ void SDLRasterizer::precalcColorIndex0(DisplayMode mode,
 		}
 	} else {
 		// TODO: superimposing
-		if ((palFg[ 0] != palBg[tpIndex >> 2]) ||
-		    (palFg[16] != palBg[tpIndex &  3])) {
-			palFg[ 0] = palBg[tpIndex >> 2];
-			palFg[16] = palBg[tpIndex &  3];
+		if ((palFg   [0] != palBg[tpIndex >> 2]) ||
+		    (palFgOdd[0] != palBg[tpIndex &  3])) {
+			palFg   [0] = palBg[tpIndex >> 2];
+			palFgOdd[0] = palBg[tpIndex &  3];
 			bitmapConverter.palette16Changed();
 		}
 	}

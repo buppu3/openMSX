@@ -144,6 +144,7 @@ VDP::VDP(const DeviceConfig& config)
 	else if (versionString == "TMS9129") version = TMS9129;
 	else if (versionString == "V9938") version = V9938;
 	else if (versionString == "V9958") version = V9958;
+	else if (versionString == "V9968") version = V9968;
 	else if (versionString == "YM2220PAL") version = YM2220PAL;
 	else if (versionString == "YM2220NTSC") version = YM2220NTSC;
 	else throw MSXException("Unknown VDP version \"", versionString, '"');
@@ -184,16 +185,44 @@ VDP::VDP(const DeviceConfig& config)
 		controlValueMasks[26] = 0x3F;
 		controlValueMasks[27] = 0x07;
 	}
+	if (hasHS()) {
+		controlValueMasks[20] |= 0x01;
+	}
+	if (hasSVNS()) {
+		controlValueMasks[20] |= 0x02;
+	}
+	if (hasILNS()) {
+		controlValueMasks[20] |= 0x04;
+	}
+	if (hasSP3()) {
+		controlValueMasks[20] |= 0x08;
+	}
+	if (hasEPAL()) {
+		controlValueMasks[20] |= 0x10;
+	}
+	if (hasECOM()) {
+		controlValueMasks[20] |= 0x20;
+	}
+	if (hasEVR()) {
+		controlValueMasks[20] |= 0x40;
+	}
+	if (hasS16()) {
+		controlValueMasks[20] |= 0x80;
+	}
 
 	resetInit(); // must be done early to avoid UMRs
 
 	// Video RAM.
 	EmuTime time = getCurrentTime();
-	unsigned vramSize =
-		(isMSX1VDP() ? 16 : config.getChildDataAsInt("vram", 0));
-	if (vramSize != one_of(16u, 64u, 128u, 192u)) {
-		throw MSXException(
-			"VRAM size of ", vramSize, "kB is not supported!");
+	unsigned vramSize;
+	if (hasEVR()) {
+		vramSize = 256;
+	} else {
+		vramSize = (isMSX1VDP() ? 16 : config.getChildDataAsInt("vram", 0));
+		if (vramSize != one_of(16u, 64u, 128u, 192u)) {
+			throw MSXException(
+				"VRAM size of ", vramSize, "kB is not supported!");
+		}
 	}
 	vram = std::make_unique<VDPVRAM>(*this, vramSize * 1024, time);
 
@@ -275,6 +304,7 @@ void VDP::resetInit()
 	registerDataStored = false;
 	writeAccess = false;
 	paletteDataStored = false;
+	paletteDataPointer = 0;
 	blinkState = false;
 	blinkCount = 0;
 	horizontalAdjust = 7;
@@ -296,7 +326,7 @@ void VDP::resetInit()
 	irqHorizontal.reset();
 
 	// From appendix 8 of the V9938 data book (page 148).
-	const std::array<uint16_t, 16> V9938_PALETTE = {
+	const std::array<uint16_t, 256> V9938_PALETTE = {
 		0x000, 0x000, 0x611, 0x733, 0x117, 0x327, 0x151, 0x627,
 		0x171, 0x373, 0x661, 0x664, 0x411, 0x265, 0x555, 0x777
 	};
@@ -706,15 +736,44 @@ void VDP::writeIO(uint16_t port, uint8_t value, EmuTime time_)
 		}
 		break;
 	case 2: // Palette data write
-		if (paletteDataStored) {
+		if (isEPAL()) {
 			unsigned index = controlRegs[16];
-			uint16_t grb = ((value << 8) | dataLatch) & 0x777;
-			setPalette(index, grb, time);
-			controlRegs[16] = (index + 1) & 0x0F;
-			paletteDataStored = false;
+			uint16_t grb = getPalette(index);
+			switch (paletteDataPointer) {
+				case 0:	// R
+					grb = (grb & ~(31 << 5)) | ((value & 31) << 5);
+					break;
+				case 1:	// G
+					grb = (grb & ~(31 << 10)) | ((value & 31) << 10);
+					break;
+				case 2:	// B
+					grb = (grb & ~(31 << 0)) | ((value & 31) << 0);
+					break;
+			}
+			if (++paletteDataPointer >= 3) {
+				paletteDataPointer = 0;
+				controlRegs[16] = (index + 1) & 0xFF;
+			}
 		} else {
-			dataLatch = value;
-			paletteDataStored = true;
+			if (paletteDataStored) {
+				unsigned index = controlRegs[16] & 0x0F;
+				uint16_t grb = ((value << 8) | dataLatch) & 0x777;
+				if (hasEPAL()) {
+					uint8_t g = (grb >> 8) & 7;					
+					uint8_t r = (grb >> 4) & 7;					
+					uint8_t b = (grb >> 0) & 7;					
+					g = (g << 2) | (g >> 1);
+					r = (r << 2) | (r >> 1);
+					b = (b << 2) | (b >> 1);
+					grb = (g << 10) | (r << 5) | (b << 0);
+				}
+				setPalette(index, grb, time);
+				controlRegs[16] = (index + 1) & 0x0F;
+				paletteDataStored = false;
+			} else {
+				dataLatch = value;
+				paletteDataStored = true;
+			}
 		}
 		break;
 	case 3: { // Indirect register write
@@ -1133,10 +1192,20 @@ void VDP::changeRegister(uint8_t reg, uint8_t val, EmuTime time)
 	case 16:
 		// Any half-finished palette loads are aborted.
 		paletteDataStored = false;
+		paletteDataPointer = false;
 		break;
 	case 18:
 		if (change & 0x0F) {
 			syncAtNextLine(syncHorAdjust, time);
+		}
+		break;
+	case 20:
+		if (   (hasS16()  && (change & 0x80))
+			|| (hasEPAL() && (change & 0x10))
+			|| (hasSP3()  && (change & 0x08))
+			|| (hasILNS() && (change & 0x04))
+			|| (hasSVNS() && (change & 0x02))) {
+			syncAtNextLine(syncSetMode, time);
 		}
 		break;
 	case 23:
