@@ -134,6 +134,10 @@ public:
 		return hasS16() & ((controlRegs[20] & 0x80) != 0);
 	}
 
+	[[nodiscard]] bool isFIL() const {
+		return hasFIL() & ((controlRegs[21] & 0x40) != 0);
+	}
+
 	/** Is this an MSX1 VDP?
 	  * @return True if this is an MSX1 VDP
 	  *   False otherwise.
@@ -206,6 +210,10 @@ public:
 	}
 
 	[[nodiscard]] bool hasS16() const {
+		return (version & VM_V9968) != 0;
+	}
+
+	[[nodiscard]] bool hasFIL() const {
 		return (version & VM_V9968) != 0;
 	}
 
@@ -375,7 +383,7 @@ public:
 	  */
 	[[nodiscard]] bool spritesEnabled() const {
 		return displayEnabled &&
-		       (displayMode.getSpriteMode(isMSX1VDP()) != 0) &&
+		       (displayMode.getSpriteMode(isMSX1VDP(), isSP3()) != 0) &&
 		       spriteEnabled;
 	}
 
@@ -383,7 +391,7 @@ public:
 	  * mode 1 or 2. Is a tiny bit faster.
 	  */
 	[[nodiscard]] bool spritesEnabledFast() const {
-		assert(displayMode.getSpriteMode(isMSX1VDP()) != 0);
+		assert(displayMode.getSpriteMode(isMSX1VDP(), isSP3()) != 0);
 		return displayEnabled && spriteEnabled;
 	}
 

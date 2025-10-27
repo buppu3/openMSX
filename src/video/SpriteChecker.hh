@@ -46,6 +46,11 @@ public:
 		  * Other bits are undefined.
 		  */
 		uint8_t colorAttrib;
+
+		int mgx;
+		uint8_t paletteSet;
+		uint8_t transparent;
+		SpritePattern pattern2;
 	};
 
 	static constexpr SpritePattern doublePattern(SpritePattern a)
@@ -280,7 +285,7 @@ private:
 	/** Calculate 'updateSpritesMethod' and 'planar'.
 	  */
 	void setDisplayMode(DisplayMode mode) {
-		switch (mode.getSpriteMode(vdp.isMSX1VDP())) {
+		switch (mode.getSpriteMode(vdp.isMSX1VDP(), vdp.isSP3())) {
 		case 0:
 			updateSpritesMethod = nullptr;
 			break;
@@ -292,6 +297,9 @@ private:
 			planar = mode.isPlanar();
 			// An alternative is to have a planar and non-planar
 			// updateSprites2 method.
+			break;
+		case 3:
+			updateSpritesMethod = &SpriteChecker::updateSprites3;
 			break;
 		default:
 			UNREACHABLE;
@@ -305,6 +313,8 @@ private:
 	/** Calculate sprite patterns for sprite mode 2.
 	  */
 	void updateSprites2(int limit);
+
+	void updateSprites3(int limit);
 
 	/** Calculates a sprite pattern.
 	  * @param patternNr Number of the sprite pattern [0..255].
@@ -340,6 +350,12 @@ private:
 	  * @effect Fills in the spriteBuffer and spriteCount arrays.
 	  */
 	void checkSprites2(int minLine, int maxLine);
+
+	void checkSprites3(int minLine, int maxLine);
+
+	uint8_t swapNibble(uint8_t val) {
+		return ((val << 4) & 0xF0) | (val >> 4);
+	}
 
 private:
 	using UpdateSpritesMethod = void (SpriteChecker::*)(int limit);

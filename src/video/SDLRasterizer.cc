@@ -665,13 +665,18 @@ void SDLRasterizer::drawSprites(
 	// Render sprites.
 	// TODO: Call different SpriteConverter methods depending on narrow/wide
 	//       pixels in this display mode?
-	int spriteMode = vdp.getDisplayMode().getSpriteMode(vdp.isMSX1VDP());
+	int spriteMode = vdp.getDisplayMode().getSpriteMode(vdp.isMSX1VDP(), vdp.isSP3());
 	int displayLimitX = displayX + displayWidth;
 	int limitY = fromY + displayHeight;
 	int screenX = translateX(
 		vdp.getLeftSprites(),
 		vdp.getDisplayMode().getLineWidth() == 512);
-	if (spriteMode == 1) {
+	if (spriteMode == 3) {
+		for (int y = fromY; y < limitY; y++, screenY++) {
+			auto dst = workFrame->getLineDirect(screenY).subspan(screenX);
+			spriteConverter.drawMode3(y, displayX, displayLimitX, dst);
+		}
+	} else if (spriteMode == 1) {
 		for (int y = fromY; y < limitY; y++, screenY++) {
 			auto dst = workFrame->getLineDirect(screenY).subspan(screenX);
 			spriteConverter.drawMode1(y, displayX, displayLimitX, dst);

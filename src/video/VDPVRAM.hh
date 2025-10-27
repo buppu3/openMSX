@@ -250,7 +250,7 @@ public:
 		assert((size & 1) == 0);
 		unsigned endIndex = index + size - 1;
 		unsigned areaBits = Math::floodRight(index ^ endIndex);
-		areaBits = ((areaBits << 16) | (areaBits >> 1)) & 0x1FFFF & sizeMask;
+		areaBits = ((areaBits << 16) | (areaBits >> 1)) & 0x3FFFF & sizeMask;
 		(void)areaBits;
 		assert((areaBits & effectiveBaseMask) == areaBits);
 		assert((areaBits & ~indexMask)        == areaBits);
@@ -537,6 +537,12 @@ public:
 	  */
 	void updateVRMode(bool mode, EmuTime time);
 
+	/** 
+	  * 
+	  * 
+	  */
+	void updateEVRMode(bool mode, EmuTime time);
+
 	void setRenderer(Renderer* renderer, EmuTime time);
 
 	/** Returns the size of VRAM in bytes
@@ -686,7 +692,11 @@ private:
 	  */
 	bool vrMode;
 
-public:
+	/** Corresponds to the EVR bit (bit 6 in VDP register 20).
+	  */
+	bool evrMode;
+
+	public:
 	VRAMWindow cmdReadWindow;
 	VRAMWindow cmdWriteWindow;
 	VRAMWindow nameTable;

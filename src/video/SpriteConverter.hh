@@ -89,6 +89,35 @@ public:
 		return true; // visible
 	}
 
+	static uint8_t calc_tp(Pixel dst, Pixel src, uint8_t tp, int shift)
+	{
+		unsigned s = src >> (shift + 3) & 31;
+		unsigned d = dst >> (shift + 3) & 31;
+		switch (tp) {
+		default:	// 0%
+			d = s;
+			break;
+		case 1:		// 25%
+			d = (s * 3 + d) >> 2;
+			break;
+		case 2:		// 50%
+			d = (s + d) >> 1;
+			break;
+		case 3:		// 70%
+			d = (d * 3 + s) >> 2;
+			break;
+		}
+		return (d << 3) | (d >> 2);
+	}
+
+	static Pixel pixel_transparent(Pixel dst, Pixel src, uint8_t tp)
+	{
+		if(tp == 0) return src;
+		return ((Pixel)calc_tp(dst, src, tp, 16) << 16)
+				| ((Pixel)calc_tp(dst, src, tp, 8) << 8)
+				| ((Pixel)calc_tp(dst, src, tp, 0) << 0);
+	}
+
 	/** Draw sprites in sprite mode 1.
 	  * @param absLine Absolute line number.
 	  *     Range is [0..262) for NTSC and [0..313) for PAL.
@@ -200,6 +229,77 @@ public:
 				}
 				++x;
 				pattern <<= 1;
+			}
+		}
+	}
+
+	/** Draw sprites in sprite mode 1.
+	  * @param absLine Absolute line number.
+	  *     Range is [0..262) for NTSC and [0..313) for PAL.
+	  * @param minX Minimum X coordinate to draw (inclusive).
+	  * @param maxX Maximum X coordinate to draw (exclusive).
+	  * @param pixelPtr Pointer to memory to draw to.
+	  */
+	void drawMode3(int absLine, int minX, int maxX, std::span<Pixel> pixelPtr) const
+	{
+		// Determine sprites visible on this line.
+		auto visibleSprites = spriteChecker.getSprites(absLine);
+		// Optimisation: return at once if no sprites on this line.
+		// Lines without any sprites are very common in most programs.
+		if (visibleSprites.empty()) return;
+
+		// initialize priority buffer
+		std::array<uint8_t, 512> priority;
+		std::ranges::fill(priority, 0);
+
+		// Render
+		for (const auto& si : visibleSprites) {
+			// check pattern
+			uint64_t pattern = ((uint64_t)si.pattern << 32) | si.pattern2;
+			if(pattern == 0) continue;
+
+			// clip
+			int srcX = 0;		// src X
+			int dstX = si.x;	// dst X
+			int nx = si.mgx;	// width
+			if (dstX < minX) {
+				int invalid = minX - dstX;
+				dstX = minX;
+				srcX = invalid;
+				nx -= invalid;
+				if (nx <= 0) {
+					continue;
+				}
+			}
+			if (dstX + nx > maxX) {
+				nx = maxX - dstX;
+				if (nx <= 0) {
+					continue;
+				}
+			}
+
+			// draw pattern
+			uint8_t *prioPtr = &priority[dstX];
+			Pixel *dstPtr = &pixelPtr[dstX];
+			while (nx > 0) {
+				if (*prioPtr == 0) {
+					// pattern position
+					int patX = 16 * srcX / si.mgx;
+
+					// pick
+					uint8_t color = (pattern >> (60 - patX * 4)) & 0x0F;
+
+					// draw pixel
+					if (color != 0) {
+						*dstPtr = pixel_transparent(*dstPtr, palette[(si.paletteSet << 4) | color], si.transparent);
+						*prioPtr = 1;
+					}
+				}
+				// next position
+				prioPtr++;
+				dstPtr++;
+				srcX++;
+				nx--;
 			}
 		}
 	}

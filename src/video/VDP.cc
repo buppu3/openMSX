@@ -180,7 +180,7 @@ VDP::VDP(const DeviceConfig& config)
 	};
 	controlRegMask = isMSX1VDP() ? 0x07 : 0x3F;
 	controlValueMasks = isMSX1VDP() ? VALUE_MASKS_MSX1 : VALUE_MASKS_MSX2;
-	if (version == V9958) {
+	if (version == V9958 || version == V9968) {
 		// Enable V9958-specific control registers.
 		controlValueMasks[25] = 0x7F;
 		controlValueMasks[26] = 0x3F;
@@ -209,6 +209,9 @@ VDP::VDP(const DeviceConfig& config)
 	}
 	if (hasS16()) {
 		controlValueMasks[20] |= 0x80;
+	}
+	if (hasFIL()) {
+		controlValueMasks[21] |= 0x40;
 	}
 	if (hasISR()) {
 		controlValueMasks[21] |= 0x80;
@@ -322,7 +325,17 @@ void VDP::resetInit()
 
 	// Init status registers.
 	statusReg0 = 0x00;
-	statusReg1 = (version == V9958 ? 0x04 : 0x00);
+	switch (version) {
+		default:
+			statusReg1 = 0x00 << 1;
+			break;
+		case V9958:
+			statusReg1 = 0x02 << 1;
+			break;
+		case V9968:
+			statusReg1 = 0x03 << 1;
+			break;
+	}
 	statusReg2 = 0x0C;
 
 	// Update IRQ to reflect new register values.
@@ -939,7 +952,7 @@ void VDP::executeCpuVramAccess(EmuTime time)
 		// note: also extended VRAM is interleaved,
 		//       because there is only 64kB it's interleaved
 		//       with itself (every byte repeated twice)
-		addr = ((addr << 16) | (addr >> 1)) & 0x1FFFF;
+		addr = ((addr << 16) | (addr >> 1)) & (hasEVR() ? 0x3FFFF : 0x1FFFF);
 	}
 
 	bool doAccess = [&] {
@@ -1235,12 +1248,17 @@ void VDP::changeRegister(uint8_t reg, uint8_t val, EmuTime time)
 		}
 		break;
 	case 20:
-		if (   (hasS16()  && (change & 0x80))
+		if (   (hasSP3()  && (change & 0x08))
 			|| (hasEPAL() && (change & 0x10))
-			|| (hasSP3()  && (change & 0x08))
 			|| (hasILNS() && (change & 0x04))
 			|| (hasSVNS() && (change & 0x02))) {
 			syncAtNextLine(syncSetMode, time);
+		}
+		if (hasEVR() && (change & 0x40)) {
+			vram->updateEVRMode((val & 0x40) != 0, time);
+		}
+		if (hasS16()  && (change & 0x80)) {
+			syncAtNextLine(syncSetSprites, time);
 		}
 		break;
 	case 23:
@@ -1460,15 +1478,34 @@ void VDP::updatePatternBase(EmuTime time)
 
 void VDP::updateSpriteAttributeBase(EmuTime time)
 {
-	int mode = displayMode.getSpriteMode(isMSX1VDP());
+	int mode = displayMode.getSpriteMode(isMSX1VDP(), isSP3());
 	if (mode == 0) {
 		vram->spriteAttribTable.disable(time);
 		return;
 	}
-	unsigned baseMask = (controlRegs[11] << 15) | (controlRegs[5] << 7) | ~(~0u << 7);
-	unsigned indexMask = mode == 1 ? ~0u << 7 : ~0u << 10;
+	unsigned baseMask;
+	switch (mode) {
+	default:
+		baseMask = (controlRegs[11] << 15) | (controlRegs[5] << 7) | ~(~0u << 7);
+		break;
+	case 3:
+		baseMask = (controlRegs[11] << 15) | (controlRegs[5] << 7) | ~(~0u << 9);
+		break;
+	}
+	unsigned indexMask;
+	switch (mode) {
+	default:
+		indexMask = ~0u << 7;
+		break;
+	case 2:
+		indexMask = ~0u << 10;
+		break;
+	case 3:
+		indexMask = ~0u << 9;
+		break;
+	}
 	if (displayMode.isPlanar()) {
-		baseMask = ((baseMask << 16) | (baseMask >> 1)) & 0x1FFFF;
+		baseMask = ((baseMask << 16) | (baseMask >> 1)) & (hasEVR() ? 0x3FFFF : 0x1FFFF);
 		indexMask = ((indexMask << 16) | ~(1 << 16)) & (indexMask >> 1);
 	}
 	vram->spriteAttribTable.setMask(baseMask, indexMask, time);
@@ -1476,17 +1513,25 @@ void VDP::updateSpriteAttributeBase(EmuTime time)
 
 void VDP::updateSpritePatternBase(EmuTime time)
 {
-	if (displayMode.getSpriteMode(isMSX1VDP()) == 0) {
+	switch (displayMode.getSpriteMode(isMSX1VDP(), isSP3())) {
+	case 1:
+	case 2: {
+		unsigned baseMask = (controlRegs[6] << 11) | ~(~0u << 11);
+		unsigned indexMask = ~0u << 11;
+		if (displayMode.isPlanar()) {
+			baseMask = ((baseMask << 16) | (baseMask >> 1)) & (hasEVR() ? 0x3FFFF : 0x1FFFF);
+			indexMask = ((indexMask << 16) | ~(1 << 16)) & (indexMask >> 1);
+		}
+		vram->spritePatternTable.setMask(baseMask, indexMask, time);
+		break;
+	}
+	case 3:
+		vram->spritePatternTable.setMask(0x3FFFF, ~0x3FFFF, time);
+		break;
+	default:
 		vram->spritePatternTable.disable(time);
-		return;
+		break;
 	}
-	unsigned baseMask = (controlRegs[6] << 11) | ~(~0u << 11);
-	unsigned indexMask = ~0u << 11;
-	if (displayMode.isPlanar()) {
-		baseMask = ((baseMask << 16) | (baseMask >> 1)) & 0x1FFFF;
-		indexMask = ((indexMask << 16) | ~(1 << 16)) & (indexMask >> 1);
-	}
-	vram->spritePatternTable.setMask(baseMask, indexMask, time);
 }
 
 void VDP::updateDisplayMode(DisplayMode newMode, bool cmdBit, EmuTime time)
@@ -1502,8 +1547,9 @@ void VDP::updateDisplayMode(DisplayMode newMode, bool cmdBit, EmuTime time)
 		newMode.isPlanar() != displayMode.isPlanar();
 	// Sprite mode changed.
 	bool msx1 = isMSX1VDP();
+	bool sp3 = isSP3();
 	bool spriteModeChange =
-		newMode.getSpriteMode(msx1) != displayMode.getSpriteMode(msx1);
+		newMode.getSpriteMode(msx1, sp3) != displayMode.getSpriteMode(msx1, sp3);
 
 	// Commit the new display mode.
 	displayMode = newMode;

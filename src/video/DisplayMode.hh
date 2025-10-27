@@ -155,7 +155,8 @@ public:
 	  *     1 means sprite mode 1 (MSX1 display modes),
 	  *     2 means sprite mode 2 (MSX2 display modes).
 	  */
-	[[nodiscard]] constexpr int getSpriteMode(bool isMSX1) const {
+	[[nodiscard]] constexpr int getSpriteMode(bool isMSX1, bool SP3) const {
+		if (SP3) return 3;
 		switch (getBase()) {
 		case GRAPHIC1: case MULTICOLOR: case GRAPHIC2:
 			return 1;

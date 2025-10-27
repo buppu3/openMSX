@@ -482,6 +482,133 @@ inline void SpriteChecker::checkSprites2(int minLine, int maxLine)
 	}
 }
 
+void SpriteChecker::updateSprites3(int limit)
+{
+	if (vdp.spritesEnabledFast()) {
+		if (vdp.isDisplayEnabled()) {
+			// in display area
+			checkSprites3(currentLine, limit);
+		} else {
+			// in border, only check last line of top border
+			int l0 = vdp.getLineZero() - 1;
+			if ((currentLine <= l0) && (l0 < limit)) {
+				checkSprites3(l0, l0 + 1);
+			}
+		}
+	}
+	currentLine = limit;
+}
+
+inline void SpriteChecker::checkSprites3(int minLine, int maxLine)
+{
+	int displayDelta = (vdp.isSVNS() ? 0 : vdp.getVerticalScroll()) - vdp.getLineZero();
+
+	// Get sprites for this line and detect 17th sprite if any.
+	bool limitSprites = limitSpritesSetting.getBoolean();
+	int size = vdp.getSpriteSize();
+	auto attributePtr = vram.spriteAttribTable.getReadArea<64 * 8>(0);
+	uint8_t patternIndexMask = size == 16 ? 0xFC : 0xFF;
+	int fifthSpriteNum  = -1;  // no 5th sprite detected yet
+	int fifthSpriteLine = 999; // larger than any possible valid line
+	int maxVisible = 16;
+
+	int sprite = 0;
+	for (/**/; sprite < 64; ++sprite) {
+		int y = attributePtr[8 * sprite + 0] | ((attributePtr[8 * sprite + 1] & 0x03) << 8);
+
+		if (y == 216) break;
+
+		int x = attributePtr[8 * sprite + 4] | ((attributePtr[8 * sprite + 5] & 0x03) << 8);
+		x |= (x & 0x200) ? ~0x1FF : 0x000;
+		int mgx = attributePtr[8 * sprite + 6];
+		if (mgx == 0) mgx = 256;
+		int mgy = attributePtr[8 * sprite + 2];
+		if (mgy == 0) mgy = 256;
+
+		uint8_t sz = (attributePtr[8 * sprite + 1] >> 6) & 0x03;	// size
+		uint8_t pts = (attributePtr[8 * sprite + 5] >> 4) & 0x07;	// pattern set
+		uint8_t px = attributePtr[8 * sprite + 7] & 0x0F;			// pattern x
+		uint8_t py = (attributePtr[8 * sprite + 7] >> 4) & 0x0F;	// pattern y
+		bool rvy = (attributePtr[8 * sprite + 3] & 0x20) != 0;
+		bool rvx = (attributePtr[8 * sprite + 3] & 0x10) != 0;
+		uint8_t ps = attributePtr[8 * sprite + 3] & 0x0F;
+		uint8_t tp = (attributePtr[8 * sprite + 3] >> 6) & 0x03;
+
+		for (int line = minLine; line < maxLine; ++line) { // 'line' changes in loop
+			// Calculate line number within the sprite.
+			int displayLine = line + displayDelta;
+			int spriteLine = (displayLine - y) & 0xFF;
+			if (spriteLine >= mgy) {
+				// Skip ahead till sprite becomes visible.
+				line += 256 - spriteLine - 1; // -1 because of for-loop
+				continue;
+			}
+
+			auto visibleIndex = spriteCount[line];
+			if (visibleIndex == maxVisible) {
+				// Find earliest line where this condition occurs.
+				if (line < fifthSpriteLine) {
+					fifthSpriteLine = line;
+					fifthSpriteNum = sprite;
+				}
+				if (limitSprites) continue;
+			}
+
+			SpriteInfo& sip = spriteBuffer[line][visibleIndex];
+
+			// pattern
+			if (rvy) {
+				spriteLine = (mgy - spriteLine) - 1;
+			}
+			unsigned srcY = (16 + (sz << 4)) * spriteLine / mgy;
+			unsigned row = ((pts << 8) | (py << 4)) + srcY;
+			unsigned offset = vdp.getSpritePatternTableBase() + ((row << 7) | (px << 3));
+			auto patternPtr = vram.spritePatternTable.getReadArea<8>(offset);
+			if (rvx) {
+				sip.pattern = (swapNibble(patternPtr[7]) << 24)
+							| (swapNibble(patternPtr[6]) << 16)
+							| (swapNibble(patternPtr[5]) <<  8)
+							| (swapNibble(patternPtr[4]) <<  0);
+				sip.pattern2 = (swapNibble(patternPtr[3]) << 24)
+							| (swapNibble(patternPtr[2]) << 16)
+							| (swapNibble(patternPtr[1]) <<  8)
+							| (swapNibble(patternPtr[0]) <<  0);
+			} else {
+				sip.pattern = (patternPtr[0] << 24)
+							| (patternPtr[1] << 16)
+							| (patternPtr[2] <<  8)
+							| (patternPtr[3] <<  0);
+				sip.pattern2 = (patternPtr[4] << 24)
+							| (patternPtr[5] << 16)
+							| (patternPtr[6] <<  8)
+							| (patternPtr[7] <<  0);
+			}
+
+			sip.x = x;
+			sip.mgx = mgx;
+			sip.paletteSet = ps;
+			sip.transparent = tp;
+			spriteCount[line] = visibleIndex + 1;
+		}
+	}
+
+	// Update status register.
+	uint8_t status = vdp.getStatusReg0();
+	if (fifthSpriteNum != -1) {
+		// Five sprites on a line.
+		// According to TMS9918.pdf 5th sprite detection is only
+		// active when F flag is zero.
+		if ((status & 0xC0) == 0) {
+			status = uint8_t(0x40 | (status & 0x20) | fifthSpriteNum);
+		}
+	}
+	if (~status & 0x40) {
+		// No 5th sprite detected, store number of latest sprite processed.
+		status = (status & 0x20) | uint8_t(std::min(sprite, 63));
+	}
+	vdp.setSpriteStatus(status);
+}
+
 // version 1: initial version
 // version 2: bug fix: also serialize 'currentLine'
 template<typename Archive>
