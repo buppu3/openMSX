@@ -513,7 +513,7 @@ inline void SpriteChecker::checkSprites3(int minLine, int maxLine)
 	int maxVisible = 16;
 
 	int sprite = vdp.isSPS() ? (vdp.getSpsTopPlane() & 63) : 0;
-	for (int count = 0; count < 32; ++count, sprite = vdp.isSPS() ? ((sprite + SPS_NEXT_PLANE) & 63) : (sprite + 1)) {
+	for (int count = 0; count < 64; ++count, sprite = vdp.isSPS() ? ((sprite + SPS_NEXT_PLANE) & 63) : (sprite + 1)) {
 		int y = attributePtr[8 * sprite + 0] | ((attributePtr[8 * sprite + 1] & 0x03) << 8);
 
 		if (y == 216) break;
