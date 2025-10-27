@@ -216,6 +216,9 @@ VDP::VDP(const DeviceConfig& config)
 	if (hasISR()) {
 		controlValueMasks[21] |= 0x80;
 	}
+	if (hasSPS()) {
+		controlValueMasks[25] |= 0x80;
+	}
 
 	resetInit(); // must be done early to avoid UMRs
 
@@ -350,6 +353,8 @@ void VDP::resetInit()
 	};
 	// Init the palette.
 	palette = V9938_PALETTE;
+	//
+	spsTopPlane = 0;
 }
 
 void VDP::resetMasks(EmuTime time)
@@ -452,6 +457,8 @@ void VDP::execVScan(EmuTime time)
 	if (controlRegs[1] & 0x20) {
 		irqVertical.set();
 	}
+
+	spsTopPlane = (spsTopPlane + SpriteChecker::SPS_NEXT_FRAME) & 63;
 }
 
 void VDP::execHScan()

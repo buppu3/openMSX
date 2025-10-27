@@ -138,6 +138,10 @@ public:
 		return hasFIL() & ((controlRegs[21] & 0x40) != 0);
 	}
 
+	[[nodiscard]] bool isSPS() const {
+		return hasSPS() & ((controlRegs[25] & 0x80) != 0);
+	}
+
 	/** Is this an MSX1 VDP?
 	  * @return True if this is an MSX1 VDP
 	  *   False otherwise.
@@ -214,6 +218,10 @@ public:
 	}
 
 	[[nodiscard]] bool hasFIL() const {
+		return (version & VM_V9968) != 0;
+	}
+
+	[[nodiscard]] bool hasSPS() const {
 		return (version & VM_V9968) != 0;
 	}
 
@@ -346,6 +354,10 @@ public:
 	/** Get vram pointer (14-bit) (only for debugger) */
 	[[nodiscard]] int getVramPointer() const {
 		return vramPointer;
+	}
+
+	[[nodiscard]] int getSpsTopPlane() const {
+		return spsTopPlane;
 	}
 
 	/** Gets a palette entry.
@@ -1445,6 +1457,8 @@ private:
 	/** Cached CPU reference */
 	MSXCPU& cpu;
 	const uint8_t fixedVDPIOdelayCycles;
+
+	int spsTopPlane;
 };
 SERIALIZE_CLASS_VERSION(VDP, 10);
 

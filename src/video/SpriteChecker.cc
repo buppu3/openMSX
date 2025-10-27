@@ -118,8 +118,8 @@ inline void SpriteChecker::checkSprites1(int minLine, int maxLine)
 	int fifthSpriteLine = 999; // larger than any possible valid line
 	int maxVisible = vdp.isS16() ? 16 : 4;
 
-	int sprite = 0;
-	for (/**/; sprite < 32; ++sprite) {
+	int sprite = vdp.isSPS() ? (vdp.getSpsTopPlane() & 31) : 0;
+	for (int count = 0; count < 32; ++count, sprite = vdp.isSPS() ? ((sprite + SPS_NEXT_PLANE) & 31) : (sprite + 1)) {
 		int y = attributePtr[4 * sprite + 0];
 		if (y == 208) break;
 
@@ -282,12 +282,12 @@ inline void SpriteChecker::checkSprites2(int minLine, int maxLine)
 
 	// Because it gave a measurable performance boost, we duplicated the
 	// code for planar and non-planar modes.
-	int sprite = 0;
+	int sprite = vdp.isSPS() ? (vdp.getSpsTopPlane() & 31) : 0;
 	if (planar) {
 		auto [attributePtr0, attributePtr1] =
 			vram.spriteAttribTable.getReadAreaPlanar<32 * 4>(512);
 		// TODO: Verify CC implementation.
-		for (/**/; sprite < 32; ++sprite) {
+		for (int count = 0; count < 32; ++count, sprite = vdp.isSPS() ? ((sprite + SPS_NEXT_PLANE) & 31) : (sprite + 1)) {
 			int y = attributePtr0[2 * sprite + 0];
 			if (y == 216) break;
 
@@ -332,7 +332,7 @@ inline void SpriteChecker::checkSprites2(int minLine, int maxLine)
 		auto attributePtr0 =
 			vram.spriteAttribTable.getReadArea<32 * 4>(512);
 		// TODO: Verify CC implementation.
-		for (/**/; sprite < 32; ++sprite) {
+		for (int count = 0; count < 32; ++count, sprite = vdp.isSPS() ? ((sprite + SPS_NEXT_PLANE) & 31) : (sprite + 1)) {
 			int y = attributePtr0[4 * sprite + 0];
 			if (y == 216) break;
 
@@ -512,8 +512,8 @@ inline void SpriteChecker::checkSprites3(int minLine, int maxLine)
 	int fifthSpriteLine = 999; // larger than any possible valid line
 	int maxVisible = 16;
 
-	int sprite = 0;
-	for (/**/; sprite < 64; ++sprite) {
+	int sprite = vdp.isSPS() ? (vdp.getSpsTopPlane() & 63) : 0;
+	for (int count = 0; count < 32; ++count, sprite = vdp.isSPS() ? ((sprite + SPS_NEXT_PLANE) & 63) : (sprite + 1)) {
 		int y = attributePtr[8 * sprite + 0] | ((attributePtr[8 * sprite + 1] & 0x03) << 8);
 
 		if (y == 216) break;

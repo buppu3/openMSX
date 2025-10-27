@@ -24,6 +24,9 @@ class BooleanSetting;
 class SpriteChecker final : public VRAMObserver
 {
 public:
+	static constexpr int SPS_NEXT_PLANE = 19;
+	static constexpr int SPS_NEXT_FRAME = 5;
+
 	/** Bitmap of length 32 describing a sprite pattern.
 	  * Visible pixels are 1, transparent pixels are 0.
 	  * If the sprite is less than 32 pixels wide,
