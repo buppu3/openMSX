@@ -121,7 +121,7 @@ inline void SpriteChecker::checkSprites1(int minLine, int maxLine)
 	int sprite = vdp.isSPS() ? (vdp.getSpsTopPlane() & 31) : 0;
 	for (int count = 0; count < 32; ++count, sprite = vdp.isSPS() ? ((sprite + SPS_NEXT_PLANE) & 31) : (sprite + 1)) {
 		int y = attributePtr[4 * sprite + 0];
-		if (y == 208) break;
+		if (y == 208 && !vdp.isSPS()) break;
 
 		for (int line = minLine; line < maxLine; ++line) { // 'line' changes in loop
 			// Calculate line number within the sprite.
@@ -289,7 +289,7 @@ inline void SpriteChecker::checkSprites2(int minLine, int maxLine)
 		// TODO: Verify CC implementation.
 		for (int count = 0; count < 32; ++count, sprite = vdp.isSPS() ? ((sprite + SPS_NEXT_PLANE) & 31) : (sprite + 1)) {
 			int y = attributePtr0[2 * sprite + 0];
-			if (y == 216) break;
+			if (y == 216 && !vdp.isSPS()) break;
 
 			for (int line = minLine; line < maxLine; ++line) { // 'line' changes in loop
 				// Calculate line number within the sprite.
@@ -334,7 +334,7 @@ inline void SpriteChecker::checkSprites2(int minLine, int maxLine)
 		// TODO: Verify CC implementation.
 		for (int count = 0; count < 32; ++count, sprite = vdp.isSPS() ? ((sprite + SPS_NEXT_PLANE) & 31) : (sprite + 1)) {
 			int y = attributePtr0[4 * sprite + 0];
-			if (y == 216) break;
+			if (y == 216 && !vdp.isSPS()) break;
 
 			for (int line = minLine; line < maxLine; ++line) { // 'line' changes in loop
 				// Calculate line number within the sprite.
@@ -516,7 +516,7 @@ inline void SpriteChecker::checkSprites3(int minLine, int maxLine)
 	for (int count = 0; count < 64; ++count, sprite = vdp.isSPS() ? ((sprite + SPS_NEXT_PLANE) & 63) : (sprite + 1)) {
 		int y = attributePtr[8 * sprite + 0] | ((attributePtr[8 * sprite + 1] & 0x03) << 8);
 
-		if (y == 216) break;
+		if (y == 216 && !vdp.isSPS()) break;
 
 		int x = attributePtr[8 * sprite + 4] | ((attributePtr[8 * sprite + 5] & 0x03) << 8);
 		x |= (x & 0x200) ? ~0x1FF : 0x000;
