@@ -1,0 +1,20 @@
+- VDPコマンドのタイミング計算にメモリアクセス時間が含まれていない。V9958互換速度のウェイトの取り方を修正する。
+
+	void nextHs(int delta, VDPCmdCache::CachePenalty penalty);
+    ↓
+	void nextHs(int delay, int wait, VDPCmdCache::CachePenalty penalty);
+
+	void nextAccessSlotHs(EmuTime time, VDPCmdCache::CachePenalty penalty);
+    ↓
+	void nextAccessSlotHs(EmuTime time, int wait, VDPCmdCache::CachePenalty penalty);
+
+    delay = VDPコマンド処理時間(通常1clk)
+    wait = メモリアクセス時間(7clk + V9958wait)
+
+- リフレッシュ時間をどうするか？
+
+- 拡張された VDP コマンド
+
+- FIL モード
+
+- 拡張VRAM, メモリアドレスの修正
