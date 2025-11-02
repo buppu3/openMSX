@@ -46,7 +46,7 @@ void PixelRenderer::draw(
 
 		// Calculate display coordinates.
 		int zero = vdp.getLineZero();
-		int displayX = (startX - vdp.getLeftSprites()) / 2;
+		int displayX = (startX - vdp.getLeftSprites()) / VDP::TICKS_DIV_DHCLK;
 		int displayY = startY - zero;
 		if (!vdp.getDisplayMode().isTextMode()) {
 			displayY += vdp.getVerticalScroll();
@@ -62,7 +62,7 @@ void PixelRenderer::draw(
 		}
 
 		displayY &= 255; // Page wrap.
-		int displayWidth = (endX - (startX & ~1)) / 2;
+		int displayWidth = (endX - (startX & ~1)) / VDP::TICKS_DIV_DHCLK;
 		int displayHeight = endY - startY;
 
 		assert(0 <= displayX);
@@ -568,7 +568,7 @@ void PixelRenderer::renderUntil(EmuTime time)
 			//       because the margin can change which leads to a line being
 			//       rendered even though the time doesn't advance.
 			return {0,
-				(limitTicks + VDP::TICKS_PER_LINE - 400) / VDP::TICKS_PER_LINE};
+				(limitTicks + VDP::TICKS_PER_LINE - VDP::TICKS_DELAY_400) / VDP::TICKS_PER_LINE};
 		default:
 			UNREACHABLE;
 		}

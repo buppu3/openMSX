@@ -145,10 +145,10 @@ static constexpr std::array<int16_t, 91 + 18> slotsMsx1Text = {
 
 struct AccessTable
 {
-	operator std::span<const uint8_t, NUM_DELTAS * TICKS>() const { return values; }
+	operator std::span<const tab_value, NUM_DELTAS * TICKS>() const { return values; }
 
 protected:
-	std::array<uint8_t, NUM_DELTAS * TICKS> values = {};
+	std::array<tab_value, NUM_DELTAS * TICKS> values = {};
 };
 
 struct CycleTable : AccessTable
@@ -160,20 +160,24 @@ struct CycleTable : AccessTable
 			0, 1, 16, 24, 28, 32, 40, 48, 64, 72, 88, 104, 120, 128, 136
 		};
 
+		constexpr size_t max_val = 65536;//1 << sizeof(tab_value);
+
 		size_t out = 0;
-		for (auto step : delta) {
+		for (auto step_raw : delta) {
+			const int step = step_raw * VDP::CLK_MUL;
 			int p = 0;
-			while (slots[p] < step) ++p;
+			while (slots[p] * VDP::CLK_MUL < step) ++p;
 			for (auto i : xrange(TICKS)) {
-				if ((slots[p] - i) < step) ++p;
-				assert((slots[p] - i) >= step);
-				unsigned t = slots[p] - i;
+				if ((slots[p] * VDP::CLK_MUL - i) < step) ++p;
+				const int16_t slot_val = slots[p] * VDP::CLK_MUL;
+				assert((slot_val - i) >= step);
+				unsigned t = slot_val - i;
 				if (msx1) {
-					if (step <= 40) assert(t < 256);
+					if (step <= 40 * VDP::CLK_MUL) assert(t < max_val);
 				} else {
-					assert(t < 256);
+					assert(t < max_val);
 				}
-				values[out++] = narrow_cast<uint8_t>(t);
+				values[out++] = narrow_cast<tab_value>(t);
 			}
 		}
 	}
@@ -183,6 +187,7 @@ struct ZeroTable : AccessTable
 {
 };
 
+#ifdef NDEBUG
 static constexpr CycleTable tabSpritesOn     (false, slotsSpritesOn);
 static constexpr CycleTable tabSpritesOff    (false, slotsSpritesOff);
 static constexpr CycleTable tabChar          (false, slotsChar);
@@ -193,9 +198,20 @@ static constexpr CycleTable tabMsx1Gfx3      (true,  slotsMsx1Gfx3);
 static constexpr CycleTable tabMsx1Text      (true,  slotsMsx1Text);
 static constexpr CycleTable tabMsx1ScreenOff (true,  slotsMsx1ScreenOff);
 static constexpr ZeroTable  tabBroken;
+#else
+static  CycleTable tabSpritesOn     (false, slotsSpritesOn);
+static  CycleTable tabSpritesOff    (false, slotsSpritesOff);
+static  CycleTable tabChar          (false, slotsChar);
+static  CycleTable tabText          (false, slotsText);
+static  CycleTable tabScreenOff     (false, slotsScreenOff);
+static  CycleTable tabMsx1Gfx12     (true,  slotsMsx1Gfx12);
+static  CycleTable tabMsx1Gfx3      (true,  slotsMsx1Gfx3);
+static  CycleTable tabMsx1Text      (true,  slotsMsx1Text);
+static  CycleTable tabMsx1ScreenOff (true,  slotsMsx1ScreenOff);
+static  ZeroTable  tabBroken;
+#endif
 
-
-[[nodiscard]] static inline std::span<const uint8_t, NUM_DELTAS * TICKS> getTab(const VDP& vdp)
+[[nodiscard]] static inline std::span<const tab_value, NUM_DELTAS * TICKS> getTab(const VDP& vdp)
 {
 	if (vdp.getBrokenCmdTiming()) return tabBroken;
 	bool enabled = vdp.isDisplayEnabled();

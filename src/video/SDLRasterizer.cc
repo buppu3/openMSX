@@ -28,15 +28,15 @@ using Pixel = SDLRasterizer::Pixel;
 
 /** VDP ticks between start of line and start of left border.
   */
-static constexpr int TICKS_LEFT_BORDER = 100 + 102;
-static constexpr int TICKS_RIGHT_BORDER = 100 + 102 + 56 + 1024 + 59;
+static constexpr int TICKS_LEFT_BORDER = VDP::TICKS_HSYNC_PERIOD + VDP::TICKS_LEFT_ERASE_PERIOD;
+static constexpr int TICKS_RIGHT_BORDER = VDP::TICKS_HSYNC_PERIOD + VDP::TICKS_LEFT_ERASE_PERIOD + VDP::TICKS_LEFT_BORDER_PERIOD + VDP::TICKS_HDISP_PERIOD + VDP::TICKS_RIGHT_BORDER_PERIOD;
 
 /** The middle of the visible (display + borders) part of a line,
   * expressed in VDP ticks since the start of the line.
   * TODO: Move this to a central location?
   */
 static constexpr int TICKS_VISIBLE_MIDDLE =
-	TICKS_LEFT_BORDER + (VDP::TICKS_PER_LINE - TICKS_LEFT_BORDER - 27) / 2;
+	TICKS_LEFT_BORDER + (VDP::TICKS_PER_LINE - TICKS_LEFT_BORDER - VDP::TICKS_DELAY_27) / 2;
 
 /** Translate from absolute VDP coordinates to screen coordinates:
   * Note: In reality, there are only 569.5 visible pixels on a line.
@@ -72,9 +72,9 @@ static constexpr int translateX(int absoluteX, bool narrow)
 
 	// Note: The ROUND_MASK forces the ticks to a pixel (2-tick) boundary.
 	//       If this is not done, rounding errors will occur.
-	const int ROUND_MASK = narrow ? ~1 : ~3;
-	return ((absoluteX - (TICKS_VISIBLE_MIDDLE & ROUND_MASK))
-		>> (narrow ? 1 : 2))
+	const int ROUND_MASK = narrow ? (VDP::CLK_MUL * ~1) : (VDP::CLK_MUL * ~3);
+	return (((absoluteX - (TICKS_VISIBLE_MIDDLE & ROUND_MASK))
+		>> (narrow ? 1 : 2))) / VDP::CLK_MUL
 		+ maxX / 2;
 }
 

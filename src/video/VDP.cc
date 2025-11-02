@@ -540,7 +540,7 @@ void VDP::scheduleDisplayStart(EmuTime time)
 		getVerticalAdjust(); // 0..15
 	displayStart =
 		lineZero * TICKS_PER_LINE
-		+ 100 + 102; // VR flips at start of left border
+		+ VDP::TICKS_HSYNC_PERIOD + VDP::TICKS_LEFT_ERASE_PERIOD; // VR flips at start of left border
 	displayStartSyncTime = frameStartTime + displayStart;
 	//cerr << "new DISPLAY_START is " << (displayStart / TICKS_PER_LINE) << "\n";
 
@@ -583,7 +583,7 @@ void VDP::scheduleHScan(EmuTime time)
 	}
 
 	// Calculate moment in time line match occurs.
-	horizontalScanOffset = displayStart - (100 + 102)
+	horizontalScanOffset = displayStart - (VDP::TICKS_HSYNC_PERIOD + VDP::TICKS_LEFT_ERASE_PERIOD)
 		+ ((controlRegs[19] - (isILNS() ? 0 : controlRegs[23])) & 0xFF) * TICKS_PER_LINE
 		+ getRightBorder();
 	// Display line counter continues into the next frame.
@@ -1026,8 +1026,8 @@ uint8_t VDP::peekStatusReg(uint8_t reg, EmuTime time) const
 				// afterMatch can still be negative at this
 				// point, see scheduleHScan()
 			}
-			int matchLength = (displayMode.isTextMode() ? 87 : 59)
-			                  + 27 + 100 + 102;
+			int matchLength = (displayMode.isTextMode() ? (87 * VDP::CLK_MUL) : (59 * VDP::CLK_MUL))
+			                  + VDP::TICKS_DELAY_27 + VDP::TICKS_HSYNC_PERIOD + VDP::TICKS_LEFT_ERASE_PERIOD;
 			return statusReg1 |
 			       (0 <= afterMatch && afterMatch < matchLength);
 		}
@@ -1390,7 +1390,7 @@ void VDP::syncAtNextLine(SyncBase& type, EmuTime time) const
 {
 	// The processing of a new line starts in the middle of the left erase,
 	// ~144 cycles after the sync signal. Adjust affects it. See issue #1310.
-	int offset = 144 + (horizontalAdjust - 7) * 4;
+	int offset = VDP::TICKS_BL_LATCH + (horizontalAdjust - 7) * VDP::TICKS_DIV_DLCLK;
 	int line = (getTicksThisFrame(time) + TICKS_PER_LINE - offset) / TICKS_PER_LINE;
 	int ticks = line * TICKS_PER_LINE + offset;
 	EmuTime nextTime = frameStartTime + ticks;
@@ -1533,7 +1533,7 @@ void VDP::updateSpritePatternBase(EmuTime time)
 		break;
 	}
 	case 3:
-		vram->spritePatternTable.setMask(0x3FFFF, ~0x3FFFF, time);
+		vram->spritePatternTable.setMask(0x3FFFFu, ~0x3FFFFu, time);
 		break;
 	default:
 		vram->spritePatternTable.disable(time);

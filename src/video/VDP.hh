@@ -67,14 +67,30 @@ class VDP final : public MSXDevice, private VideoSystemChangeListener
                 , private Observer<Setting>
 {
 public:
+	static constexpr int CLK_MUL = 4;
+
 	/** Number of VDP clock ticks per second.
 	  */
-	static constexpr int TICKS_PER_SECOND = 3579545 * 6; // 21.5MHz;
+	static constexpr int TICKS_PER_SECOND = 3579545 * 6 * CLK_MUL; // 85.9MHz;
 	using VDPClock = Clock<TICKS_PER_SECOND>;
 
 	/** Number of VDP clock ticks per line.
 	  */
-	static constexpr int TICKS_PER_LINE = 1368;
+	static constexpr int TICKS_PER_LINE = 1368 * CLK_MUL;
+
+	static constexpr int TICKS_DIV_DLCLK = 4 * CLK_MUL;
+	static constexpr int TICKS_DIV_DHCLK = 2 * CLK_MUL;
+	static constexpr int TICKS_HSYNC_PERIOD = 100 * CLK_MUL;
+	static constexpr int TICKS_LEFT_ERASE_PERIOD = 102 * CLK_MUL;
+	static constexpr int TICKS_LEFT_BORDER_PERIOD = 56 * CLK_MUL;
+	static constexpr int TICKS_RIGHT_BORDER_PERIOD = 59 * CLK_MUL;
+	static constexpr int TICKS_RIGHT_ERASE_PERIOD = 27 * CLK_MUL;
+	static constexpr int TICKS_DISP_TEXT = 960 * CLK_MUL;
+	static constexpr int TICKS_DISP_BMP = 1024 * CLK_MUL;
+	static constexpr int TICKS_HDISP_PERIOD = TICKS_DISP_BMP;
+	static constexpr int TICKS_BL_LATCH = 144 * CLK_MUL;
+	static constexpr int TICKS_DELAY_400 = 400 * CLK_MUL;
+	static constexpr int TICKS_DELAY_27 = 27 * CLK_MUL;
 
 	explicit VDP(const DeviceConfig& config);
 	~VDP() override;
@@ -688,9 +704,9 @@ public:
 		// The text mode (40*6 = 240) pixels are not centered in the 256
 		// pixels of the other modes. And it's different between TMSxxx
 		// and V99x8. See https://github.com/openMSX/openMSX/issues/708
-		return 100 + 102 + 56
-			+ (horizontalAdjust - 7) * 4
-			+ (displayMode.isTextMode() ? (isMSX1VDP() ? 6 : 9) : 0) * 4;
+		return VDP::TICKS_HSYNC_PERIOD + VDP::TICKS_LEFT_ERASE_PERIOD + VDP::TICKS_LEFT_BORDER_PERIOD
+			+ (horizontalAdjust - 7) * VDP::TICKS_DIV_DLCLK
+			+ (displayMode.isTextMode() ? (isMSX1VDP() ? 6 : 9) : 0) * VDP::TICKS_DIV_DLCLK;
 	}
 
 	/** Gets the number of VDP clock ticks between start of line and the end
@@ -699,7 +715,7 @@ public:
 	  * are not actually border pixels (sprites appear in front of them).
 	  */
 	[[nodiscard]] int getLeftBorder() const {
-		return getLeftSprites() + (isBorderMasked() ? 8 * 4 : 0);
+		return getLeftSprites() + (isBorderMasked() ? 8 * VDP::TICKS_DIV_DLCLK : 0);
 	}
 
 	/** Gets the number of VDP clock ticks between start of line and the start
@@ -707,7 +723,7 @@ public:
 	  */
 	[[nodiscard]] int getRightBorder() const {
 		return getLeftSprites()
-			+ (displayMode.isTextMode() ? 960 : 1024);
+			+ (displayMode.isTextMode() ? VDP::TICKS_DISP_TEXT : VDP::TICKS_DISP_BMP);
 	}
 
 	/** Gets the number of VDP clock ticks between start of line and the time
@@ -716,7 +732,7 @@ public:
 	  * but disregards border mask.
 	  */
 	[[nodiscard]] int getLeftBackground() const {
-		return getLeftSprites() + getHorizontalScrollLow() * 4;
+		return getLeftSprites() + getHorizontalScrollLow() * VDP::TICKS_DIV_DLCLK;
 	}
 
 	/** Should only be used by SpriteChecker. Returns the current value
@@ -1011,11 +1027,11 @@ private:
 		/** Length of horizontal blank (HR=1) in text mode, measured in VDP
 		  * ticks.
 		  */
-		static constexpr int HBLANK_LEN_TXT = 404;
+		static constexpr int HBLANK_LEN_TXT = 404 * VDP::CLK_MUL;
 		/** Length of horizontal blank (HR=1) in graphics mode, measured in VDP
 		  * ticks.
 		  */
-		static constexpr int HBLANK_LEN_GFX = 312;
+		static constexpr int HBLANK_LEN_GFX = 312 * VDP::CLK_MUL;
 		return (ticksThisFrame + TICKS_PER_LINE - getRightBorder()) % TICKS_PER_LINE
 		     < (displayMode.isTextMode() ? HBLANK_LEN_TXT : HBLANK_LEN_GFX);
 	}

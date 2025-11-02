@@ -33,6 +33,8 @@ enum class Delta : int {
 };
 static constexpr int NUM_DELTAS = 15;
 
+using tab_value = uint16_t;
+
 /** VDP-VRAM access slot calculator, meant to be used in the inner loops of the
   * VDPCmdEngine commands. Code optimized for the case that:
   *  - timing remains constant (sprites/display enable/disable)
@@ -43,7 +45,7 @@ class Calculator
 public:
 	/** This shouldn't be called directly, instead use getCalculator(). */
 	Calculator(EmuTime frame, EmuTime time,
-	           EmuTime limit_, std::span<const uint8_t, NUM_DELTAS * TICKS> tab_)
+	           EmuTime limit_, std::span<const tab_value, NUM_DELTAS * TICKS> tab_)
 		: ref(frame), tab(tab_)
 	{
 		assert(frame <= time);
@@ -86,7 +88,7 @@ private:
 	int ticks;
 	int limit;
 	VDP::VDPClock ref;
-	std::span<const uint8_t, NUM_DELTAS * TICKS> tab;
+	std::span<const tab_value, NUM_DELTAS * TICKS> tab;
 };
 
 /** Return the time of the next available access slot that is at least 'delta'
