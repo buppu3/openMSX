@@ -3,6 +3,7 @@
 
 #include "VDP.hh"
 #include "VDPAccessSlots.hh"
+#include "VDPCmdCache.hh"
 
 #include "BooleanSetting.hh"
 #include "Probe.hh"
@@ -16,7 +17,6 @@ namespace openmsx {
 class VDPVRAM;
 class DisplayMode;
 class CommandController;
-
 
 /** VDP command engine by Alex Wulms.
   * Implements command execution unit of V9938/58.
@@ -37,6 +37,19 @@ public:
 	static constexpr uint8_t BD = 1 << 4;
 	static constexpr uint8_t CE = 1 << 0;
 
+	static constexpr int waitHmmc = 40 * 4;
+	static constexpr int waitYmmm = 40 * 4;
+	static constexpr int waitHmmm = 40 * 4;
+	static constexpr int waitHmmv = 40 * 4;
+	static constexpr int waitLmmc = 40 * 4;
+	static constexpr int waitLmcm = 40 * 4;
+	static constexpr int waitLmmm = 40 * 4;
+	static constexpr int waitLmmv = 40 * 4;
+	static constexpr int waitLine = 40 * 4;
+	static constexpr int waitSrch = 40 * 4;
+	static constexpr int waitPset = 40 * 4;
+	static constexpr int waitPoint = 40 * 4;
+
 public:
 	VDPCmdEngine(VDP& vdp, CommandController& commandController);
 
@@ -51,9 +64,16 @@ public:
 	  * @param time The moment in emulated time to sync to.
 	  */
 	void sync(EmuTime time) {
-		if (CMD) sync2(time);
+		if (CMD) {
+			if (vdp.useHS()) {
+				sync2Hs(time);
+			} else {
+				sync2(time);
+			}
+		}
 	}
 	void sync2(EmuTime time);
+	void sync2Hs(EmuTime time);
 
 	/** Steal a VRAM access slot from the CmdEngine.
 	 * Used when the CPU reads/writes VRAM.
@@ -162,7 +182,114 @@ public:
 	void serialize(Archive& ar, unsigned version);
 
 private:
+	static constexpr int CACHE_BUFFER_COUNT = 4;
+
+	struct CacheBuffer {
+		bool		data_en;
+		bool		already_read;
+		bool		data_mask[4];
+		unsigned	address;
+	};
+
+	VDPCmdCache::CachePenalty flushCache()
+	{
+		int cnt = 0;
+		for (auto& cb : cacheBuffer) {
+			if (cb.data_en && !(cb.data_mask[0] & cb.data_mask[1] & cb.data_mask[2] & cb.data_mask[3])) {
+				cb.data_en = false;
+				cb.data_mask[0] = true;
+				cb.data_mask[1] = true;
+				cb.data_mask[2] = true;
+				cb.data_mask[3] = true;
+				cnt++;
+			}
+		}
+
+		switch (cnt) {
+		case 1:
+			return VDPCmdCache::CachePenalty::CACHE_FLUSH_1;
+		case 2:
+			return VDPCmdCache::CachePenalty::CACHE_FLUSH_2;
+		case 3:
+			return VDPCmdCache::CachePenalty::CACHE_FLUSH_3;
+		case 4:
+			return VDPCmdCache::CachePenalty::CACHE_FLUSH_4;
+		default:
+			return VDPCmdCache::CachePenalty::CACHE_FLUSH_0;
+		}
+	}
+
+	VDPCmdCache::CachePenalty checkCache(bool write, unsigned addr)
+	{
+		unsigned word_address = addr >> 2;
+		unsigned word_offset = addr & 3;
+		CacheBuffer *cb_ptr = &cacheBuffer[cachePriority];
+		bool found_free = false;
+
+		if (write) {
+			for (auto& cb : cacheBuffer) {
+				if (cb.data_en && cb.address == word_address) {
+					cb.data_mask[word_offset] = false;
+					//cb.data[word_offset] = w_data;
+					return VDPCmdCache::CachePenalty::CACHE_WRITE_HIT;
+				}
+			}
+
+			for (auto& cb : cacheBuffer) {
+				if (!cb.data_en) {
+					found_free = true;
+					cb_ptr = &cb;
+					break;
+				}
+			}
+		} else {
+			for (auto& cb : cacheBuffer) {
+				if (cb.data_en && cb.address == word_address) {
+					if (cb.already_read || !cb.data_mask[word_offset]) {
+						// r_data = cb.data[word_offset];
+						return VDPCmdCache::CachePenalty::CACHE_READ_HIT;
+					}
+				}
+			}
+		}
+
+		// flush
+		if (!found_free) {
+			if (cb_ptr->data_en && !(cb_ptr->data_mask[0] & cb_ptr->data_mask[1] & cb_ptr->data_mask[2] & cb_ptr->data_mask[3])) {
+				//write_32bis(cb_ptr->address, (uint32_t)cb_ptr->data[0] | ((uint32_t)cb_ptr->data[1] << 8) | ((uint32_t)cb_ptr->data[2] << 16) | ((uint32_t)cb_ptr->data[3] << 24), cb_ptr->data_mask)
+				cb_ptr->data_en = false;
+			}
+			cachePriority = (cachePriority + 1) % CACHE_BUFFER_COUNT;
+		}
+
+		// make new buffer
+		cb_ptr->data_en = true;
+		cb_ptr->already_read = !write;
+		cb_ptr->data_mask[0] = !write || !(word_offset == 0);
+		cb_ptr->data_mask[1] = !write || !(word_offset == 1);
+		cb_ptr->data_mask[2] = !write || !(word_offset == 2);
+		cb_ptr->data_mask[3] = !write || !(word_offset == 3);
+		cb_ptr->address = word_address;
+		//if(write) {
+		//	cb_ptr->data[offset] = w_data;
+		//} else {
+		//	uint32_t data = read_32bis(cb_ptr->address);
+		//	cb_ptr->data[0] = data & 0xFF;
+		//	cb_ptr->data[1] = (data >> 8) & 0xFF;
+		//	cb_ptr->data[2] = (data >> 16) & 0xFF;
+		//	cb_ptr->data[3] = (data >> 24) & 0xFF;
+		//	r_dara = cb_ptr->data[word_offset];
+		//}
+
+		if (write) {
+			return found_free ? VDPCmdCache::CachePenalty::CACHE_WRITE_MISS : VDPCmdCache::CachePenalty::CACHE_WRITE_FLUSH;
+		} else {
+			return found_free ? VDPCmdCache::CachePenalty::CACHE_READ_MISS : VDPCmdCache::CachePenalty::CACHE_READ_FLUSH;
+		}
+	}
+
 	void executeCommand(EmuTime time);
+	void executeCommandHs(EmuTime time);
 
 	void setStatusChangeTime(EmuTime t);
 	void calcFinishTime(unsigned NX, unsigned NY, unsigned ticksPerPixel);
@@ -194,12 +321,92 @@ private:
 	template<typename Mode>                 void executeYmmm(EmuTime limit);
 	template<typename Mode>                 void executeHmmc(EmuTime limit);
 
+	template<typename Mode> void startPointHs(EmuTime time);
+	template<typename Mode> void startPsetHs(EmuTime time);
+	template<typename Mode> void startSrchHs(EmuTime time);
+	template<typename Mode>	void startLineHs(EmuTime time);
+	template<typename Mode> void startLmmvHs(EmuTime time);
+	template<typename Mode> void startLmmmHs(EmuTime time);
+	template<typename Mode> void startLmcmHs(EmuTime time);
+	template<typename Mode> void startLmmcHs(EmuTime time);
+	template<typename Mode> void startHmmvHs(EmuTime time);
+	template<typename Mode> void startHmmmHs(EmuTime time);
+	template<typename Mode> void startYmmmHs(EmuTime time);
+	template<typename Mode> void startHmmcHs(EmuTime time);
+	template<typename Mode> 				void executePointHs(EmuTime limit);
+	template<typename Mode, typename LogOp> void executePsetHs(EmuTime limit);
+	template<typename Mode>                 void executeSrchHs(EmuTime limit);
+	template<typename Mode, typename LogOp> void executeLineHs(EmuTime limit);
+	template<typename Mode, typename LogOp> void executeLmmvHs(EmuTime limit);
+	template<typename Mode, typename LogOp> void executeLmmmHs(EmuTime limit);
+	template<typename Mode>                 void executeLmcmHs(EmuTime limit);
+	template<typename Mode, typename LogOp> void executeLmmcHs(EmuTime limit);
+	template<typename Mode>                 void executeHmmvHs(EmuTime limit);
+	template<typename Mode>                 void executeHmmmHs(EmuTime limit);
+	template<typename Mode>                 void executeYmmmHs(EmuTime limit);
+	template<typename Mode>                 void executeHmmcHs(EmuTime limit);
+
 	// Advance to the next access slot at or past the given time.
 	EmuTime getNextAccessSlot(EmuTime time) const {
 		return vdp.getAccessSlot(time, VDPAccessSlots::Delta::D0);
 	}
 	void nextAccessSlot(EmuTime time) {
 		engineTime = getNextAccessSlot(time);
+	}
+	void nextAccessSlotHs(EmuTime time, VDPCmdCache::CachePenalty penalty) {
+		if(penalty == VDPCmdCache::CachePenalty::CACHE_READ_HIT) {
+			time += VDP::VDPClock::duration(3);
+		} else if(penalty == VDPCmdCache::CachePenalty::CACHE_READ_MISS) {
+			time += VDP::VDPClock::duration(2);
+			time = getNextAccessSlot(time);
+			time += VDP::VDPClock::duration(1);
+		} else if(penalty == VDPCmdCache::CachePenalty::CACHE_READ_FLUSH) {
+			time += VDP::VDPClock::duration(2);
+			time = getNextAccessSlot(time);
+			time += VDP::VDPClock::duration(2);
+			time = getNextAccessSlot(time);
+			time += VDP::VDPClock::duration(2);
+		} else if(penalty == VDPCmdCache::CachePenalty::CACHE_WRITE_HIT) {
+			time += VDP::VDPClock::duration(2);
+		} else if(penalty == VDPCmdCache::CachePenalty::CACHE_WRITE_MISS) {
+			time += VDP::VDPClock::duration(2);
+		} else if(penalty == VDPCmdCache::CachePenalty::CACHE_WRITE_FLUSH) {
+			time += VDP::VDPClock::duration(2);
+			time = getNextAccessSlot(time);
+			time += VDP::VDPClock::duration(1);
+		} else if(penalty == VDPCmdCache::CachePenalty::CACHE_FLUSH_1) {
+			time += VDP::VDPClock::duration(2);
+			time = getNextAccessSlot(time);
+			time += VDP::VDPClock::duration(1);
+		} else if(penalty == VDPCmdCache::CachePenalty::CACHE_FLUSH_2) {
+			time += VDP::VDPClock::duration(2);
+			time = getNextAccessSlot(time);
+			time += VDP::VDPClock::duration(2);
+			time = getNextAccessSlot(time);
+			time += VDP::VDPClock::duration(1);
+		} else if(penalty == VDPCmdCache::CachePenalty::CACHE_FLUSH_3) {
+			time += VDP::VDPClock::duration(2);
+			time = getNextAccessSlot(time);
+			time += VDP::VDPClock::duration(2);
+			time = getNextAccessSlot(time);
+			time += VDP::VDPClock::duration(2);
+			time = getNextAccessSlot(time);
+			time += VDP::VDPClock::duration(1);
+		} else if(penalty == VDPCmdCache::CachePenalty::CACHE_FLUSH_4) {
+			time += VDP::VDPClock::duration(2);
+			time = getNextAccessSlot(time);
+			time += VDP::VDPClock::duration(2);
+			time = getNextAccessSlot(time);
+			time += VDP::VDPClock::duration(2);
+			time = getNextAccessSlot(time);
+			time += VDP::VDPClock::duration(2);
+			time = getNextAccessSlot(time);
+			time += VDP::VDPClock::duration(1);
+		}
+		engineTime = time;
+	}
+	void nextAccessSlotHs(EmuTime time) {
+		nextAccessSlotHs(time, VDPCmdCache::CachePenalty::CACHE_NONE);
 	}
 	// Advance to the next access slot that is at least 'delta' cycles past
 	// the current one.
@@ -208,6 +415,9 @@ private:
 	}
 	void nextAccessSlot(VDPAccessSlots::Delta delta) {
 		engineTime = getNextAccessSlot(engineTime, delta);
+	}
+	void nextAccessSlotHs(int delta, VDPCmdCache::CachePenalty penalty) {
+		nextAccessSlotHs(engineTime + VDP::VDPClock::duration(delta), penalty);
 	}
 	VDPAccessSlots::Calculator getSlotCalculator(
 			EmuTime limit) const {
@@ -223,6 +433,9 @@ private:
 	void reportVdpCommand() const;
 
 private:
+	int cachePriority;
+	CacheBuffer cacheBuffer[CACHE_BUFFER_COUNT];
+
 	/** The VDP this command engine is part of.
 	  */
 	VDP& vdp;

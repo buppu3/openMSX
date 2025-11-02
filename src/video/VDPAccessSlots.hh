@@ -2,6 +2,7 @@
 #define VDPACCESSSLOTS_HH
 
 #include "VDP.hh"
+#include "VDPCmdCache.hh"
 
 #include "narrow.hh"
 
@@ -77,6 +78,65 @@ public:
 	  * ticks later than the current time. */
 	void next(Delta delta) {
 		ticks += tab[std::to_underlying(delta) + ticks];
+		if (ticks >= TICKS) [[unlikely]] {
+			ticks -= TICKS;
+			limit -= TICKS;
+			ref   += TICKS;
+		}
+	}
+
+	void nextHs(int delta, VDPCmdCache::CachePenalty penalty) {
+		ticks += delta;
+		if(penalty == VDPCmdCache::CachePenalty::CACHE_READ_HIT) {
+			ticks += 3;
+		} else if(penalty == VDPCmdCache::CachePenalty::CACHE_READ_MISS) {
+			ticks += 2;
+			ticks += tab[ticks % TICKS];
+			ticks += 1;
+		} else if(penalty == VDPCmdCache::CachePenalty::CACHE_READ_FLUSH) {
+			ticks += 2;
+			ticks += tab[ticks % TICKS];
+			ticks += 2;
+			ticks += tab[ticks % TICKS];
+			ticks += 2;
+		} else if(penalty == VDPCmdCache::CachePenalty::CACHE_WRITE_HIT) {
+			ticks += 2;
+		} else if(penalty == VDPCmdCache::CachePenalty::CACHE_WRITE_MISS) {
+			ticks += 2;
+		} else if(penalty == VDPCmdCache::CachePenalty::CACHE_WRITE_FLUSH) {
+			ticks += 2;
+			ticks += tab[ticks % TICKS];
+			ticks += 1;
+		} else if(penalty == VDPCmdCache::CachePenalty::CACHE_FLUSH_1) {
+			ticks += 2;
+			ticks += tab[ticks % TICKS];
+			ticks += 1;
+		} else if(penalty == VDPCmdCache::CachePenalty::CACHE_FLUSH_2) {
+			ticks += 2;
+			ticks += tab[ticks % TICKS];
+			ticks += 2;
+			ticks += tab[ticks % TICKS];
+			ticks += 1;
+		} else if(penalty == VDPCmdCache::CachePenalty::CACHE_FLUSH_3) {
+			ticks += 2;
+			ticks += tab[ticks % TICKS];
+			ticks += 2;
+			ticks += tab[ticks % TICKS];
+			ticks += 2;
+			ticks += tab[ticks % TICKS];
+			ticks += 1;
+		} else if(penalty == VDPCmdCache::CachePenalty::CACHE_FLUSH_4) {
+			ticks += 2;
+			ticks += tab[ticks % TICKS];
+			ticks += 2;
+			ticks += tab[ticks % TICKS];
+			ticks += 2;
+			ticks += tab[ticks % TICKS];
+			ticks += 2;
+			ticks += tab[ticks % TICKS];
+			ticks += 1;
+		}
+
 		if (ticks >= TICKS) [[unlikely]] {
 			ticks -= TICKS;
 			limit -= TICKS;

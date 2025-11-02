@@ -118,6 +118,10 @@ public:
 	 */
 	[[nodiscard]] PostProcessor* getPostProcessor() const;
 
+	[[nodiscard]] bool useHS() const {
+		return compatibleMemoryTiming ? isHS() : hasHS();
+	}
+
 	[[nodiscard]] bool isHS() const {
 		return hasHS() & ((controlRegs[20] & 0x01) != 0);
 	}
@@ -1475,6 +1479,7 @@ private:
 	const uint8_t fixedVDPIOdelayCycles;
 
 	int spsTopPlane;
+	bool compatibleMemoryTiming;	// Use V9968 timing only in HS mode;
 };
 SERIALIZE_CLASS_VERSION(VDP, 10);
 
