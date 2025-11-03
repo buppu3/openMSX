@@ -219,6 +219,9 @@ VDP::VDP(const DeviceConfig& config)
 	if (hasSPS()) {
 		controlValueMasks[25] |= 0x80;
 	}
+	if (hasFID()) {
+		controlValueMasks[21] |= 0x01;
+	}
 
 	resetInit(); // must be done early to avoid UMRs
 
@@ -335,10 +338,8 @@ void VDP::resetInit()
 			statusReg1 = 0x00 << 1;
 			break;
 		case V9958:
-			statusReg1 = 0x02 << 1;
-			break;
 		case V9968:
-			statusReg1 = 0x03 << 1;
+			statusReg1 = 0x02 << 1;
 			break;
 	}
 	statusReg2 = 0x0C;
@@ -1269,6 +1270,12 @@ void VDP::changeRegister(uint8_t reg, uint8_t val, EmuTime time)
 		}
 		if (hasS16()  && (change & 0x80)) {
 			syncAtNextLine(syncSetSprites, time);
+		}
+		break;
+	case 21:
+		if (hasFID() && (change & 0x01)) {
+			statusReg1 &= ~(0x1F << 1);
+			statusReg1 |= (val & 0x01) ? (0x02 << 1) : (0x03 << 1);
 		}
 		break;
 	case 23:

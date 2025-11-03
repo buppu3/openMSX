@@ -162,6 +162,10 @@ public:
 		return hasSPS() & ((controlRegs[25] & 0x80) != 0);
 	}
 
+	[[nodiscard]] bool isFID() const {
+		return hasFID() & ((controlRegs[21] & 0x01) == 0);
+	}
+
 	/** Is this an MSX1 VDP?
 	  * @return True if this is an MSX1 VDP
 	  *   False otherwise.
@@ -246,6 +250,10 @@ public:
 	}
 
 	[[nodiscard]] bool hasISR() const {
+		return (version & VM_V9968) != 0;
+	}
+
+	[[nodiscard]] bool hasFID() const {
 		return (version & VM_V9968) != 0;
 	}
 
