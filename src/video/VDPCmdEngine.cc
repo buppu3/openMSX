@@ -783,7 +783,7 @@ void VDPCmdEngine::startPointHs(EmuTime time)
 	vram.cmdReadWindow.setMask(0x3FFFF, ~0u << 18, time);
 	vram.cmdWriteWindow.disable(time);
 	bool srcExt  = (ARG & MXS) != 0;
-	nextAccessSlotHs(time, checkCache(false, Mode::addressOf(SX, SY, srcExt)));
+	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitPoint, checkCache(false, Mode::addressOf(SX, SY, srcExt)));
 	setStatusChangeTime(EmuTime::zero()); // will finish soon
 }
 
@@ -846,7 +846,7 @@ void VDPCmdEngine::startPsetHs(EmuTime time)
 	vram.cmdReadWindow.disable(time);
 	vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
 	bool dstExt = (ARG & MXD) != 0;
-	nextAccessSlotHs(time, checkCache(false, Mode::addressOf(DX, DY, dstExt)));
+	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitPset, checkCache(false, Mode::addressOf(DX, DY, dstExt)));
 	setStatusChangeTime(EmuTime::zero()); // will finish soon
 	phase = 0;
 }
@@ -864,7 +864,7 @@ void VDPCmdEngine::executePsetHs(EmuTime limit)
 		if (doPset) [[likely]] {
 			tmpDst = vram.cmdWriteWindow.readNP(addr);
 		}
-		nextAccessSlotHs(60, checkCache(true, Mode::addressOf(DX, DY, dstExt)));
+		nextAccessSlotHs(1, vdp.isHS() ? 0 : waitPset, checkCache(true, Mode::addressOf(DX, DY, dstExt)));
 		[[fallthrough]];
 	case 1:
 		if (engineTime >= limit) [[unlikely]] { phase = 1; break; }
@@ -934,7 +934,7 @@ void VDPCmdEngine::startSrchHs(EmuTime time)
 	vram.cmdWriteWindow.disable(time);
 	ASX = SX;
 	bool srcExt  = (ARG & MXS) != 0;
-	nextAccessSlotHs(time, checkCache(false, Mode::addressOf(ASX, SY, srcExt)));
+	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitSrch, checkCache(false, Mode::addressOf(ASX, SY, srcExt)));
 	setStatusChangeTime(EmuTime::zero()); // we can find it any moment
 }
 
@@ -961,18 +961,18 @@ void VDPCmdEngine::executeSrchHs(EmuTime limit)
 		}();
 		if ((p == CL) ^ AEQ) {
 			status |= BD; // border detected
-			calculator.nextHs(0, flushCache());
+			calculator.nextHs(1, 0, flushCache());
 			commandDone(calculator.getTime());
 			break;
 		}
 		ASX += TX;
 		if (ASX & Mode::PIXELS_PER_LINE) {
 			// this does NOT reset the BD flag!
-			calculator.nextHs(0, flushCache());
+			calculator.nextHs(1, 0, flushCache());
 			commandDone(calculator.getTime());
 			break;
 		}
-		calculator.nextHs(vdp.isHS() ? 1 : waitSrch, checkCache(false, Mode::addressOf(ASX, SY, srcExt)));
+		calculator.nextHs(1, vdp.isHS() ? 0 : waitSrch, checkCache(false, Mode::addressOf(ASX, SY, srcExt)));
 	}
 	engineTime = calculator.getTime();
 }
@@ -1086,7 +1086,7 @@ void VDPCmdEngine::startLineHs(EmuTime time)
 	ADX = DX;
 	ANX = 0;
 	bool dstExt = (ARG & MXD) != 0;
-	nextAccessSlotHs(time, checkCache(false, Mode::addressOf(ADX, DY, dstExt)));
+	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitLine, checkCache(false, Mode::addressOf(ADX, DY, dstExt)));
 	setStatusChangeTime(EmuTime::zero()); // TODO can still be optimized
 	phase = 0;
 }
@@ -1109,7 +1109,7 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 		if (doPset) [[likely]] {
 			tmpDst = vram.cmdWriteWindow.readNP(addr);
 		}
-		calculator.nextHs(vdp.isHS() ? 1 : waitLine, checkCache(true, Mode::addressOf(ADX, DY, dstExt)));
+		calculator.nextHs(1, vdp.isHS() ? 0 : waitLine, checkCache(true, Mode::addressOf(ADX, DY, dstExt)));
 		[[fallthrough]];
 	case 1: {
 		if (calculator.limitReached()) [[unlikely]] { phase = 1; break; }
@@ -1126,7 +1126,7 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 			//  - (ADX & PPL) test only happens after first pixel
 			//    is drawn. And it does test with 'AND' (not with ==)
 			if (ANX++ == NX || (ADX & Mode::PIXELS_PER_LINE)) {
-				calculator.nextHs(0, flushCache());
+				calculator.nextHs(1, 0, flushCache());
 				commandDone(calculator.getTime());
 				break;
 			}
@@ -1138,7 +1138,7 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 				// Same for the block commands, but those handle it via
 				// clipNY_1() and clipNY_2().
 				if ((TY < 0) && (int(DY) < 0)) {
-					calculator.nextHs(0, flushCache());
+					calculator.nextHs(1, 0, flushCache());
 					commandDone(calculator.getTime());
 					break;
 				}
@@ -1150,7 +1150,7 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 			// confirmed on real HW: DY += TY happens before end-test
 			DY += TY;
 			if ((TY < 0) && (int(DY) < 0)) { // see comment above
-				calculator.nextHs(0, flushCache());
+				calculator.nextHs(1, 0, flushCache());
 				commandDone(calculator.getTime());
 				break;
 			}
@@ -1161,13 +1161,13 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 			ASX -= NY;
 			ASX &= 1023; // mask to 10 bits range
 			if (ANX++ == NX || (ADX & Mode::PIXELS_PER_LINE)) {
-				calculator.nextHs(0, flushCache());
+				calculator.nextHs(1, 0, flushCache());
 				commandDone(calculator.getTime());
 				break;
 			}
 		}
 		addr = Mode::addressOf(ADX, DY, dstExt);
-		calculator.nextHs(vdp.isHS() ? 1 : waitLine, checkCache(false, addr));
+		calculator.nextHs(1, vdp.isHS() ? 0 : waitLine, checkCache(false, addr));
 		goto loop;
 	}
 	default:
@@ -1311,7 +1311,7 @@ void VDPCmdEngine::startLmmvHs(EmuTime time)
 	ADX = DX;
 	ANX = tmpNX;
 	bool dstExt = (ARG & MXD) != 0;
-	nextAccessSlotHs(time, checkCache(false, Mode::addressOf(ADX, DY, dstExt)));
+	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitLmmv, checkCache(false, Mode::addressOf(ADX, DY, dstExt)));
 	calcFinishTime(tmpNX, tmpNY, 72 + 24);
 	phase = 0;
 }
@@ -1337,7 +1337,7 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 		if (doPset) [[likely]] {
 			tmpDst = vram.cmdWriteWindow.readNP(addr);
 		}
-		calculator.nextHs(vdp.isHS() ? 1 : waitLmmv, checkCache(true, Mode::addressOf(ADX, DY, dstExt)));
+		calculator.nextHs(1, vdp.isHS() ? 0 : waitLmmv, checkCache(true, Mode::addressOf(ADX, DY, dstExt)));
 		[[fallthrough]];
 	case 1: {
 		if (calculator.limitReached()) [[unlikely]] { phase = 1; break; }
@@ -1350,13 +1350,13 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 			DY += TY; --NY;
 			ADX = DX; ANX = tmpNX;
 			if (--tmpNY == 0) {
-				calculator.nextHs(0, flushCache());
+				calculator.nextHs(1, 0, flushCache());
 				commandDone(calculator.getTime());
 				break;
 			}
 		}
 		addr = Mode::addressOf(ADX, DY, dstExt);
-		calculator.nextHs(vdp.isHS() ? 1 : waitLmmv, checkCache(false, addr));
+		calculator.nextHs(1, vdp.isHS() ? 0 : waitLmmv, checkCache(false, addr));
 		goto loop;
 	}
 	default:
@@ -1527,7 +1527,7 @@ void VDPCmdEngine::startLmmmHs(EmuTime time)
 	ADX = DX;
 	ANX = tmpNX;
 	bool srcExt  = (ARG & MXS) != 0;
-	nextAccessSlotHs(time, checkCache(false, Mode::addressOf(ASX, SY, srcExt)));
+	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitLmmm, checkCache(false, Mode::addressOf(ASX, SY, srcExt)));
 	calcFinishTime(tmpNX, tmpNY, 64 + 32 + 24);
 	phase = 0;
 }
@@ -1557,14 +1557,14 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 		       tmpSrc = 0xFF;
 		}
 
-		calculator.nextHs(vdp.isHS() ? 1 : waitLmmm, checkCache(false, dstAddr));
+		calculator.nextHs(1, vdp.isHS() ? 0 : waitLmmm, checkCache(false, dstAddr));
 		[[fallthrough]];
 	case 1:
 		if (calculator.limitReached()) [[unlikely]] { phase = 1; break; }
 		if (doPset) [[likely]] {
 			tmpDst = vram.cmdWriteWindow.readNP(dstAddr);
 		}
-		calculator.nextHs(vdp.isHS() ? 1 : waitLmmm, checkCache(true, dstAddr));
+		calculator.nextHs(1, vdp.isHS() ? 0 : waitLmmm, checkCache(true, dstAddr));
 		[[fallthrough]];
 	case 2: {
 		if (calculator.limitReached()) [[unlikely]] { phase = 2; break; }
@@ -1579,13 +1579,13 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 			SY += TY; DY += TY; --NY;
 			ASX = SX; ADX = DX; ANX = tmpNX;
 			if (--tmpNY == 0) {
-				calculator.nextHs(0, flushCache());
+				calculator.nextHs(1, 0, flushCache());
 				commandDone(calculator.getTime());
 				break;
 			}
 		}
 		dstAddr = Mode::addressOf(ADX, DY, dstExt);
-		calculator.nextHs(vdp.isHS() ? 1 : waitLmmm, checkCache(false, Mode::addressOf(ASX, SY, srcExt)));
+		calculator.nextHs(1, vdp.isHS() ? 0 : waitLmmm, checkCache(false, Mode::addressOf(ASX, SY, srcExt)));
 		goto loop;
 	}
 	default:
@@ -1658,7 +1658,7 @@ void VDPCmdEngine::startLmcmHs(EmuTime time)
 	transfer = true;
 	status |= TR;
 	bool srcExt  = (ARG & MXS) != 0;
-	nextAccessSlotHs(time, checkCache(false, Mode::addressOf(ASX, SY, srcExt)));
+	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitLmcm, checkCache(false, Mode::addressOf(ASX, SY, srcExt)));
 	setStatusChangeTime(EmuTime::zero());
 }
 
@@ -1771,7 +1771,7 @@ void VDPCmdEngine::startLmmcHs(EmuTime time)
 	// Baltak Rampage: characters in greetings part are one pixel offset
 	status |= TR;
 	bool dstExt = (ARG & MXD) != 0;
-	nextAccessSlotHs(time, checkCache(true, Mode::addressOf(ADX, DY, dstExt)));
+	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitLmmc, checkCache(true, Mode::addressOf(ADX, DY, dstExt)));
 }
 
 template<typename Mode, typename LogOp>
@@ -1932,7 +1932,7 @@ void VDPCmdEngine::startHmmvHs(EmuTime time)
 	ADX = DX;
 	ANX = tmpNX;
 	bool dstExt = (ARG & MXD) != 0;
-	nextAccessSlotHs(time, checkCache(true, Mode::addressOf(ADX, DY, dstExt)));
+	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitHmmv, checkCache(true, Mode::addressOf(ADX, DY, dstExt)));
 	calcFinishTime(tmpNX, tmpNY, 48);
 }
 
@@ -1961,12 +1961,12 @@ void VDPCmdEngine::executeHmmvHs(EmuTime limit)
 			DY += TY; --NY;
 			ADX = DX; ANX = tmpNX;
 			if (--tmpNY == 0) {
-				calculator.nextHs(0, flushCache());
+				calculator.nextHs(1, 0, flushCache());
 				commandDone(calculator.getTime());
 				break;
 			}
 		}
-		calculator.nextHs(vdp.isHS() ? 1 : waitHmmv, checkCache(true, Mode::addressOf(ADX, DY, dstExt)));
+		calculator.nextHs(1, vdp.isHS() ? 0 : waitHmmv, checkCache(true, Mode::addressOf(ADX, DY, dstExt)));
 	}
 	engineTime = calculator.getTime();
 	calcFinishTime(tmpNX, tmpNY, 48);
@@ -2120,7 +2120,7 @@ void VDPCmdEngine::startHmmmHs(EmuTime time)
 	ADX = DX;
 	ANX = tmpNX;
 	bool srcExt  = (ARG & MXS) != 0;
-	nextAccessSlotHs(time, checkCache(false, Mode::addressOf(ASX, SY, srcExt)));
+	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitHmmm, checkCache(false, Mode::addressOf(ASX, SY, srcExt)));
 	calcFinishTime(tmpNX, tmpNY, 24 + 64);
 	phase = 0;
 }
@@ -2150,7 +2150,7 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 		} else {
 			tmpSrc = 0xFF;
 		}
-		calculator.nextHs(vdp.isHS() ? 1 : waitHmmm, checkCache(true, Mode::addressOf(ADX, DY, dstExt)));
+		calculator.nextHs(1, vdp.isHS() ? 0 : waitHmmm, checkCache(true, Mode::addressOf(ADX, DY, dstExt)));
 		[[fallthrough]];
 	case 1: {
 		if (calculator.limitReached()) [[unlikely]] { phase = 1; break; }
@@ -2165,12 +2165,12 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 			SY += TY; DY += TY; --NY;
 			ASX = SX; ADX = DX; ANX = tmpNX;
 			if (--tmpNY == 0) {
-				calculator.nextHs(0, flushCache());
+				calculator.nextHs(1, 0, flushCache());
 				commandDone(calculator.getTime());
 				break;
 			}
 		}
-		calculator.nextHs(vdp.isHS() ? 1 : waitHmmm, checkCache(false, Mode::addressOf(ASX, SY, dstExt)));
+		calculator.nextHs(1, vdp.isHS() ? 0 : waitHmmm, checkCache(false, Mode::addressOf(ASX, SY, dstExt)));
 		goto loop;
 	}
 	default:
@@ -2320,7 +2320,7 @@ void VDPCmdEngine::startYmmmHs(EmuTime time)
 	ADX = DX;
 	ANX = tmpNX;
 	bool dstExt = (ARG & MXD) != 0;
-	nextAccessSlotHs(time, checkCache(false, Mode::addressOf(ADX, SY, dstExt)));
+	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitYmmm, checkCache(false, Mode::addressOf(ADX, SY, dstExt)));
 	calcFinishTime(tmpNX, tmpNY, 24 + 40);
 	phase = 0;
 }
@@ -2351,7 +2351,7 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 			tmpSrc = vram.cmdReadWindow.readNP(
 			       Mode::addressOf(ADX, SY, dstExt));
 		}
-		calculator.nextHs(vdp.isHS() ? 1 : waitYmmm, checkCache(true, Mode::addressOf(ADX, DY, dstExt)));
+		calculator.nextHs(1, vdp.isHS() ? 0 : waitYmmm, checkCache(true, Mode::addressOf(ADX, DY, dstExt)));
 		[[fallthrough]];
 	case 1:
 		if (calculator.limitReached()) [[unlikely]] { phase = 1; break; }
@@ -2365,12 +2365,12 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 			SY += TY; DY += TY; --NY;
 			ADX = DX; ANX = tmpNX;
 			if (--tmpNY == 0) {
-				calculator.nextHs(0, flushCache());
+				calculator.nextHs(1, 0, flushCache());
 				commandDone(calculator.getTime());
 				break;
 			}
 		}
-		calculator.nextHs(vdp.isHS() ? 1 : waitYmmm, checkCache(false, Mode::addressOf(ADX, SY, dstExt)));
+		calculator.nextHs(1, vdp.isHS() ? 0 : waitYmmm, checkCache(false, Mode::addressOf(ADX, SY, dstExt)));
 		goto loop;
 	default:
 		UNREACHABLE;
@@ -2445,7 +2445,7 @@ void VDPCmdEngine::startHmmcHs(EmuTime time)
 	// do not set 'transfer = true', see startLmmc()
 	status |= TR;
 	bool dstExt = (ARG & MXD) != 0;
-	nextAccessSlotHs(time, checkCache(true, Mode::addressOf(ADX, DY, dstExt)));
+	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitHmmc, checkCache(true, Mode::addressOf(ADX, DY, dstExt)));
 }
 
 template<typename Mode>

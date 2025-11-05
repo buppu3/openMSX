@@ -36,6 +36,10 @@ static constexpr int NUM_DELTAS = 15;
 
 using tab_value = uint16_t;
 
+static constexpr int V9968_MEMORY_ACCESS_TIME = 7;
+
+[[nodiscard]] unsigned getAccessSlotTick(unsigned ticks, int delay, int wait, VDPCmdCache::CachePenalty penalty, std::span<const tab_value, NUM_DELTAS * TICKS> tab);
+
 /** VDP-VRAM access slot calculator, meant to be used in the inner loops of the
   * VDPCmdEngine commands. Code optimized for the case that:
   *  - timing remains constant (sprites/display enable/disable)
@@ -85,58 +89,8 @@ public:
 		}
 	}
 
-	void nextHs(int delta, VDPCmdCache::CachePenalty penalty) {
-		ticks += delta;
-		if(penalty == VDPCmdCache::CachePenalty::CACHE_READ_HIT) {
-			ticks += 3;
-		} else if(penalty == VDPCmdCache::CachePenalty::CACHE_READ_MISS) {
-			ticks += 2;
-			ticks += tab[ticks % TICKS];
-			ticks += 1;
-		} else if(penalty == VDPCmdCache::CachePenalty::CACHE_READ_FLUSH) {
-			ticks += 2;
-			ticks += tab[ticks % TICKS];
-			ticks += 2;
-			ticks += tab[ticks % TICKS];
-			ticks += 2;
-		} else if(penalty == VDPCmdCache::CachePenalty::CACHE_WRITE_HIT) {
-			ticks += 2;
-		} else if(penalty == VDPCmdCache::CachePenalty::CACHE_WRITE_MISS) {
-			ticks += 2;
-		} else if(penalty == VDPCmdCache::CachePenalty::CACHE_WRITE_FLUSH) {
-			ticks += 2;
-			ticks += tab[ticks % TICKS];
-			ticks += 1;
-		} else if(penalty == VDPCmdCache::CachePenalty::CACHE_FLUSH_1) {
-			ticks += 2;
-			ticks += tab[ticks % TICKS];
-			ticks += 1;
-		} else if(penalty == VDPCmdCache::CachePenalty::CACHE_FLUSH_2) {
-			ticks += 2;
-			ticks += tab[ticks % TICKS];
-			ticks += 2;
-			ticks += tab[ticks % TICKS];
-			ticks += 1;
-		} else if(penalty == VDPCmdCache::CachePenalty::CACHE_FLUSH_3) {
-			ticks += 2;
-			ticks += tab[ticks % TICKS];
-			ticks += 2;
-			ticks += tab[ticks % TICKS];
-			ticks += 2;
-			ticks += tab[ticks % TICKS];
-			ticks += 1;
-		} else if(penalty == VDPCmdCache::CachePenalty::CACHE_FLUSH_4) {
-			ticks += 2;
-			ticks += tab[ticks % TICKS];
-			ticks += 2;
-			ticks += tab[ticks % TICKS];
-			ticks += 2;
-			ticks += tab[ticks % TICKS];
-			ticks += 2;
-			ticks += tab[ticks % TICKS];
-			ticks += 1;
-		}
-
+	void nextHs(int delay, int wait, VDPCmdCache::CachePenalty penalty) {
+		ticks = (int)getAccessSlotTick((unsigned)ticks, delay, wait, penalty, tab);
 		if (ticks >= TICKS) [[unlikely]] {
 			ticks -= TICKS;
 			limit -= TICKS;
@@ -156,6 +110,7 @@ private:
   * reference. */
 [[nodiscard]] EmuTime getAccessSlot(EmuTime frame, EmuTime time, Delta delta,
                       const VDP& vdp);
+[[nodiscard]] EmuTime getAccessSlot(EmuTime frame_, EmuTime time, int delay, int wait, VDPCmdCache::CachePenalty penalty, const VDP& vdp);
 
 /** When many calls to getAccessSlot() are needed, it's more efficient to
   * instead use this function. */

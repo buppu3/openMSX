@@ -151,7 +151,7 @@ static constexpr std::array<int16_t, 91 + 18> slotsMsx1Text = {
 static constexpr std::array<int16_t, 352> slotsV9968ScreenOff = {
 //	bmp   bmp   spr   cmd   cmd   cmd   cmd   cmd
 	   0,   16,   32,   48,   64,   80,   96,  112,	// -40
-	 128,  144,  160,  176,  192,  208,  224,  240,	// -32
+	       144,  160,  176,  192,  208,  224,  240,	// -32 128=REFRESH
 	 256,  272,  288,  304,  320,  336,  352,  368,	// -24
 	 384,  400,  416,  432,  448,  464,  480,  496,	// -16
 	 512,  528,  544,  560,  576,  592,  608,  624,	// -8
@@ -194,14 +194,14 @@ static constexpr std::array<int16_t, 352> slotsV9968ScreenOff = {
 	5248, 5264, 5280, 5296, 5312, 5328, 5344, 5360,
 	5376, 5392, 5408, 5424, 5440, 5456,
 	5472, 5488, 5504, 5520, 5536, 5552, 5568, 5584,	// -40
-	5600, 5616
+	      5616										// -32 5600 = REFRESH
 };
 
 // screen0:width40
 static constexpr std::array<int16_t, 232> slotsV9968TextLow = {
 //	name  pat   pat   clr   cmd   cmd
 	   0,   16,   32,   48,   64,   80, // -42
-	  96,  112,  128,  144,  160,  176,	// -36
+	  96,  112,        144,  160,  176,	// -36 128=REFRESH
 	 192,  208,  224,  240,  256,  272, // -30
 	 288,  304,  320,  336,  352,  368,	// -24
 	 384,  400,  416,  432,  448,  464,	// -18
@@ -257,15 +257,15 @@ static constexpr std::array<int16_t, 232> slotsV9968TextLow = {
 	5184, 5200, 5216, 5232,	5248, 5264,
 	5280, 5296, 5312, 5328, 5344, 5360,
 	5376, 5392, 5408, 5424, 5440, 5456,
-	5472, 5488, 5504, 5520, 5536, 5552,
-	5568, 5584,	5600, 5616
+	5472, 5488, 5504, 5520, 5536, 5552,	// -42
+	5568, 5584,	      5616				// -36 5600=REFRESH
 };
 
 // screen0:width80
 static constexpr std::array<int16_t, 192> slotsV9968TextHigh = {
 //	name  pat   pat   clr   cmd   cmd
 	   0,   16,   32,   48,   64,   80, // -42
-	  96,  112,  128,  144,  160,  176,	// -36
+	  96,  112,        144,  160,  176,	// -36 128=REFRESH
 	 192,  208,  224,  240,  256,  272, // -30
 	 288,  304,  320,  336,  352,  368,	// -24
 	 384,  400,  416,  432,  448,  464,	// -18
@@ -321,15 +321,15 @@ static constexpr std::array<int16_t, 192> slotsV9968TextHigh = {
 	5184, 5200, 5216, 5232,	5248, 5264,
 	5280, 5296, 5312, 5328, 5344, 5360,
 	5376, 5392, 5408, 5424, 5440, 5456,
-	5472, 5488, 5504, 5520, 5536, 5552,
-	5568, 5584,	5600, 5616
+	5472, 5488, 5504, 5520, 5536, 5552,	// -42
+	5568, 5584,	      5616				// -36 5600=REFRESH
 };
 
 // screen 5,6
 static constexpr std::array<int16_t, 320> slotsV9968BitmapLowSpritesOff = {
 //	bmp   bmp   spr   cmd   cmd   cmd   cmd   cmd
 	   0,   16,   32,   48,   64,   80,   96,  112,	// -40
-	 128,  144,  160,  176,  192,  208,  224,  240,	// -32
+	       144,  160,  176,  192,  208,  224,  240,	// -32 128=REFRESH
 	 256,  272,  288,  304,  320,  336,  352,  368,	// -24
 	 384,  400,  416,  432,  448,  464,  480,  496,	// -16
 	       528,  544,  560,  576,  592,  608,  624,	// -8
@@ -371,15 +371,15 @@ static constexpr std::array<int16_t, 320> slotsV9968BitmapLowSpritesOff = {
 	5120, 5136, 5152, 5168, 5184, 5200, 5216, 5232,
 	5248, 5264, 5280, 5296, 5312, 5328, 5344, 5360,
 	5376, 5392, 5408, 5424, 5440, 5456,
-	5472, 5488, 5504, 5520, 5536, 5552, 5568, 5584,
-	5600, 5616
+	5472, 5488, 5504, 5520, 5536, 5552, 5568, 5584,	// -40
+	      5616										// -32 5600=REFRESH
 };
 
 // screen 5,6
 static constexpr std::array<int16_t, 276> slotsV9968BitmapLowSpritesOn = {
 //	bmp   bmp   spr   cmd   cmd   cmd   cmd   cmd
 	   0,   16,         48,   64,   80,   96,  112,	// -40
-	 128,  144,        176,  192,  208,  224,  240,	// -32
+	       144,        176,  192,  208,  224,  240,	// -32 128=REFRESH
 	 256,  272,        304,  320,  336,  352,  368,	// -24
 	 384,  400,        432,  448,  464,  480,  496,	// -16
 	       528,        560,  576,  592,  608,  624,	// -8
@@ -421,15 +421,15 @@ static constexpr std::array<int16_t, 276> slotsV9968BitmapLowSpritesOn = {
 	5120, 5136,       5168, 5184, 5200, 5216, 5232,
 	5248, 5264,       5296, 5312, 5328, 5344, 5360,
 	5376, 5392,       5424, 5440, 5456,
-	5472, 5488,       5520, 5536, 5552, 5568, 5584,
-	5600, 5616
+	5472, 5488,       5520, 5536, 5552, 5568, 5584,	// -40
+	      5616										// -32 5600=REFRESH
 };
 
 // screen 7,8,10,11,12
 static constexpr std::array<int16_t, 288> slotsV9968BitmapHighSpritesOff = {
 //	bmp   bmp   spr   cmd   cmd   cmd   cmd   cmd
 	   0,   16,   32,   48,   64,   80,   96,  112,	// -40
-	 128,  144,  160,  176,  192,  208,  224,  240,	// -32
+	       144,  160,  176,  192,  208,  224,  240,	// -32 128=REFRESH
 	 256,  272,  288,  304,  320,  336,  352,  368,	// -24
 	 384,  400,  416,  432,  448,  464,  480,  496,	// -16
 	             544,  560,  576,  592,  608,  624,	// -8
@@ -471,15 +471,15 @@ static constexpr std::array<int16_t, 288> slotsV9968BitmapHighSpritesOff = {
 	5120, 5136, 5152, 5168, 5184, 5200, 5216, 5232,
 	5248, 5264, 5280, 5296, 5312, 5328, 5344, 5360,
 	5376, 5392, 5408, 5424, 5440, 5456,
-	5472, 5488, 5504, 5520, 5536, 5552, 5568, 5584,
-	5600, 5616
+	5472, 5488, 5504, 5520, 5536, 5552, 5568, 5584,	// -40
+	      5616										// -32 5600=REFRESH
 };
 
 // screen 7,8,10,11,12
 static constexpr std::array<int16_t, 244> slotsV9968BitmapHighSpritesOn = {
 //	bmp   bmp   spr   cmd   cmd   cmd   cmd   cmd
 	   0,   16,         48,   64,   80,   96,  112,	// -40
-	 128,  144,        176,  192,  208,  224,  240,	// -32
+	       144,        176,  192,  208,  224,  240,	// -32 128=REFRESH
 	 256,  272,        304,  320,  336,  352,  368,	// -24
 	 384,  400,        432,  448,  464,  480,  496,	// -16
 	                   560,  576,  592,  608,  624,	// -8
@@ -521,15 +521,15 @@ static constexpr std::array<int16_t, 244> slotsV9968BitmapHighSpritesOn = {
 	5120, 5136,       5168, 5184, 5200, 5216, 5232,
 	5248, 5264,       5296, 5312, 5328, 5344, 5360,
 	5376, 5392,       5424, 5440, 5456,
-	5472, 5488,       5520, 5536, 5552, 5568, 5584,
-	5600, 5616
+	5472, 5488,       5520, 5536, 5552, 5568, 5584,	// -40
+	      5616										// -32 5600=REFRESH
 };
 
 // screen 1,2,4
 static constexpr std::array<int16_t, 256> slotsV9968PcgSpritesOff = {
 //	name  pat   spr   clr   cmd   cmd   cmd   cmd
 	   0,   16,   32,   48,   64,   80,   96,  112,	// -40
-	 128,  144,  160,  176,  192,  208,  224,  240,	// -32
+	       144,  160,  176,  192,  208,  224,  240,	// -32 128=REFRESH
 	 256,  272,  288,  304,  320,  336,  352,  368,	// -24
 	 384,  400,  416,  432,  448,  464,  480,  496,	// -16
 	             544,        576,  592,  608,  624,	// -8
@@ -571,15 +571,15 @@ static constexpr std::array<int16_t, 256> slotsV9968PcgSpritesOff = {
 	5120, 5136, 5152, 5168, 5184, 5200, 5216, 5232,
 	5248, 5264, 5280, 5296, 5312, 5328, 5344, 5360,
 	5376, 5392, 5408, 5424, 5440, 5456,
-	5472, 5488, 5504, 5520, 5536, 5552, 5568, 5584,
-	5600, 5616
+	5472, 5488, 5504, 5520, 5536, 5552, 5568, 5584,	// -40
+	      5616										// -32 5600=REFRESH
 };
 
 // screen 1,2,4
 static constexpr std::array<int16_t, 212> slotsV9968PcgSpritesOn = {
 //	name  pat   spr   clr   cmd   cmd   cmd   cmd
 	   0,   16,         48,   64,   80,   96,  112,	// -40
-	 128,  144,        176,  192,  208,  224,  240,	// -32
+	       144,        176,  192,  208,  224,  240,	// -32 128=REFRESH
 	 256,  272,        304,  320,  336,  352,  368,	// -24
 	 384,  400,        432,  448,  464,  480,  496,	// -16
 	                         576,  592,  608,  624,	// -8
@@ -621,8 +621,8 @@ static constexpr std::array<int16_t, 212> slotsV9968PcgSpritesOn = {
 	5120, 5136,       5168, 5184, 5200, 5216, 5232,
 	5248, 5264,       5296, 5312, 5328, 5344, 5360,
 	5376, 5392,       5424, 5440, 5456,
-	5472, 5488,       5520, 5536, 5552, 5568, 5584,
-	5600, 5616
+	5472, 5488,       5520, 5536, 5552, 5568, 5584,	// -40
+	      5616										// -32 5600=REFRESH
 };
 
 // Helper functions to transform the above tables into a format that is easier
@@ -771,6 +771,73 @@ EmuTime getAccessSlot(
 	unsigned ticks = frame.getTicksTill_fast(time) % TICKS;
 	auto tab = getTab(vdp);
 	return time + VDP::VDPClock::duration(tab[std::to_underlying(delta) + ticks]);
+}
+
+EmuTime getAccessSlot(EmuTime frame_, EmuTime time, int delay, int wait, VDPCmdCache::CachePenalty penalty, const VDP& vdp)
+{
+	VDP::VDPClock frame(frame_);
+	auto tab = getTab(vdp);
+	unsigned start_ticks = frame.getTicksTill_fast(time);
+	unsigned end_ticks = getAccessSlotTick(start_ticks, delay, wait, penalty, tab);
+	return time + VDP::VDPClock::duration(end_ticks - start_ticks);
+}
+
+unsigned getAccessSlotTick(unsigned ticks, int delay, int wait, VDPCmdCache::CachePenalty penalty, std::span<const tab_value, NUM_DELTAS * TICKS> tab)
+{
+	ticks += delay;
+	if(penalty == VDPCmdCache::CachePenalty::CACHE_READ_HIT) {
+		ticks += 3;
+	} else if(penalty == VDPCmdCache::CachePenalty::CACHE_READ_MISS) {
+		ticks += 2;
+		ticks += tab[ticks % TICKS];
+		ticks += 1 + V9968_MEMORY_ACCESS_TIME;
+	} else if(penalty == VDPCmdCache::CachePenalty::CACHE_READ_FLUSH) {
+		ticks += 2;
+		ticks += tab[ticks % TICKS];
+		ticks += 2 + V9968_MEMORY_ACCESS_TIME;
+		ticks += tab[ticks % TICKS];
+		ticks += 2 + V9968_MEMORY_ACCESS_TIME;
+	} else if(penalty == VDPCmdCache::CachePenalty::CACHE_WRITE_HIT) {
+		ticks += 2;
+	} else if(penalty == VDPCmdCache::CachePenalty::CACHE_WRITE_MISS) {
+		ticks += 2;
+	} else if(penalty == VDPCmdCache::CachePenalty::CACHE_WRITE_FLUSH) {
+		ticks += 2;
+		ticks += tab[ticks % TICKS];
+		ticks += 1 + V9968_MEMORY_ACCESS_TIME;
+	} else if(penalty == VDPCmdCache::CachePenalty::CACHE_FLUSH_1) {
+		ticks += 2;
+		ticks += tab[ticks % TICKS];
+		ticks += 1 + V9968_MEMORY_ACCESS_TIME;
+	} else if(penalty == VDPCmdCache::CachePenalty::CACHE_FLUSH_2) {
+		ticks += 2;
+		ticks += tab[ticks % TICKS];
+		ticks += 2 + V9968_MEMORY_ACCESS_TIME;
+		ticks += tab[ticks % TICKS];
+		ticks += 1 + V9968_MEMORY_ACCESS_TIME;
+	} else if(penalty == VDPCmdCache::CachePenalty::CACHE_FLUSH_3) {
+		ticks += 2;
+		ticks += tab[ticks % TICKS];
+		ticks += 2 + V9968_MEMORY_ACCESS_TIME;
+		ticks += tab[ticks % TICKS];
+		ticks += 2 + V9968_MEMORY_ACCESS_TIME;
+		ticks += tab[ticks % TICKS];
+		ticks += 1 + V9968_MEMORY_ACCESS_TIME;
+	} else if(penalty == VDPCmdCache::CachePenalty::CACHE_FLUSH_4) {
+		ticks += 2;
+		ticks += tab[ticks % TICKS];
+		ticks += 2 + V9968_MEMORY_ACCESS_TIME;
+		ticks += tab[ticks % TICKS];
+		ticks += 2 + V9968_MEMORY_ACCESS_TIME;
+		ticks += tab[ticks % TICKS];
+		ticks += 2 + V9968_MEMORY_ACCESS_TIME;
+		ticks += tab[ticks % TICKS];
+		ticks += 1 + V9968_MEMORY_ACCESS_TIME;
+	}
+
+	ticks += wait;
+
+	return ticks;
 }
 
 Calculator getCalculator(

@@ -353,60 +353,11 @@ private:
 	void nextAccessSlot(EmuTime time) {
 		engineTime = getNextAccessSlot(time);
 	}
-	void nextAccessSlotHs(EmuTime time, VDPCmdCache::CachePenalty penalty) {
-		if(penalty == VDPCmdCache::CachePenalty::CACHE_READ_HIT) {
-			time += VDP::VDPClock::duration(3);
-		} else if(penalty == VDPCmdCache::CachePenalty::CACHE_READ_MISS) {
-			time += VDP::VDPClock::duration(2);
-			time = getNextAccessSlot(time);
-			time += VDP::VDPClock::duration(1);
-		} else if(penalty == VDPCmdCache::CachePenalty::CACHE_READ_FLUSH) {
-			time += VDP::VDPClock::duration(2);
-			time = getNextAccessSlot(time);
-			time += VDP::VDPClock::duration(2);
-			time = getNextAccessSlot(time);
-			time += VDP::VDPClock::duration(2);
-		} else if(penalty == VDPCmdCache::CachePenalty::CACHE_WRITE_HIT) {
-			time += VDP::VDPClock::duration(2);
-		} else if(penalty == VDPCmdCache::CachePenalty::CACHE_WRITE_MISS) {
-			time += VDP::VDPClock::duration(2);
-		} else if(penalty == VDPCmdCache::CachePenalty::CACHE_WRITE_FLUSH) {
-			time += VDP::VDPClock::duration(2);
-			time = getNextAccessSlot(time);
-			time += VDP::VDPClock::duration(1);
-		} else if(penalty == VDPCmdCache::CachePenalty::CACHE_FLUSH_1) {
-			time += VDP::VDPClock::duration(2);
-			time = getNextAccessSlot(time);
-			time += VDP::VDPClock::duration(1);
-		} else if(penalty == VDPCmdCache::CachePenalty::CACHE_FLUSH_2) {
-			time += VDP::VDPClock::duration(2);
-			time = getNextAccessSlot(time);
-			time += VDP::VDPClock::duration(2);
-			time = getNextAccessSlot(time);
-			time += VDP::VDPClock::duration(1);
-		} else if(penalty == VDPCmdCache::CachePenalty::CACHE_FLUSH_3) {
-			time += VDP::VDPClock::duration(2);
-			time = getNextAccessSlot(time);
-			time += VDP::VDPClock::duration(2);
-			time = getNextAccessSlot(time);
-			time += VDP::VDPClock::duration(2);
-			time = getNextAccessSlot(time);
-			time += VDP::VDPClock::duration(1);
-		} else if(penalty == VDPCmdCache::CachePenalty::CACHE_FLUSH_4) {
-			time += VDP::VDPClock::duration(2);
-			time = getNextAccessSlot(time);
-			time += VDP::VDPClock::duration(2);
-			time = getNextAccessSlot(time);
-			time += VDP::VDPClock::duration(2);
-			time = getNextAccessSlot(time);
-			time += VDP::VDPClock::duration(2);
-			time = getNextAccessSlot(time);
-			time += VDP::VDPClock::duration(1);
-		}
-		engineTime = time;
+	void nextAccessSlotHs(EmuTime time, int delay, int wait, VDPCmdCache::CachePenalty penalty) {
+		engineTime = vdp.getAccessSlot(time, delay, wait, penalty);
 	}
 	void nextAccessSlotHs(EmuTime time) {
-		nextAccessSlotHs(time, VDPCmdCache::CachePenalty::CACHE_NONE);
+		nextAccessSlotHs(time, 0, 0, VDPCmdCache::CachePenalty::CACHE_NONE);
 	}
 	// Advance to the next access slot that is at least 'delta' cycles past
 	// the current one.
@@ -416,8 +367,8 @@ private:
 	void nextAccessSlot(VDPAccessSlots::Delta delta) {
 		engineTime = getNextAccessSlot(engineTime, delta);
 	}
-	void nextAccessSlotHs(int delta, VDPCmdCache::CachePenalty penalty) {
-		nextAccessSlotHs(engineTime + VDP::VDPClock::duration(delta), penalty);
+	void nextAccessSlotHs(int delay, int wait, VDPCmdCache::CachePenalty penalty) {
+		nextAccessSlotHs(engineTime, delay, wait, penalty);
 	}
 	VDPAccessSlots::Calculator getSlotCalculator(
 			EmuTime limit) const {

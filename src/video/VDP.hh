@@ -37,6 +37,9 @@ namespace VDPAccessSlots {
 	enum class Delta : int;
 	class Calculator;
 }
+namespace VDPCmdCache {
+	enum class CachePenalty : int;
+}
 
 /** Unified implementation of MSX Video Display Processors (VDPs).
   * MSX1 VDP is Texas Instruments TMS9918A or TMS9928A.
@@ -787,6 +790,7 @@ public:
 	/** Get the earliest access slot that is at least 'delta' cycles in
 	  * the future. */
 	[[nodiscard]] EmuTime getAccessSlot(EmuTime time, VDPAccessSlots::Delta delta) const;
+	[[nodiscard]] EmuTime getAccessSlot(EmuTime time, int delay, int wait, VDPCmdCache::CachePenalty penalty) const;
 
 	/** Same as getAccessSlot(), but it can be _much_ faster for repeated
 	  * calls, e.g. in the implementation of VDP commands. However it does

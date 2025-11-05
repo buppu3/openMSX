@@ -1003,6 +1003,12 @@ EmuTime VDP::getAccessSlot(EmuTime time, VDPAccessSlots::Delta delta) const
 		getFrameStartTime(), time, delta, *this);
 }
 
+EmuTime VDP::getAccessSlot(EmuTime time, int delay, int wait, VDPCmdCache::CachePenalty penalty) const
+{
+	return VDPAccessSlots::getAccessSlot(
+		getFrameStartTime(), time, delay, wait, penalty, *this);
+}
+
 VDPAccessSlots::Calculator VDP::getAccessSlotCalculator(
 	EmuTime time, EmuTime limit) const
 {
