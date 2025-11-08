@@ -255,7 +255,7 @@ public:
 		assert((areaBits & effectiveBaseMask) == areaBits);
 		assert((areaBits & ~indexMask)        == areaBits);
 		assert(isEnabled());
-		unsigned addr = effectiveBaseMask & (indexMask | (index >> 1));
+		unsigned addr = effectiveBaseMask & (indexMask | ((index >> 1) & 0x0FFFF) | (index & 0x20000));
 		const uint8_t* ptr0 = &data[addr | 0x00000];
 		const uint8_t* ptr1 = &data[addr | 0x10000];
 		return {std::span<const uint8_t, size / 2>{ptr0, size / 2},

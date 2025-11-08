@@ -125,6 +125,14 @@ static constexpr unsigned clipNY_2(unsigned SY, unsigned DY, unsigned NY, uint8_
 	return (ARG & VDPCmdEngine::DIY) ? std::min(NY, std::min(SY, DY) + 1) : NY;
 }
 
+static bool getMXD(uint8_t ARG, bool evr) {
+	return ((ARG & VDPCmdEngine::MXD) != 0) && !evr;
+}
+
+static bool getMXS(uint8_t ARG, bool evr) {
+	return ((ARG & VDPCmdEngine::MXS) != 0) && !evr;
+}
+
 static unsigned getYBitMask(bool evr) {
 	return evr ? 2047 : 1023;
 }
@@ -801,7 +809,7 @@ void VDPCmdEngine::executePoint(EmuTime limit)
 {
 	if (engineTime >= limit) [[unlikely]] return;
 
-	bool srcExt  = (ARG & MXS) != 0;
+	bool srcExt  = getMXS(ARG, vdp.hasEVR());
 	if (bool doPoint = !srcExt || hasExtendedVRAM; doPoint) [[likely]] {
 		COL = Mode::point(vram, SX, SY, vdp.isEVR(), srcExt);
 	} else {
@@ -815,7 +823,7 @@ void VDPCmdEngine::startPointHs(EmuTime time)
 {
 	setReadMask(time, vram, vdp.hasEVR(), true);	//vram.cmdReadWindow.setMask(0x3FFFF, ~0u << 18, time);
 	setWriteMask(time, vram, vdp.hasEVR(), false);	//vram.cmdWriteWindow.disable(time);
-	bool srcExt  = (ARG & MXS) != 0;
+	bool srcExt  = getMXS(ARG, vdp.hasEVR());
 	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitPoint, checkCache(false, Mode::addressOf(SX, SY, vdp.isEVR(), srcExt)));
 	setStatusChangeTime(EmuTime::zero()); // will finish soon
 }
@@ -825,7 +833,7 @@ void VDPCmdEngine::executePointHs(EmuTime limit)
 {
 	if (engineTime >= limit) [[unlikely]] return;
 
-	bool srcExt  = (ARG & MXS) != 0;
+	bool srcExt  = getMXS(ARG, vdp.hasEVR());
 	if (bool doPoint = !srcExt || hasExtendedVRAM; doPoint) [[likely]] {
 		COL = Mode::point(vram, SX, SY, vdp.isEVR(), srcExt);
 	} else {
@@ -848,7 +856,7 @@ void VDPCmdEngine::startPset(EmuTime time)
 template<typename Mode, typename LogOp>
 void VDPCmdEngine::executePset(EmuTime limit)
 {
-	bool dstExt = (ARG & MXD) != 0;
+	bool dstExt = getMXD(ARG, vdp.hasEVR());
 	bool doPset = !dstExt || hasExtendedVRAM;
 	unsigned addr = Mode::addressOf(DX, DY, vdp.isEVR(), dstExt);
 
@@ -878,7 +886,7 @@ void VDPCmdEngine::startPsetHs(EmuTime time)
 {
 	setReadMask(time, vram, vdp.hasEVR(), false);	//vram.cmdReadWindow.disable(time);
 	setWriteMask(time, vram, vdp.hasEVR(), true);	//vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
-	bool dstExt = (ARG & MXD) != 0;
+	bool dstExt = getMXD(ARG, vdp.hasEVR());
 	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitPset, checkCache(false, Mode::addressOf(DX, DY, vdp.isEVR(), dstExt)));
 	setStatusChangeTime(EmuTime::zero()); // will finish soon
 	phase = 0;
@@ -887,7 +895,7 @@ void VDPCmdEngine::startPsetHs(EmuTime time)
 template<typename Mode, typename LogOp>
 void VDPCmdEngine::executePsetHs(EmuTime limit)
 {
-	bool dstExt = (ARG & MXD) != 0;
+	bool dstExt = getMXD(ARG, vdp.hasEVR());
 	bool doPset = !dstExt || hasExtendedVRAM;
 	unsigned addr = Mode::addressOf(DX, DY, vdp.isEVR(), dstExt);
 
@@ -932,7 +940,7 @@ void VDPCmdEngine::executeSrch(EmuTime limit)
 
 	// TODO use MXS or MXD here?
 	//  datasheet says MXD but MXS seems more logical
-	bool srcExt  = (ARG & MXS) != 0;
+	bool srcExt  = getMXS(ARG, vdp.hasEVR());
 	bool doPoint = !srcExt || hasExtendedVRAM;
 	auto calculator = getSlotCalculator(limit);
 
@@ -966,7 +974,7 @@ void VDPCmdEngine::startSrchHs(EmuTime time)
 	setReadMask(time, vram, vdp.hasEVR(), true);	//vram.cmdReadWindow.setMask(0x3FFFF, ~0u << 18, time);
 	setWriteMask(time, vram, vdp.hasEVR(), false);	//vram.cmdWriteWindow.disable(time);
 	ASX = SX;
-	bool srcExt  = (ARG & MXS) != 0;
+	bool srcExt  = getMXS(ARG, vdp.hasEVR());
 	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitSrch, checkCache(false, Mode::addressOf(ASX, SY, vdp.isEVR(), srcExt)));
 	setStatusChangeTime(EmuTime::zero()); // we can find it any moment
 }
@@ -980,7 +988,7 @@ void VDPCmdEngine::executeSrchHs(EmuTime limit)
 
 	// TODO use MXS or MXD here?
 	//  datasheet says MXD but MXS seems more logical
-	bool srcExt  = (ARG & MXS) != 0;
+	bool srcExt  = getMXS(ARG, vdp.hasEVR());
 	bool doPoint = !srcExt || hasExtendedVRAM;
 	auto calculator = getSlotCalculator(limit);
 
@@ -1032,7 +1040,7 @@ void VDPCmdEngine::executeLine(EmuTime limit)
 	uint8_t CL = COL & Mode::COLOR_MASK;
 	int TX = (ARG & DIX) ? -1 : 1;
 	int TY = (ARG & DIY) ? -1 : 1;
-	bool dstExt = (ARG & MXD) != 0;
+	bool dstExt = getMXD(ARG, vdp.hasEVR());
 	bool doPset = !dstExt || hasExtendedVRAM;
 	unsigned addr = Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt);
 	auto calculator = getSlotCalculator(limit);
@@ -1118,7 +1126,7 @@ void VDPCmdEngine::startLineHs(EmuTime time)
 	ASX = ((NX - 1) >> 1);
 	ADX = DX;
 	ANX = 0;
-	bool dstExt = (ARG & MXD) != 0;
+	bool dstExt = getMXD(ARG, vdp.hasEVR());
 	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitLine, checkCache(false, Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt)));
 	setStatusChangeTime(EmuTime::zero()); // TODO can still be optimized
 	phase = 0;
@@ -1131,7 +1139,7 @@ void VDPCmdEngine::executeLineHs(EmuTime limit)
 	uint8_t CL = COL & Mode::COLOR_MASK;
 	int TX = (ARG & DIX) ? -1 : 1;
 	int TY = (ARG & DIY) ? -1 : 1;
-	bool dstExt = (ARG & MXD) != 0;
+	bool dstExt = getMXD(ARG, vdp.hasEVR());
 	bool doPset = !dstExt || hasExtendedVRAM;
 	unsigned addr = Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt);
 	auto calculator = getSlotCalculator(limit);
@@ -1236,7 +1244,7 @@ void VDPCmdEngine::executeLmmv(EmuTime limit)
 	int TY = (ARG & DIY) ? -1 : 1;
 	ANX = clipNX_1_pixel<Mode>(ADX, ANX, ARG);
 	uint8_t CL = COL & Mode::COLOR_MASK;
-	bool dstExt = (ARG & MXD) != 0;
+	bool dstExt = getMXD(ARG, vdp.hasEVR());
 	bool doPset = !dstExt || hasExtendedVRAM;
 	unsigned addr = Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt);
 	auto calculator = getSlotCalculator(limit);
@@ -1343,7 +1351,7 @@ void VDPCmdEngine::startLmmvHs(EmuTime time)
 	unsigned tmpNY = clipNY_1(DY, NY, ARG);
 	ADX = DX;
 	ANX = tmpNX;
-	bool dstExt = (ARG & MXD) != 0;
+	bool dstExt = getMXD(ARG, vdp.hasEVR());
 	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitLmmv, checkCache(false, Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt)));
 	calcFinishTime(tmpNX, tmpNY, 72 + 24);
 	phase = 0;
@@ -1359,7 +1367,7 @@ void VDPCmdEngine::executeLmmvHs(EmuTime limit)
 	int TY = (ARG & DIY) ? -1 : 1;
 	ANX = clipNX_1_pixel<Mode>(ADX, ANX, ARG);
 	uint8_t CL = COL & Mode::COLOR_MASK;
-	bool dstExt = (ARG & MXD) != 0;
+	bool dstExt = getMXD(ARG, vdp.hasEVR());
 	bool doPset = !dstExt || hasExtendedVRAM;
 	unsigned addr = Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt);
 	auto calculator = getSlotCalculator(limit);
@@ -1426,8 +1434,8 @@ void VDPCmdEngine::executeLmmm(EmuTime limit)
 	int TX = (ARG & DIX) ? -1 : 1;
 	int TY = (ARG & DIY) ? -1 : 1;
 	ANX = clipNX_2_pixel<Mode>(ASX, ADX, ANX, ARG);
-	bool srcExt  = (ARG & MXS) != 0;
-	bool dstExt  = (ARG & MXD) != 0;
+	bool srcExt  = getMXS(ARG, vdp.hasEVR());
+	bool dstExt  = getMXD(ARG, vdp.hasEVR());
 	bool doPoint = !srcExt || hasExtendedVRAM;
 	bool doPset  = !dstExt || hasExtendedVRAM;
 	unsigned dstAddr = Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt);
@@ -1559,7 +1567,7 @@ void VDPCmdEngine::startLmmmHs(EmuTime time)
 	ASX = SX;
 	ADX = DX;
 	ANX = tmpNX;
-	bool srcExt  = (ARG & MXS) != 0;
+	bool srcExt  = getMXS(ARG, vdp.hasEVR());
 	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitLmmm, checkCache(false, Mode::addressOf(ASX, SY, vdp.isEVR(), srcExt)));
 	calcFinishTime(tmpNX, tmpNY, 64 + 32 + 24);
 	phase = 0;
@@ -1574,8 +1582,8 @@ void VDPCmdEngine::executeLmmmHs(EmuTime limit)
 	int TX = (ARG & DIX) ? -1 : 1;
 	int TY = (ARG & DIY) ? -1 : 1;
 	ANX = clipNX_2_pixel<Mode>(ASX, ADX, ANX, ARG);
-	bool srcExt  = (ARG & MXS) != 0;
-	bool dstExt  = (ARG & MXD) != 0;
+	bool srcExt  = getMXS(ARG, vdp.hasEVR());
+	bool dstExt  = getMXD(ARG, vdp.hasEVR());
 	bool doPoint = !srcExt || hasExtendedVRAM;
 	bool doPset  = !dstExt || hasExtendedVRAM;
 	unsigned dstAddr = Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt);
@@ -1657,7 +1665,7 @@ void VDPCmdEngine::executeLmcm(EmuTime limit)
 	int TX = (ARG & DIX) ? -1 : 1;
 	int TY = (ARG & DIY) ? -1 : 1;
 	ANX = clipNX_1_pixel<Mode>(ASX, ANX, ARG);
-	bool srcExt  = (ARG & MXS) != 0;
+	bool srcExt  = getMXS(ARG, vdp.hasEVR());
 
 	// TODO we should (most likely) perform the actual read earlier and
 	//  buffer it, and on a CPU-IO-read start the next read (just like how
@@ -1690,7 +1698,7 @@ void VDPCmdEngine::startLmcmHs(EmuTime time)
 	ANX = tmpNX;
 	transfer = true;
 	status |= TR;
-	bool srcExt  = (ARG & MXS) != 0;
+	bool srcExt  = getMXS(ARG, vdp.hasEVR());
 	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitLmcm, checkCache(false, Mode::addressOf(ASX, SY, vdp.isEVR(), srcExt)));
 	setStatusChangeTime(EmuTime::zero());
 }
@@ -1707,7 +1715,7 @@ void VDPCmdEngine::executeLmcmHs(EmuTime limit)
 	int TX = (ARG & DIX) ? -1 : 1;
 	int TY = (ARG & DIY) ? -1 : 1;
 	ANX = clipNX_1_pixel<Mode>(ASX, ANX, ARG);
-	bool srcExt  = (ARG & MXS) != 0;
+	bool srcExt  = getMXS(ARG, vdp.hasEVR());
 
 	// TODO we should (most likely) perform the actual read earlier and
 	//  buffer it, and on a CPU-IO-read start the next read (just like how
@@ -1756,7 +1764,7 @@ void VDPCmdEngine::executeLmmc(EmuTime limit)
 	int TX = (ARG & DIX) ? -1 : 1;
 	int TY = (ARG & DIY) ? -1 : 1;
 	ANX = clipNX_1_pixel<Mode>(ADX, ANX, ARG);
-	bool dstExt = (ARG & MXD) != 0;
+	bool dstExt = getMXD(ARG, vdp.hasEVR());
 	bool doPset  = !dstExt || hasExtendedVRAM;
 
 	if (transfer) {
@@ -1803,7 +1811,7 @@ void VDPCmdEngine::startLmmcHs(EmuTime time)
 	// do not set 'transfer = true', this fixes bug#1014
 	// Baltak Rampage: characters in greetings part are one pixel offset
 	status |= TR;
-	bool dstExt = (ARG & MXD) != 0;
+	bool dstExt = getMXD(ARG, vdp.hasEVR());
 	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitLmmc, checkCache(true, Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt)));
 }
 
@@ -1816,7 +1824,7 @@ void VDPCmdEngine::executeLmmcHs(EmuTime limit)
 	int TX = (ARG & DIX) ? -1 : 1;
 	int TY = (ARG & DIY) ? -1 : 1;
 	ANX = clipNX_1_pixel<Mode>(ADX, ANX, ARG);
-	bool dstExt = (ARG & MXD) != 0;
+	bool dstExt = getMXD(ARG, vdp.hasEVR());
 	bool doPset  = !dstExt || hasExtendedVRAM;
 
 	if (transfer) {
@@ -1877,7 +1885,7 @@ void VDPCmdEngine::executeHmmv(EmuTime limit)
 	int TY = (ARG & DIY) ? -1 : 1;
 	ANX = clipNX_1_byte<Mode>(
 		ADX, ANX << Mode::PIXELS_PER_BYTE_SHIFT, ARG);
-	bool dstExt = (ARG & MXD) != 0;
+	bool dstExt = getMXD(ARG, vdp.hasEVR());
 	bool doPset = !dstExt || hasExtendedVRAM;
 	auto calculator = getSlotCalculator(limit);
 
@@ -1964,7 +1972,7 @@ void VDPCmdEngine::startHmmvHs(EmuTime time)
 	unsigned tmpNY = clipNY_1(DY, NY, ARG);
 	ADX = DX;
 	ANX = tmpNX;
-	bool dstExt = (ARG & MXD) != 0;
+	bool dstExt = getMXD(ARG, vdp.hasEVR());
 	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitHmmv, checkCache(true, Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt)));
 	calcFinishTime(tmpNX, tmpNY, 48);
 }
@@ -1980,7 +1988,7 @@ void VDPCmdEngine::executeHmmvHs(EmuTime limit)
 	int TY = (ARG & DIY) ? -1 : 1;
 	ANX = clipNX_1_byte<Mode>(
 		ADX, ANX << Mode::PIXELS_PER_BYTE_SHIFT, ARG);
-	bool dstExt = (ARG & MXD) != 0;
+	bool dstExt = getMXD(ARG, vdp.hasEVR());
 	bool doPset = !dstExt || hasExtendedVRAM;
 	auto calculator = getSlotCalculator(limit);
 
@@ -2034,8 +2042,8 @@ void VDPCmdEngine::executeHmmm(EmuTime limit)
 	int TY = (ARG & DIY) ? -1 : 1;
 	ANX = clipNX_2_byte<Mode>(
 		ASX, ADX, ANX << Mode::PIXELS_PER_BYTE_SHIFT, ARG);
-	bool srcExt  = (ARG & MXS) != 0;
-	bool dstExt  = (ARG & MXD) != 0;
+	bool srcExt  = getMXS(ARG, vdp.hasEVR());
+	bool dstExt  = getMXD(ARG, vdp.hasEVR());
 	bool doPoint = !srcExt || hasExtendedVRAM;
 	bool doPset  = !dstExt || hasExtendedVRAM;
 	auto calculator = getSlotCalculator(limit);
@@ -2152,7 +2160,7 @@ void VDPCmdEngine::startHmmmHs(EmuTime time)
 	ASX = SX;
 	ADX = DX;
 	ANX = tmpNX;
-	bool srcExt  = (ARG & MXS) != 0;
+	bool srcExt  = getMXS(ARG, vdp.hasEVR());
 	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitHmmm, checkCache(false, Mode::addressOf(ASX, SY, vdp.isEVR(), srcExt)));
 	calcFinishTime(tmpNX, tmpNY, 24 + 64);
 	phase = 0;
@@ -2169,8 +2177,8 @@ void VDPCmdEngine::executeHmmmHs(EmuTime limit)
 	int TY = (ARG & DIY) ? -1 : 1;
 	ANX = clipNX_2_byte<Mode>(
 		ASX, ADX, ANX << Mode::PIXELS_PER_BYTE_SHIFT, ARG);
-	bool srcExt  = (ARG & MXS) != 0;
-	bool dstExt  = (ARG & MXD) != 0;
+	bool srcExt  = getMXS(ARG, vdp.hasEVR());
+	bool dstExt  = getMXD(ARG, vdp.hasEVR());
 	bool doPoint = !srcExt || hasExtendedVRAM;
 	bool doPset  = !dstExt || hasExtendedVRAM;
 	auto calculator = getSlotCalculator(limit);
@@ -2246,7 +2254,7 @@ void VDPCmdEngine::executeYmmm(EmuTime limit)
 	// TODO does this use MXD for both read and write?
 	//  it says so in the datasheet, but it seems illogical
 	//  OTOH YMMM also uses DX for both read and write
-	bool dstExt = (ARG & MXD) != 0;
+	bool dstExt = getMXD(ARG, vdp.hasEVR());
 	bool doPset  = !dstExt || hasExtendedVRAM;
 	auto calculator = getSlotCalculator(limit);
 
@@ -2352,7 +2360,7 @@ void VDPCmdEngine::startYmmmHs(EmuTime time)
 	unsigned tmpNY = clipNY_2(SY, DY, NY, ARG);
 	ADX = DX;
 	ANX = tmpNX;
-	bool dstExt = (ARG & MXD) != 0;
+	bool dstExt = getMXD(ARG, vdp.hasEVR());
 	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitYmmm, checkCache(false, Mode::addressOf(ADX, SY, vdp.isEVR(), dstExt)));
 	calcFinishTime(tmpNX, tmpNY, 24 + 40);
 	phase = 0;
@@ -2373,7 +2381,7 @@ void VDPCmdEngine::executeYmmmHs(EmuTime limit)
 	// TODO does this use MXD for both read and write?
 	//  it says so in the datasheet, but it seems illogical
 	//  OTOH YMMM also uses DX for both read and write
-	bool dstExt = (ARG & MXD) != 0;
+	bool dstExt = getMXD(ARG, vdp.hasEVR());
 	bool doPset  = !dstExt || hasExtendedVRAM;
 	auto calculator = getSlotCalculator(limit);
 
@@ -2440,7 +2448,7 @@ void VDPCmdEngine::executeHmmc(EmuTime limit)
 	int TY = (ARG & DIY) ? -1 : 1;
 	ANX = clipNX_1_byte<Mode>(
 		ADX, ANX << Mode::PIXELS_PER_BYTE_SHIFT, ARG);
-	bool dstExt = (ARG & MXD) != 0;
+	bool dstExt = getMXD(ARG, vdp.hasEVR());
 	bool doPset = !dstExt || hasExtendedVRAM;
 
 	if (transfer) {
@@ -2477,7 +2485,7 @@ void VDPCmdEngine::startHmmcHs(EmuTime time)
 	setStatusChangeTime(EmuTime::zero());
 	// do not set 'transfer = true', see startLmmc()
 	status |= TR;
-	bool dstExt = (ARG & MXD) != 0;
+	bool dstExt = getMXD(ARG, vdp.hasEVR());
 	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitHmmc, checkCache(true, Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt)));
 }
 
@@ -2492,7 +2500,7 @@ void VDPCmdEngine::executeHmmcHs(EmuTime limit)
 	int TY = (ARG & DIY) ? -1 : 1;
 	ANX = clipNX_1_byte<Mode>(
 		ADX, ANX << Mode::PIXELS_PER_BYTE_SHIFT, ARG);
-	bool dstExt = (ARG & MXD) != 0;
+	bool dstExt = getMXD(ARG, vdp.hasEVR());
 	bool doPset = !dstExt || hasExtendedVRAM;
 
 	if (transfer) {
@@ -2531,7 +2539,7 @@ void VDPCmdEngine::startLfmm(EmuTime time)
 	ADY = DY;
 	ANX = tmpNX;
 	ANY = tmpNY;
-	bool srcExt  = (ARG & MXS) != 0;
+	bool srcExt  = getMXS(ARG, vdp.hasEVR());
 	fontWidthCount = 0;
 	nextAccessSlot(time);
 	calcFinishTime(tmpNX, tmpNY, 64 + 32 + 24);
@@ -2547,7 +2555,7 @@ void VDPCmdEngine::executeLfmm(EmuTime limit)
 	int TX = (ARG & DIX) ? -1 : 1;
 	int TY = (ARG & DIY) ? -1 : 1;
 	ANX = clipNX_1_pixel<Mode>(ADX, ANX, ARG);
-	bool dstExt  = (ARG & MXD) != 0;
+	bool dstExt  = getMXD(ARG, vdp.hasEVR());
 	bool doPset  = !dstExt || hasExtendedVRAM;
 	unsigned dstAddr = Mode::addressOf(ADX, ADY, vdp.isEVR(), dstExt);
 	auto calculator = getSlotCalculator(limit);
@@ -2623,7 +2631,7 @@ void VDPCmdEngine::startLfmmHs(EmuTime time)
 	ADY = DY;
 	ANX = tmpNX;
 	ANY = tmpNY;
-	bool srcExt  = (ARG & MXS) != 0;
+	bool srcExt  = getMXS(ARG, vdp.hasEVR());
 	fontWidthCount = 0;
 	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitLfmm, checkCache(false, ASA));
 	calcFinishTime(tmpNX, tmpNY, 64 + 32 + 24);
@@ -2639,7 +2647,7 @@ void VDPCmdEngine::executeLfmmHs(EmuTime limit)
 	int TX = (ARG & DIX) ? -1 : 1;
 	int TY = (ARG & DIY) ? -1 : 1;
 	ANX = clipNX_1_pixel<Mode>(ADX, ANX, ARG);
-	bool dstExt  = (ARG & MXD) != 0;
+	bool dstExt  = getMXD(ARG, vdp.hasEVR());
 	bool doPset  = !dstExt || hasExtendedVRAM;
 	unsigned dstAddr = Mode::addressOf(ADX, ADY, vdp.isEVR(), dstExt);
 	auto calculator = getSlotCalculator(limit);
@@ -2732,7 +2740,7 @@ void VDPCmdEngine::executeLfmc(EmuTime limit)
 	int TX = (ARG & DIX) ? -1 : 1;
 	int TY = (ARG & DIY) ? -1 : 1;
 	ANX = clipNX_1_pixel<Mode>(ADX, ANX, ARG);
-	bool dstExt  = (ARG & MXD) != 0;
+	bool dstExt  = getMXD(ARG, vdp.hasEVR());
 	bool doPset  = !dstExt || hasExtendedVRAM;
 	unsigned dstAddr = Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt);
 	auto calculator = getSlotCalculator(limit);
@@ -2813,8 +2821,8 @@ void VDPCmdEngine::executeLrmm(EmuTime limit)
 	int TX = (ARG & DIX) ? -1 : 1;
 	int TY = (ARG & DIY) ? -1 : 1;
 	ANX = clipNX_1_pixel<Mode>(ADX, ANX, ARG);
-	bool srcExt  = (ARG & MXS) != 0;
-	bool dstExt  = (ARG & MXD) != 0;
+	bool srcExt  = getMXS(ARG, vdp.hasEVR());
+	bool dstExt  = getMXD(ARG, vdp.hasEVR());
 	bool doPoint = !srcExt || hasExtendedVRAM;
 	bool doPset  = !dstExt || hasExtendedVRAM;
 	unsigned dstAddr = Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt);
@@ -2887,7 +2895,7 @@ void VDPCmdEngine::startLrmmHs(EmuTime time)
 	ASY_12P8 = SY_12P8 = (SY << 8);// | ((SY & (1 << 11)) ? ~((1 << (12+8)) - 1): 0);
 	ADX = DX;
 	ANX = tmpNX;
-	bool srcExt  = (ARG & MXS) != 0;
+	bool srcExt  = getMXS(ARG, vdp.hasEVR());
 	signed x = (signed)ASX_12P8 / 256;
 	signed y = (signed)ASY_12P8 / 256;
 	if ((signed)WSX <= x && x <= (signed)WEX && (signed)WSY <= y && y <= (signed)WEY) {
@@ -2908,8 +2916,8 @@ void VDPCmdEngine::executeLrmmHs(EmuTime limit)
 	int TX = (ARG & DIX) ? -1 : 1;
 	int TY = (ARG & DIY) ? -1 : 1;
 	ANX = clipNX_1_pixel<Mode>(ADX, ANX, ARG);
-	bool srcExt  = (ARG & MXS) != 0;
-	bool dstExt  = (ARG & MXD) != 0;
+	bool srcExt  = getMXS(ARG, vdp.hasEVR());
+	bool dstExt  = getMXD(ARG, vdp.hasEVR());
 	bool doPoint = !srcExt || hasExtendedVRAM;
 	bool doPset  = !dstExt || hasExtendedVRAM;
 	unsigned dstAddr = Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt);

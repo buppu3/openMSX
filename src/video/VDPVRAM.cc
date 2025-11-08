@@ -47,9 +47,13 @@ VDPVRAM::LogicalVRAMDebuggable::LogicalVRAMDebuggable(const VDP& vdp_)
 unsigned VDPVRAM::LogicalVRAMDebuggable::transform(unsigned address)
 {
 	const auto& vram = OUTER(VDPVRAM, logicalVRAMDebug);
-	return vram.vdp.getDisplayMode().isPlanar()
-	     ? ((address << 16) | (address >> 1)) & (vram.vdp.hasEVR() ? 0x3FFFF : 0x1FFFF)
-	     : address;
+	if (!vram.vdp.getDisplayMode().isPlanar()) {
+		return address;
+	} else if (vram.vdp.hasEVR()) {
+		return ((address & 0x20000) | ((address << 16) & 0x10000) | ((address >> 1) & 0x0FFFF)) & 0x3FFFF;
+	} else {
+		return ((address << 16) | (address >> 1)) & 0x1FFFF;
+	}
 }
 
 uint8_t VDPVRAM::LogicalVRAMDebuggable::read(unsigned address, EmuTime time)
