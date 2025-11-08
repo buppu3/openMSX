@@ -1353,7 +1353,7 @@ void VDPCmdEngine::startLmmvHs(EmuTime time)
 	ANX = tmpNX;
 	bool dstExt = getMXD(ARG, vdp.hasEVR());
 	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitLmmv, checkCache(false, Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt)));
-	calcFinishTime(tmpNX, tmpNY, 72 + 24);
+	calcFinishTime(tmpNX, tmpNY, vdp.isHS() ? (1 + 1) : (1 + 1 + waitLmmv + waitLmmv));
 	phase = 0;
 }
 
@@ -1404,7 +1404,7 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 		UNREACHABLE;
 	}
 	engineTime = calculator.getTime();
-	this->calcFinishTime(tmpNX, tmpNY, 72 + 24);
+	this->calcFinishTime(tmpNX, tmpNY, vdp.isHS() ? (1 + 1) : (1 + 1 + waitLmmv + waitLmmv));
 }
 
 /** Logical move VRAM -> VRAM.
@@ -1569,7 +1569,7 @@ void VDPCmdEngine::startLmmmHs(EmuTime time)
 	ANX = tmpNX;
 	bool srcExt  = getMXS(ARG, vdp.hasEVR());
 	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitLmmm, checkCache(false, Mode::addressOf(ASX, SY, vdp.isEVR(), srcExt)));
-	calcFinishTime(tmpNX, tmpNY, 64 + 32 + 24);
+	calcFinishTime(tmpNX, tmpNY, vdp.isHS() ? (1 + 1 + 1) : (1 + 1 + 1 + waitLmmm + waitLmmm + waitLmmm));
 	phase = 0;
 }
 
@@ -1633,7 +1633,7 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 		UNREACHABLE;
 	}
 	engineTime = calculator.getTime();
-	this->calcFinishTime(tmpNX, tmpNY, 64 + 32 + 24);
+	this->calcFinishTime(tmpNX, tmpNY, vdp.isHS() ? (1 + 1 + 1) : (1 + 1 + 1 + waitLmmm + waitLmmm + waitLmmm));
 }
 
 /** Logical move VRAM -> CPU.
@@ -1974,7 +1974,7 @@ void VDPCmdEngine::startHmmvHs(EmuTime time)
 	ANX = tmpNX;
 	bool dstExt = getMXD(ARG, vdp.hasEVR());
 	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitHmmv, checkCache(true, Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt)));
-	calcFinishTime(tmpNX, tmpNY, 48);
+	calcFinishTime(tmpNX, tmpNY, vdp.isHS() ? 1 : (1 + waitHmmv));
 }
 
 template<typename Mode>
@@ -2010,7 +2010,7 @@ void VDPCmdEngine::executeHmmvHs(EmuTime limit)
 		calculator.nextHs(1, vdp.isHS() ? 0 : waitHmmv, checkCache(true, Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt)));
 	}
 	engineTime = calculator.getTime();
-	calcFinishTime(tmpNX, tmpNY, 48);
+	calcFinishTime(tmpNX, tmpNY, vdp.isHS() ? 1 : (1 + waitHmmv));
 }
 
 /** High-speed move VRAM -> VRAM.
@@ -2162,7 +2162,7 @@ void VDPCmdEngine::startHmmmHs(EmuTime time)
 	ANX = tmpNX;
 	bool srcExt  = getMXS(ARG, vdp.hasEVR());
 	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitHmmm, checkCache(false, Mode::addressOf(ASX, SY, vdp.isEVR(), srcExt)));
-	calcFinishTime(tmpNX, tmpNY, 24 + 64);
+	calcFinishTime(tmpNX, tmpNY, vdp.isHS() ? (1 + 1) : (1 + 1 + waitHmmm + waitHmmm));
 	phase = 0;
 }
 
@@ -2218,7 +2218,7 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 		UNREACHABLE;
 	}
 	engineTime = calculator.getTime();
-	calcFinishTime(tmpNX, tmpNY, 24 + 64);
+	calcFinishTime(tmpNX, tmpNY, vdp.isHS() ? (1 + 1) : (1 + 1 + waitHmmm + waitHmmm));
 }
 
 /** High-speed move VRAM -> VRAM (Y direction only).
@@ -2362,7 +2362,7 @@ void VDPCmdEngine::startYmmmHs(EmuTime time)
 	ANX = tmpNX;
 	bool dstExt = getMXD(ARG, vdp.hasEVR());
 	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitYmmm, checkCache(false, Mode::addressOf(ADX, SY, vdp.isEVR(), dstExt)));
-	calcFinishTime(tmpNX, tmpNY, 24 + 40);
+	calcFinishTime(tmpNX, tmpNY, vdp.isHS() ? (1 + 1) : (1 + 1 + waitYmmm + waitYmmm));
 	phase = 0;
 }
 
@@ -2417,7 +2417,7 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 		UNREACHABLE;
 	}
 	engineTime = calculator.getTime();
-	calcFinishTime(tmpNX, tmpNY, 24 + 40);
+	calcFinishTime(tmpNX, tmpNY, vdp.isHS() ? (1 + 1) : (1 + 1 + waitYmmm + waitYmmm));
 }
 
 /** High-speed move CPU -> VRAM.
@@ -2634,7 +2634,7 @@ void VDPCmdEngine::startLfmmHs(EmuTime time)
 	bool srcExt  = getMXS(ARG, vdp.hasEVR());
 	fontWidthCount = 0;
 	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitLfmm, checkCache(false, ASA));
-	calcFinishTime(tmpNX, tmpNY, 64 + 32 + 24);
+	calcFinishTime(tmpNX, tmpNY, vdp.isHS() ? (1 + 1 + 1) : (1 + 1 + 1 + waitLfmm + waitLfmm + waitLfmm));
 	phase = 0;
 }
 
@@ -2710,7 +2710,7 @@ loop:	if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 		UNREACHABLE;
 	}
 	engineTime = calculator.getTime();
-	this->calcFinishTime(tmpNX, tmpNY, 64 + 32 + 24);
+	this->calcFinishTime(tmpNX, tmpNY, vdp.isHS() ? (1 + 1 + 1) : (1 + 1 + 1 + waitLfmm + waitLfmm + waitLfmm));
 }
 
 /** Logical draw font CPU -> VRAM.
@@ -2808,7 +2808,7 @@ void VDPCmdEngine::startLrmm(EmuTime time)
 	ADX = DX;
 	ANX = tmpNX;
 	nextAccessSlot(time);
-	calcFinishTime(tmpNX, tmpNY, 64 + 32 + 24);
+	calcFinishTime(tmpNX, tmpNY, (1 + 1 + 1 + waitLrmm + waitLrmm + waitLrmm));
 	phase = 0;
 }
 
@@ -2880,7 +2880,7 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 		UNREACHABLE;
 	}
 	engineTime = calculator.getTime();
-	this->calcFinishTime(tmpNX, tmpNY, 64 + 32 + 24);
+	this->calcFinishTime(tmpNX, tmpNY, (1 + 1 + 1 + waitLrmm + waitLrmm + waitLrmm));
 }
 
 template<typename Mode>
@@ -2903,7 +2903,7 @@ void VDPCmdEngine::startLrmmHs(EmuTime time)
 	} else {
 		nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitLrmm, VDPCmdCache::CachePenalty::CACHE_NONE);
 	}
-	calcFinishTime(tmpNX, tmpNY, 64 + 32 + 24);
+	calcFinishTime(tmpNX, tmpNY, vdp.isHS() ? (1 + 1 + 1) : (1 + 1 + 1 + waitLrmm + waitLrmm + waitLrmm));
 	phase = 0;
 }
 
@@ -2983,7 +2983,7 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 		UNREACHABLE;
 	}
 	engineTime = calculator.getTime();
-	this->calcFinishTime(tmpNX, tmpNY, 64 + 32 + 24);
+	this->calcFinishTime(tmpNX, tmpNY, vdp.isHS() ? (1 + 1 + 1) : (1 + 1 + 1 + waitLrmm + waitLrmm + waitLrmm));
 }
 
 VDPCmdEngine::VDPCmdEngine(VDP& vdp_, CommandController& commandController)

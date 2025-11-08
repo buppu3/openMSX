@@ -786,53 +786,45 @@ unsigned getAccessSlotTick(unsigned ticks, int delay, int wait, VDPCmdCache::Cac
 {
 	ticks += delay;
 	if(penalty == VDPCmdCache::CachePenalty::CACHE_READ_HIT) {
-		ticks += 3;
+		ticks += 1;													// check
 	} else if(penalty == VDPCmdCache::CachePenalty::CACHE_READ_MISS) {
-		ticks += 2;
-		ticks += tab[ticks % TICKS];
-		ticks += 1 + V9968_MEMORY_ACCESS_TIME;
+		ticks += 1;													// check
+		ticks += tab[ticks % TICKS] + V9968_MEMORY_ACCESS_TIME + 1;	// read
 	} else if(penalty == VDPCmdCache::CachePenalty::CACHE_READ_FLUSH) {
-		ticks += 2;
-		ticks += tab[ticks % TICKS];
-		ticks += 2 + V9968_MEMORY_ACCESS_TIME;
-		ticks += tab[ticks % TICKS];
-		ticks += 2 + V9968_MEMORY_ACCESS_TIME;
+		ticks += 1;													// check
+		ticks += tab[ticks % TICKS] + V9968_MEMORY_ACCESS_TIME + 1;	// write
+		ticks += tab[ticks % TICKS] + V9968_MEMORY_ACCESS_TIME + 1;	// read
 	} else if(penalty == VDPCmdCache::CachePenalty::CACHE_WRITE_HIT) {
-		ticks += 2;
+		ticks += 1;													// check
 	} else if(penalty == VDPCmdCache::CachePenalty::CACHE_WRITE_MISS) {
-		ticks += 2;
+		ticks += 1;													// check
 	} else if(penalty == VDPCmdCache::CachePenalty::CACHE_WRITE_FLUSH) {
-		ticks += 2;
-		ticks += tab[ticks % TICKS];
-		ticks += 1 + V9968_MEMORY_ACCESS_TIME;
+		ticks += 1;													// check
+		ticks += tab[ticks % TICKS] + V9968_MEMORY_ACCESS_TIME;		// write
 	} else if(penalty == VDPCmdCache::CachePenalty::CACHE_FLUSH_1) {
-		ticks += 2;
-		ticks += tab[ticks % TICKS];
-		ticks += 1 + V9968_MEMORY_ACCESS_TIME;
+		ticks += 1;													// check
+		ticks += tab[ticks % TICKS] + V9968_MEMORY_ACCESS_TIME;		// write
 	} else if(penalty == VDPCmdCache::CachePenalty::CACHE_FLUSH_2) {
-		ticks += 2;
-		ticks += tab[ticks % TICKS];
-		ticks += 2 + V9968_MEMORY_ACCESS_TIME;
-		ticks += tab[ticks % TICKS];
-		ticks += 1 + V9968_MEMORY_ACCESS_TIME;
+		ticks += 1;													// check
+		ticks += tab[ticks % TICKS] + V9968_MEMORY_ACCESS_TIME;		// write
+		ticks += 1;													// check
+		ticks += tab[ticks % TICKS] + V9968_MEMORY_ACCESS_TIME;		// write
 	} else if(penalty == VDPCmdCache::CachePenalty::CACHE_FLUSH_3) {
-		ticks += 2;
-		ticks += tab[ticks % TICKS];
-		ticks += 2 + V9968_MEMORY_ACCESS_TIME;
-		ticks += tab[ticks % TICKS];
-		ticks += 2 + V9968_MEMORY_ACCESS_TIME;
-		ticks += tab[ticks % TICKS];
-		ticks += 1 + V9968_MEMORY_ACCESS_TIME;
+		ticks += 1;													// check
+		ticks += tab[ticks % TICKS] + V9968_MEMORY_ACCESS_TIME;		// write
+		ticks += 1;													// check
+		ticks += tab[ticks % TICKS] + V9968_MEMORY_ACCESS_TIME;		// write
+		ticks += 1;													// check
+		ticks += tab[ticks % TICKS] + V9968_MEMORY_ACCESS_TIME;		// write
 	} else if(penalty == VDPCmdCache::CachePenalty::CACHE_FLUSH_4) {
-		ticks += 2;
-		ticks += tab[ticks % TICKS];
-		ticks += 2 + V9968_MEMORY_ACCESS_TIME;
-		ticks += tab[ticks % TICKS];
-		ticks += 2 + V9968_MEMORY_ACCESS_TIME;
-		ticks += tab[ticks % TICKS];
-		ticks += 2 + V9968_MEMORY_ACCESS_TIME;
-		ticks += tab[ticks % TICKS];
-		ticks += 1 + V9968_MEMORY_ACCESS_TIME;
+		ticks += 1;													// check
+		ticks += tab[ticks % TICKS] + V9968_MEMORY_ACCESS_TIME;		// write
+		ticks += 1;													// check
+		ticks += tab[ticks % TICKS] + V9968_MEMORY_ACCESS_TIME;		// write
+		ticks += 1;													// check
+		ticks += tab[ticks % TICKS] + V9968_MEMORY_ACCESS_TIME;		// write
+		ticks += 1;													// check
+		ticks += tab[ticks % TICKS] + V9968_MEMORY_ACCESS_TIME;		// write
 	}
 
 	ticks += wait;
