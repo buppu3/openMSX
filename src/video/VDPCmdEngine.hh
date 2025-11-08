@@ -25,6 +25,8 @@ class VDPCmdEngine
 {
 public:
 	// bits in ARG register
+	static constexpr uint8_t FG4 = 0x80;
+	static constexpr uint8_t XHR = 0x40;
 	static constexpr uint8_t MXD = 0x20;
 	static constexpr uint8_t MXS = 0x10;
 	static constexpr uint8_t DIY = 0x08;
@@ -49,6 +51,9 @@ public:
 	static constexpr int waitSrch = 40 * 4;
 	static constexpr int waitPset = 40 * 4;
 	static constexpr int waitPoint = 40 * 4;
+	static constexpr int waitLfmm = 0;
+	static constexpr int waitLfmc = 0;
+	static constexpr int waitLrmm = 0;
 
 public:
 	VDPCmdEngine(VDP& vdp, CommandController& commandController);
@@ -307,6 +312,9 @@ private:
 	template<typename Mode> void startHmmm(EmuTime time);
 	template<typename Mode> void startYmmm(EmuTime time);
 	template<typename Mode> void startHmmc(EmuTime time);
+	template<typename Mode> void startLfmc(EmuTime time);
+	template<typename Mode> void startLfmm(EmuTime time);
+	template<typename Mode> void startLrmm(EmuTime time);
 
 	template<typename Mode>                 void executePoint(EmuTime limit);
 	template<typename Mode, typename LogOp> void executePset(EmuTime limit);
@@ -320,6 +328,9 @@ private:
 	template<typename Mode>                 void executeHmmm(EmuTime limit);
 	template<typename Mode>                 void executeYmmm(EmuTime limit);
 	template<typename Mode>                 void executeHmmc(EmuTime limit);
+	template<typename Mode, typename LogOp> void executeLfmc(EmuTime limit);
+	template<typename Mode, typename LogOp> void executeLfmm(EmuTime limit);
+	template<typename Mode, typename LogOp> void executeLrmm(EmuTime limit);
 
 	template<typename Mode> void startPointHs(EmuTime time);
 	template<typename Mode> void startPsetHs(EmuTime time);
@@ -333,6 +344,10 @@ private:
 	template<typename Mode> void startHmmmHs(EmuTime time);
 	template<typename Mode> void startYmmmHs(EmuTime time);
 	template<typename Mode> void startHmmcHs(EmuTime time);
+//	template<typename Mode> void startLfmcHs(EmuTime time);
+	template<typename Mode> void startLfmmHs(EmuTime time);
+	template<typename Mode> void startLrmmHs(EmuTime time);
+
 	template<typename Mode> 				void executePointHs(EmuTime limit);
 	template<typename Mode, typename LogOp> void executePsetHs(EmuTime limit);
 	template<typename Mode>                 void executeSrchHs(EmuTime limit);
@@ -345,6 +360,9 @@ private:
 	template<typename Mode>                 void executeHmmmHs(EmuTime limit);
 	template<typename Mode>                 void executeYmmmHs(EmuTime limit);
 	template<typename Mode>                 void executeHmmcHs(EmuTime limit);
+//	template<typename Mode, typename LogOp> void executeLfmcHs(EmuTime limit);
+	template<typename Mode, typename LogOp> void executeLfmmHs(EmuTime limit);
+	template<typename Mode, typename LogOp> void executeLrmmHs(EmuTime limit);
 
 	// Advance to the next access slot at or past the given time.
 	EmuTime getNextAccessSlot(EmuTime time) const {
@@ -429,6 +447,13 @@ private:
 	unsigned ASX{0}, ADX{0}, ANX{0}; // Temporary registers used in the VDP commands
 	                                 // Register ASX can be read (via status register 8/9)
 	uint8_t COL{0}, ARG{0}, CMD{0};
+
+	int SX_12P8{0}, SY_12P8{0}, ASX_12P8{0}, ASY_12P8{0}, VX{0}, VY{0};
+	unsigned WSX{0}, WEX{0}, WSY{0}, WEY{0};
+	unsigned ANY{0};			// Y-loop every 8 horizontal dots (use for LFMM)
+	unsigned ADY{0};			// Y-loop every 8 horizontal dots (use for LFMM)
+	unsigned ASA{0};			// source address (use for LFMM)
+	unsigned fontWidthCount{0};	// Font width counter (use for LFMM, LFMC)
 
 	/** The last executed command (for debugging only).
 	  * A copy of the above registers when the command starts. Remains valid

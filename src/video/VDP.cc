@@ -1150,7 +1150,7 @@ void VDP::changeRegister(uint8_t reg, uint8_t val, EmuTime time)
 			cpuExtendedVram = (val & 0x40) != 0;
 		}
 		// Pass command register writes to command engine.
-		if (reg < 47) {
+		if (reg < (hasECOM() ? 59 : 47)) {
 			cmdEngine->setCmdReg(reg - 32, val, time);
 		}
 		return;

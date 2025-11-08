@@ -125,6 +125,29 @@ static constexpr unsigned clipNY_2(unsigned SY, unsigned DY, unsigned NY, uint8_
 	return (ARG & VDPCmdEngine::DIY) ? std::min(NY, std::min(SY, DY) + 1) : NY;
 }
 
+static unsigned getYBitMask(bool evr) {
+	return evr ? 2047 : 1023;
+}
+
+static void setReadMask(EmuTime time, VDPVRAM &vram, bool evr, bool enable) {
+	if (!enable) {
+		vram.cmdReadWindow.disable(time);
+	} else if (evr) {
+		vram.cmdReadWindow.setMask(0x3FFFF, ~0u << 18, time);
+	} else {
+		vram.cmdReadWindow.setMask(0x1FFFF, ~0u << 17, time);
+	}
+}
+
+static void setWriteMask(EmuTime time, VDPVRAM &vram, bool evr, bool enable) {
+	if (!enable) {
+		vram.cmdWriteWindow.disable(time);
+	} else if (evr) {
+		vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
+	} else {
+		vram.cmdWriteWindow.setMask(0x1FFFF, ~0u << 17, time);
+	}
+}
 
 //struct IncrByteAddr4;
 //struct IncrByteAddr5;
@@ -164,8 +187,8 @@ struct Graphic4Mode
 	static constexpr uint8_t PIXELS_PER_BYTE = 2;
 	static constexpr uint8_t PIXELS_PER_BYTE_SHIFT = 1;
 	static constexpr unsigned PIXELS_PER_LINE = 256;
-	static unsigned addressOf(unsigned x, unsigned y, bool extVRAM);
-	static uint8_t point(const VDPVRAM& vram, unsigned x, unsigned y, bool extVRAM);
+	static unsigned addressOf(unsigned x, unsigned y, bool evr, bool extVRAM);
+	static uint8_t point(const VDPVRAM& vram, unsigned x, unsigned y, bool evr, bool extVRAM);
 	template<typename LogOp>
 	static void pset(EmuTime time, VDPVRAM& vram,
 		unsigned x, unsigned addr, uint8_t src, uint8_t color, LogOp op);
@@ -173,9 +196,11 @@ struct Graphic4Mode
 };
 
 inline unsigned Graphic4Mode::addressOf(
-	unsigned x, unsigned y, bool extVRAM)
+	unsigned x, unsigned y, bool evr, bool extVRAM)
 {
-	if (!extVRAM) [[likely]] {
+	if (evr) {
+		return ((y & 2047) << 7) | ((x & 255) >> 1);
+	} else if (!extVRAM) [[likely]] {
 		return ((y & 1023) << 7) | ((x & 255) >> 1);
 	} else {
 		return ((y &  511) << 7) | ((x & 255) >> 1) | 0x20000;
@@ -183,9 +208,9 @@ inline unsigned Graphic4Mode::addressOf(
 }
 
 inline uint8_t Graphic4Mode::point(
-	const VDPVRAM& vram, unsigned x, unsigned y, bool extVRAM)
+	const VDPVRAM& vram, unsigned x, unsigned y, bool evr, bool extVRAM)
 {
-	return (vram.cmdReadWindow.readNP(addressOf(x, y, extVRAM))
+	return (vram.cmdReadWindow.readNP(addressOf(x, y, evr, extVRAM))
 		>> (((~x) & 1) << 2)) & 15;
 }
 
@@ -216,8 +241,8 @@ struct Graphic5Mode
 	static constexpr uint8_t PIXELS_PER_BYTE = 4;
 	static constexpr uint8_t PIXELS_PER_BYTE_SHIFT = 2;
 	static constexpr unsigned PIXELS_PER_LINE = 512;
-	static unsigned addressOf(unsigned x, unsigned y, bool extVRAM);
-	static uint8_t point(const VDPVRAM& vram, unsigned x, unsigned y, bool extVRAM);
+	static unsigned addressOf(unsigned x, unsigned y, bool evr, bool extVRAM);
+	static uint8_t point(const VDPVRAM& vram, unsigned x, unsigned y, bool evr, bool extVRAM);
 	template<typename LogOp>
 	static void pset(EmuTime time, VDPVRAM& vram,
 		unsigned x, unsigned addr, uint8_t src, uint8_t color, LogOp op);
@@ -225,9 +250,11 @@ struct Graphic5Mode
 };
 
 inline unsigned Graphic5Mode::addressOf(
-	unsigned x, unsigned y, bool extVRAM)
+	unsigned x, unsigned y, bool evr, bool extVRAM)
 {
-	if (!extVRAM) [[likely]] {
+	if (evr) {
+		return ((y & 2047) << 7) | ((x & 511) >> 2);
+	} else if (!extVRAM) [[likely]] {
 		return ((y & 1023) << 7) | ((x & 511) >> 2);
 	} else {
 		return ((y &  511) << 7) | ((x & 511) >> 2) | 0x20000;
@@ -235,9 +262,9 @@ inline unsigned Graphic5Mode::addressOf(
 }
 
 inline uint8_t Graphic5Mode::point(
-	const VDPVRAM& vram, unsigned x, unsigned y, bool extVRAM)
+	const VDPVRAM& vram, unsigned x, unsigned y, bool evr, bool extVRAM)
 {
-	return (vram.cmdReadWindow.readNP(addressOf(x, y, extVRAM))
+	return (vram.cmdReadWindow.readNP(addressOf(x, y, evr, extVRAM))
 		>> (((~x) & 3) << 1)) & 3;
 }
 
@@ -270,8 +297,8 @@ struct Graphic6Mode
 	static constexpr uint8_t PIXELS_PER_BYTE = 2;
 	static constexpr uint8_t PIXELS_PER_BYTE_SHIFT = 1;
 	static constexpr unsigned PIXELS_PER_LINE = 512;
-	static unsigned addressOf(unsigned x, unsigned y, bool extVRAM);
-	static uint8_t point(const VDPVRAM& vram, unsigned x, unsigned y, bool extVRAM);
+	static unsigned addressOf(unsigned x, unsigned y, bool evr, bool extVRAM);
+	static uint8_t point(const VDPVRAM& vram, unsigned x, unsigned y, bool evr, bool extVRAM);
 	template<typename LogOp>
 	static void pset(EmuTime time, VDPVRAM& vram,
 		unsigned x, unsigned addr, uint8_t src, uint8_t color, LogOp op);
@@ -279,9 +306,11 @@ struct Graphic6Mode
 };
 
 inline unsigned Graphic6Mode::addressOf(
-	unsigned x, unsigned y, bool extVRAM)
+	unsigned x, unsigned y, bool evr, bool extVRAM)
 {
-	if (!extVRAM) [[likely]] {
+	if (evr) {
+		return ((x & 2) << 15) | ((y & 511) << 7) | ((x & 511) >> 2) | ((y & 512) << 8);
+	} else if (!extVRAM) [[likely]] {
 		return ((x & 2) << 15) | ((y & 511) << 7) | ((x & 511) >> 2);
 	} else {
 		return 0x20000         | ((y & 511) << 7) | ((x & 511) >> 2);
@@ -289,9 +318,9 @@ inline unsigned Graphic6Mode::addressOf(
 }
 
 inline uint8_t Graphic6Mode::point(
-	const VDPVRAM& vram, unsigned x, unsigned y, bool extVRAM)
+	const VDPVRAM& vram, unsigned x, unsigned y, bool evr, bool extVRAM)
 {
-	return (vram.cmdReadWindow.readNP(addressOf(x, y, extVRAM))
+	return (vram.cmdReadWindow.readNP(addressOf(x, y, evr, extVRAM))
 		>> (((~x) & 1) << 2)) & 15;
 }
 
@@ -322,8 +351,8 @@ struct Graphic7Mode
 	static constexpr uint8_t PIXELS_PER_BYTE = 1;
 	static constexpr uint8_t PIXELS_PER_BYTE_SHIFT = 0;
 	static constexpr unsigned PIXELS_PER_LINE = 256;
-	static unsigned addressOf(unsigned x, unsigned y, bool extVRAM);
-	static uint8_t point(const VDPVRAM& vram, unsigned x, unsigned y, bool extVRAM);
+	static unsigned addressOf(unsigned x, unsigned y, bool evr, bool extVRAM);
+	static uint8_t point(const VDPVRAM& vram, unsigned x, unsigned y, bool evr, bool extVRAM);
 	template<typename LogOp>
 	static void pset(EmuTime time, VDPVRAM& vram,
 		unsigned x, unsigned addr, uint8_t src, uint8_t color, LogOp op);
@@ -331,9 +360,11 @@ struct Graphic7Mode
 };
 
 inline unsigned Graphic7Mode::addressOf(
-	unsigned x, unsigned y, bool extVRAM)
+	unsigned x, unsigned y, bool evr, bool extVRAM)
 {
-	if (!extVRAM) [[likely]] {
+	if (evr) {
+		return ((x & 1) << 16) | ((y & 511) << 7) | ((x & 255) >> 1) | ((y & 512) << 8);
+	} else if (!extVRAM) [[likely]] {
 		return ((x & 1) << 16) | ((y & 511) << 7) | ((x & 255) >> 1);
 	} else {
 		return 0x20000         | ((y & 511) << 7) | ((x & 255) >> 1);
@@ -341,9 +372,9 @@ inline unsigned Graphic7Mode::addressOf(
 }
 
 inline uint8_t Graphic7Mode::point(
-	const VDPVRAM& vram, unsigned x, unsigned y, bool extVRAM)
+	const VDPVRAM& vram, unsigned x, unsigned y, bool evr, bool extVRAM)
 {
-	return vram.cmdReadWindow.readNP(addressOf(x, y, extVRAM));
+	return vram.cmdReadWindow.readNP(addressOf(x, y, evr, extVRAM));
 }
 
 template<typename LogOp>
@@ -372,8 +403,8 @@ struct NonBitmapMode
 	static constexpr uint8_t PIXELS_PER_BYTE = 1;
 	static constexpr uint8_t PIXELS_PER_BYTE_SHIFT = 0;
 	static constexpr unsigned PIXELS_PER_LINE = 256;
-	static unsigned addressOf(unsigned x, unsigned y, bool extVRAM);
-	static uint8_t point(const VDPVRAM& vram, unsigned x, unsigned y, bool extVRAM);
+	static unsigned addressOf(unsigned x, unsigned y, bool evr, bool extVRAM);
+	static uint8_t point(const VDPVRAM& vram, unsigned x, unsigned y, bool evr, bool extVRAM);
 	template<typename LogOp>
 	static void pset(EmuTime time, VDPVRAM& vram,
 		unsigned x, unsigned addr, uint8_t src, uint8_t color, LogOp op);
@@ -381,9 +412,11 @@ struct NonBitmapMode
 };
 
 inline unsigned NonBitmapMode::addressOf(
-	unsigned x, unsigned y, bool extVRAM)
+	unsigned x, unsigned y, bool evr, bool extVRAM)
 {
-	if (!extVRAM) [[likely]] {
+	if (evr) {
+		return ((y & 1023) << 8) | (x & 255);
+	} else if (!extVRAM) [[likely]] {
 		return ((y & 511) << 8) | (x & 255);
 	} else {
 		return ((y & 255) << 8) | (x & 255) | 0x20000;
@@ -391,9 +424,9 @@ inline unsigned NonBitmapMode::addressOf(
 }
 
 inline uint8_t NonBitmapMode::point(
-	const VDPVRAM& vram, unsigned x, unsigned y, bool extVRAM)
+	const VDPVRAM& vram, unsigned x, unsigned y, bool evr, bool extVRAM)
 {
-	return vram.cmdReadWindow.readNP(addressOf(x, y, extVRAM));
+	return vram.cmdReadWindow.readNP(addressOf(x, y, evr, extVRAM));
 }
 
 template<typename LogOp>
@@ -414,7 +447,7 @@ inline uint8_t NonBitmapMode::duplicate(uint8_t color)
 struct IncrByteAddr4
 {
 	IncrByteAddr4(unsigned x, unsigned y, int /*tx*/)
-		: addr(Graphic4Mode::addressOf(x, y, false))
+		: addr(Graphic4Mode::addressOf(x, y, false, false))
 	{
 	}
 	[[nodiscard]] unsigned getAddr() const
@@ -433,7 +466,7 @@ private:
 struct IncrByteAddr5
 {
 	IncrByteAddr5(unsigned x, unsigned y, int /*tx*/)
-		: addr(Graphic5Mode::addressOf(x, y, false))
+		: addr(Graphic5Mode::addressOf(x, y, false, false))
 	{
 	}
 	[[nodiscard]] unsigned getAddr() const
@@ -452,7 +485,7 @@ private:
 struct IncrByteAddr7
 {
 	IncrByteAddr7(unsigned x, unsigned y, int tx)
-		: addr(Graphic7Mode::addressOf(x, y, false))
+		: addr(Graphic7Mode::addressOf(x, y, false, false))
 		, delta((tx > 0) ? 0x10000 : (0x10000 - 1))
 		, delta2((tx > 0) ? ( 0x10000 ^ (1 - 0x10000))
 		                  : (-0x10000 ^ (0x10000 - 1)))
@@ -488,7 +521,7 @@ struct IncrByteAddr6 : IncrByteAddr7
 struct IncrPixelAddr4
 {
 	IncrPixelAddr4(unsigned x, unsigned y, int tx)
-		: addr(Graphic4Mode::addressOf(x, y, false))
+		: addr(Graphic4Mode::addressOf(x, y, false, false))
 		, delta((tx == 1) ? (x & 1) : ((x & 1) - 1))
 	{
 	}
@@ -506,7 +539,7 @@ private:
 struct IncrPixelAddr5
 {
 	IncrPixelAddr5(unsigned x, unsigned y, int tx)
-		: addr(Graphic5Mode::addressOf(x, y, false))
+		: addr(Graphic5Mode::addressOf(x, y, false, false))
 		                       // x |  0 |  1 |  2 |  3
 		                       //-----------------------
 		, c1(-(signed(x) & 1)) //   |  0 | -1 |  0 | -1
@@ -533,7 +566,7 @@ private:
 struct IncrPixelAddr6
 {
 	IncrPixelAddr6(unsigned x, unsigned y, int tx)
-		: addr(Graphic6Mode::addressOf(x, y, false))
+		: addr(Graphic6Mode::addressOf(x, y, false, false))
 		, c1(-(signed(x) & 1))
 		, c3((tx == 1) ? unsigned(0x10000 ^ (1 - 0x10000))   // == -0x1FFFF
 		               : unsigned(-0x10000 ^ (0x10000 - 1))) // == -1
@@ -757,8 +790,8 @@ void VDPCmdEngine::startAbrt(EmuTime time)
   */
 void VDPCmdEngine::startPoint(EmuTime time)
 {
-	vram.cmdReadWindow.setMask(0x3FFFF, ~0u << 18, time);
-	vram.cmdWriteWindow.disable(time);
+	setReadMask(time, vram, vdp.hasEVR(), true);	//vram.cmdReadWindow.setMask(0x3FFFF, ~0u << 18, time);
+	setWriteMask(time, vram, vdp.hasEVR(), false);	//vram.cmdWriteWindow.disable(time);
 	nextAccessSlot(time);
 	setStatusChangeTime(EmuTime::zero()); // will finish soon
 }
@@ -770,7 +803,7 @@ void VDPCmdEngine::executePoint(EmuTime limit)
 
 	bool srcExt  = (ARG & MXS) != 0;
 	if (bool doPoint = !srcExt || hasExtendedVRAM; doPoint) [[likely]] {
-		COL = Mode::point(vram, SX, SY, srcExt);
+		COL = Mode::point(vram, SX, SY, vdp.isEVR(), srcExt);
 	} else {
 		COL = 0xFF;
 	}
@@ -780,10 +813,10 @@ void VDPCmdEngine::executePoint(EmuTime limit)
 template<typename Mode>
 void VDPCmdEngine::startPointHs(EmuTime time)
 {
-	vram.cmdReadWindow.setMask(0x3FFFF, ~0u << 18, time);
-	vram.cmdWriteWindow.disable(time);
+	setReadMask(time, vram, vdp.hasEVR(), true);	//vram.cmdReadWindow.setMask(0x3FFFF, ~0u << 18, time);
+	setWriteMask(time, vram, vdp.hasEVR(), false);	//vram.cmdWriteWindow.disable(time);
 	bool srcExt  = (ARG & MXS) != 0;
-	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitPoint, checkCache(false, Mode::addressOf(SX, SY, srcExt)));
+	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitPoint, checkCache(false, Mode::addressOf(SX, SY, vdp.isEVR(), srcExt)));
 	setStatusChangeTime(EmuTime::zero()); // will finish soon
 }
 
@@ -794,7 +827,7 @@ void VDPCmdEngine::executePointHs(EmuTime limit)
 
 	bool srcExt  = (ARG & MXS) != 0;
 	if (bool doPoint = !srcExt || hasExtendedVRAM; doPoint) [[likely]] {
-		COL = Mode::point(vram, SX, SY, srcExt);
+		COL = Mode::point(vram, SX, SY, vdp.isEVR(), srcExt);
 	} else {
 		COL = 0xFF;
 	}
@@ -805,8 +838,8 @@ void VDPCmdEngine::executePointHs(EmuTime limit)
   */
 void VDPCmdEngine::startPset(EmuTime time)
 {
-	vram.cmdReadWindow.disable(time);
-	vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
+	setReadMask(time, vram, vdp.hasEVR(), false);	//vram.cmdReadWindow.disable(time);
+	setWriteMask(time, vram, vdp.hasEVR(), true);	//vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
 	nextAccessSlot(time);
 	setStatusChangeTime(EmuTime::zero()); // will finish soon
 	phase = 0;
@@ -817,7 +850,7 @@ void VDPCmdEngine::executePset(EmuTime limit)
 {
 	bool dstExt = (ARG & MXD) != 0;
 	bool doPset = !dstExt || hasExtendedVRAM;
-	unsigned addr = Mode::addressOf(DX, DY, dstExt);
+	unsigned addr = Mode::addressOf(DX, DY, vdp.isEVR(), dstExt);
 
 	switch (phase) {
 	case 0:
@@ -843,10 +876,10 @@ void VDPCmdEngine::executePset(EmuTime limit)
 template<typename Mode>
 void VDPCmdEngine::startPsetHs(EmuTime time)
 {
-	vram.cmdReadWindow.disable(time);
-	vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
+	setReadMask(time, vram, vdp.hasEVR(), false);	//vram.cmdReadWindow.disable(time);
+	setWriteMask(time, vram, vdp.hasEVR(), true);	//vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
 	bool dstExt = (ARG & MXD) != 0;
-	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitPset, checkCache(false, Mode::addressOf(DX, DY, dstExt)));
+	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitPset, checkCache(false, Mode::addressOf(DX, DY, vdp.isEVR(), dstExt)));
 	setStatusChangeTime(EmuTime::zero()); // will finish soon
 	phase = 0;
 }
@@ -856,7 +889,7 @@ void VDPCmdEngine::executePsetHs(EmuTime limit)
 {
 	bool dstExt = (ARG & MXD) != 0;
 	bool doPset = !dstExt || hasExtendedVRAM;
-	unsigned addr = Mode::addressOf(DX, DY, dstExt);
+	unsigned addr = Mode::addressOf(DX, DY, vdp.isEVR(), dstExt);
 
 	switch (phase) {
 	case 0:
@@ -864,7 +897,7 @@ void VDPCmdEngine::executePsetHs(EmuTime limit)
 		if (doPset) [[likely]] {
 			tmpDst = vram.cmdWriteWindow.readNP(addr);
 		}
-		nextAccessSlotHs(1, vdp.isHS() ? 0 : waitPset, checkCache(true, Mode::addressOf(DX, DY, dstExt)));
+		nextAccessSlotHs(1, vdp.isHS() ? 0 : waitPset, checkCache(true, Mode::addressOf(DX, DY, vdp.isEVR(), dstExt)));
 		[[fallthrough]];
 	case 1:
 		if (engineTime >= limit) [[unlikely]] { phase = 1; break; }
@@ -883,8 +916,8 @@ void VDPCmdEngine::executePsetHs(EmuTime limit)
   */
 void VDPCmdEngine::startSrch(EmuTime time)
 {
-	vram.cmdReadWindow.setMask(0x3FFFF, ~0u << 18, time);
-	vram.cmdWriteWindow.disable(time);
+	setReadMask(time, vram, vdp.hasEVR(), true);	//vram.cmdReadWindow.setMask(0x3FFFF, ~0u << 18, time);
+	setWriteMask(time, vram, vdp.hasEVR(), false);	//vram.cmdWriteWindow.disable(time);
 	ASX = SX;
 	nextAccessSlot(time);
 	setStatusChangeTime(EmuTime::zero()); // we can find it any moment
@@ -906,7 +939,7 @@ void VDPCmdEngine::executeSrch(EmuTime limit)
 	while (!calculator.limitReached()) {
 		auto p = [&] -> uint8_t {
 			if (doPoint) [[likely]] {
-				return Mode::point(vram, ASX, SY, srcExt);
+				return Mode::point(vram, ASX, SY, vdp.isEVR(), srcExt);
 			} else {
 				return 0xFF;
 			}
@@ -930,11 +963,11 @@ void VDPCmdEngine::executeSrch(EmuTime limit)
 template<typename Mode>
 void VDPCmdEngine::startSrchHs(EmuTime time)
 {
-	vram.cmdReadWindow.setMask(0x3FFFF, ~0u << 18, time);
-	vram.cmdWriteWindow.disable(time);
+	setReadMask(time, vram, vdp.hasEVR(), true);	//vram.cmdReadWindow.setMask(0x3FFFF, ~0u << 18, time);
+	setWriteMask(time, vram, vdp.hasEVR(), false);	//vram.cmdWriteWindow.disable(time);
 	ASX = SX;
 	bool srcExt  = (ARG & MXS) != 0;
-	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitSrch, checkCache(false, Mode::addressOf(ASX, SY, srcExt)));
+	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitSrch, checkCache(false, Mode::addressOf(ASX, SY, vdp.isEVR(), srcExt)));
 	setStatusChangeTime(EmuTime::zero()); // we can find it any moment
 }
 
@@ -954,7 +987,7 @@ void VDPCmdEngine::executeSrchHs(EmuTime limit)
 	while (!calculator.limitReached()) {
 		auto p = [&] -> uint8_t {
 			if (doPoint) [[likely]] {
-				return Mode::point(vram, ASX, SY, srcExt);
+				return Mode::point(vram, ASX, SY, vdp.isEVR(), srcExt);
 			} else {
 				return 0xFF;
 			}
@@ -972,7 +1005,7 @@ void VDPCmdEngine::executeSrchHs(EmuTime limit)
 			commandDone(calculator.getTime());
 			break;
 		}
-		calculator.nextHs(1, vdp.isHS() ? 0 : waitSrch, checkCache(false, Mode::addressOf(ASX, SY, srcExt)));
+		calculator.nextHs(1, vdp.isHS() ? 0 : waitSrch, checkCache(false, Mode::addressOf(ASX, SY, vdp.isEVR(), srcExt)));
 	}
 	engineTime = calculator.getTime();
 }
@@ -981,9 +1014,9 @@ void VDPCmdEngine::executeSrchHs(EmuTime limit)
   */
 void VDPCmdEngine::startLine(EmuTime time)
 {
-	vram.cmdReadWindow.disable(time);
-	vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
-	NY &= 1023;
+	setReadMask(time, vram, vdp.hasEVR(), false);	//vram.cmdReadWindow.disable(time);
+	setWriteMask(time, vram, vdp.hasEVR(), true);	//vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
+	NY &= getYBitMask(vdp.isEVR());
 	ASX = ((NX - 1) >> 1);
 	ADX = DX;
 	ANX = 0;
@@ -1001,7 +1034,7 @@ void VDPCmdEngine::executeLine(EmuTime limit)
 	int TY = (ARG & DIY) ? -1 : 1;
 	bool dstExt = (ARG & MXD) != 0;
 	bool doPset = !dstExt || hasExtendedVRAM;
-	unsigned addr = Mode::addressOf(ADX, DY, dstExt);
+	unsigned addr = Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt);
 	auto calculator = getSlotCalculator(limit);
 
 	switch (phase) {
@@ -1066,7 +1099,7 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 				break;
 			}
 		}
-		addr = Mode::addressOf(ADX, DY, dstExt);
+		addr = Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt);
 		calculator.next(delta);
 		goto loop;
 	}
@@ -1079,14 +1112,14 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 template<typename Mode>
 void VDPCmdEngine::startLineHs(EmuTime time)
 {
-	vram.cmdReadWindow.disable(time);
-	vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
-	NY &= 1023;
+	setReadMask(time, vram, vdp.hasEVR(), false);	//vram.cmdReadWindow.disable(time);
+	setWriteMask(time, vram, vdp.hasEVR(), true);	//vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
+	NY &= getYBitMask(vdp.isEVR());
 	ASX = ((NX - 1) >> 1);
 	ADX = DX;
 	ANX = 0;
 	bool dstExt = (ARG & MXD) != 0;
-	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitLine, checkCache(false, Mode::addressOf(ADX, DY, dstExt)));
+	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitLine, checkCache(false, Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt)));
 	setStatusChangeTime(EmuTime::zero()); // TODO can still be optimized
 	phase = 0;
 }
@@ -1100,7 +1133,7 @@ void VDPCmdEngine::executeLineHs(EmuTime limit)
 	int TY = (ARG & DIY) ? -1 : 1;
 	bool dstExt = (ARG & MXD) != 0;
 	bool doPset = !dstExt || hasExtendedVRAM;
-	unsigned addr = Mode::addressOf(ADX, DY, dstExt);
+	unsigned addr = Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt);
 	auto calculator = getSlotCalculator(limit);
 
 	switch (phase) {
@@ -1109,7 +1142,7 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 		if (doPset) [[likely]] {
 			tmpDst = vram.cmdWriteWindow.readNP(addr);
 		}
-		calculator.nextHs(1, vdp.isHS() ? 0 : waitLine, checkCache(true, Mode::addressOf(ADX, DY, dstExt)));
+		calculator.nextHs(1, vdp.isHS() ? 0 : waitLine, checkCache(true, Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt)));
 		[[fallthrough]];
 	case 1: {
 		if (calculator.limitReached()) [[unlikely]] { phase = 1; break; }
@@ -1166,7 +1199,7 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 				break;
 			}
 		}
-		addr = Mode::addressOf(ADX, DY, dstExt);
+		addr = Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt);
 		calculator.nextHs(1, vdp.isHS() ? 0 : waitLine, checkCache(false, addr));
 		goto loop;
 	}
@@ -1181,9 +1214,9 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 template<typename Mode>
 void VDPCmdEngine::startLmmv(EmuTime time)
 {
-	vram.cmdReadWindow.disable(time);
-	vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
-	NY &= 1023;
+	setReadMask(time, vram, vdp.hasEVR(), false);	//vram.cmdReadWindow.disable(time);
+	setWriteMask(time, vram, vdp.hasEVR(), true);	//vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
+	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_pixel<Mode>(DX, NX, ARG);
 	unsigned tmpNY = clipNY_1(DY, NY, ARG);
 	ADX = DX;
@@ -1196,7 +1229,7 @@ void VDPCmdEngine::startLmmv(EmuTime time)
 template<typename Mode, typename LogOp>
 void VDPCmdEngine::executeLmmv(EmuTime limit)
 {
-	NY &= 1023;
+	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_pixel<Mode>(DX, NX, ARG);
 	unsigned tmpNY = clipNY_1(DY, NY, ARG);
 	int TX = (ARG & DIX) ? -1 : 1;
@@ -1205,7 +1238,7 @@ void VDPCmdEngine::executeLmmv(EmuTime limit)
 	uint8_t CL = COL & Mode::COLOR_MASK;
 	bool dstExt = (ARG & MXD) != 0;
 	bool doPset = !dstExt || hasExtendedVRAM;
-	unsigned addr = Mode::addressOf(ADX, DY, dstExt);
+	unsigned addr = Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt);
 	auto calculator = getSlotCalculator(limit);
 
 	switch (phase) {
@@ -1233,7 +1266,7 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 				break;
 			}
 		}
-		addr = Mode::addressOf(ADX, DY, dstExt);
+		addr = Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt);
 		calculator.next(delta);
 		goto loop;
 	}
@@ -1303,15 +1336,15 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 template<typename Mode>
 void VDPCmdEngine::startLmmvHs(EmuTime time)
 {
-	vram.cmdReadWindow.disable(time);
-	vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
-	NY &= 1023;
+	setReadMask(time, vram, vdp.hasEVR(), false);	//vram.cmdReadWindow.disable(time);
+	setWriteMask(time, vram, vdp.hasEVR(), true);	//vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
+	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_pixel<Mode>(DX, NX, ARG);
 	unsigned tmpNY = clipNY_1(DY, NY, ARG);
 	ADX = DX;
 	ANX = tmpNX;
 	bool dstExt = (ARG & MXD) != 0;
-	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitLmmv, checkCache(false, Mode::addressOf(ADX, DY, dstExt)));
+	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitLmmv, checkCache(false, Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt)));
 	calcFinishTime(tmpNX, tmpNY, 72 + 24);
 	phase = 0;
 }
@@ -1319,7 +1352,7 @@ void VDPCmdEngine::startLmmvHs(EmuTime time)
 template<typename Mode, typename LogOp>
 void VDPCmdEngine::executeLmmvHs(EmuTime limit)
 {
-	NY &= 1023;
+	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_pixel<Mode>(DX, NX, ARG);
 	unsigned tmpNY = clipNY_1(DY, NY, ARG);
 	int TX = (ARG & DIX) ? -1 : 1;
@@ -1328,7 +1361,7 @@ void VDPCmdEngine::executeLmmvHs(EmuTime limit)
 	uint8_t CL = COL & Mode::COLOR_MASK;
 	bool dstExt = (ARG & MXD) != 0;
 	bool doPset = !dstExt || hasExtendedVRAM;
-	unsigned addr = Mode::addressOf(ADX, DY, dstExt);
+	unsigned addr = Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt);
 	auto calculator = getSlotCalculator(limit);
 
 	switch (phase) {
@@ -1337,7 +1370,7 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 		if (doPset) [[likely]] {
 			tmpDst = vram.cmdWriteWindow.readNP(addr);
 		}
-		calculator.nextHs(1, vdp.isHS() ? 0 : waitLmmv, checkCache(true, Mode::addressOf(ADX, DY, dstExt)));
+		calculator.nextHs(1, vdp.isHS() ? 0 : waitLmmv, checkCache(true, Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt)));
 		[[fallthrough]];
 	case 1: {
 		if (calculator.limitReached()) [[unlikely]] { phase = 1; break; }
@@ -1355,7 +1388,7 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 				break;
 			}
 		}
-		addr = Mode::addressOf(ADX, DY, dstExt);
+		addr = Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt);
 		calculator.nextHs(1, vdp.isHS() ? 0 : waitLmmv, checkCache(false, addr));
 		goto loop;
 	}
@@ -1371,9 +1404,9 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 template<typename Mode>
 void VDPCmdEngine::startLmmm(EmuTime time)
 {
-	vram.cmdReadWindow .setMask(0x3FFFF, ~0u << 18, time);
-	vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
-	NY &= 1023;
+	setReadMask(time, vram, vdp.hasEVR(), true);	//vram.cmdReadWindow .setMask(0x3FFFF, ~0u << 18, time);
+	setWriteMask(time, vram, vdp.hasEVR(), true);	//vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
+	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_2_pixel<Mode>(SX, DX, NX, ARG);
 	unsigned tmpNY = clipNY_2(SY, DY, NY, ARG);
 	ASX = SX;
@@ -1387,7 +1420,7 @@ void VDPCmdEngine::startLmmm(EmuTime time)
 template<typename Mode, typename LogOp>
 void VDPCmdEngine::executeLmmm(EmuTime limit)
 {
-	NY &= 1023;
+	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_2_pixel<Mode>(SX, DX, NX, ARG);
 	unsigned tmpNY = clipNY_2(SY, DY, NY, ARG);
 	int TX = (ARG & DIX) ? -1 : 1;
@@ -1397,14 +1430,14 @@ void VDPCmdEngine::executeLmmm(EmuTime limit)
 	bool dstExt  = (ARG & MXD) != 0;
 	bool doPoint = !srcExt || hasExtendedVRAM;
 	bool doPset  = !dstExt || hasExtendedVRAM;
-	unsigned dstAddr = Mode::addressOf(ADX, DY, dstExt);
+	unsigned dstAddr = Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt);
 	auto calculator = getSlotCalculator(limit);
 
 	switch (phase) {
 	case 0:
 loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 		if (doPoint) [[likely]] {
-		       tmpSrc = Mode::point(vram, ASX, SY, srcExt);
+		       tmpSrc = Mode::point(vram, ASX, SY, vdp.isEVR(), srcExt);
 		} else {
 		       tmpSrc = 0xFF;
 		}
@@ -1434,7 +1467,7 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 				break;
 			}
 		}
-		dstAddr = Mode::addressOf(ADX, DY, dstExt);
+		dstAddr = Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt);
 		calculator.next(delta);
 		goto loop;
 	}
@@ -1451,7 +1484,7 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 			if (doPset) [[likely]] {
 				auto p = [&] -> uint8_t {
 					if (doPoint) [[likely]] {
-						return Mode::point(vram, ASX, SY, srcExt);
+						return Mode::point(vram, ASX, SY, vdp.isEVR(), srcExt);
 					} else {
 						return 0xFF;
 					}
@@ -1518,16 +1551,16 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 template<typename Mode>
 void VDPCmdEngine::startLmmmHs(EmuTime time)
 {
-	vram.cmdReadWindow .setMask(0x3FFFF, ~0u << 18, time);
-	vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
-	NY &= 1023;
+	setReadMask(time, vram, vdp.hasEVR(), true);	//vram.cmdReadWindow .setMask(0x3FFFF, ~0u << 18, time);
+	setWriteMask(time, vram, vdp.hasEVR(), true);	//vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
+	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_2_pixel<Mode>(SX, DX, NX, ARG);
 	unsigned tmpNY = clipNY_2(SY, DY, NY, ARG);
 	ASX = SX;
 	ADX = DX;
 	ANX = tmpNX;
 	bool srcExt  = (ARG & MXS) != 0;
-	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitLmmm, checkCache(false, Mode::addressOf(ASX, SY, srcExt)));
+	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitLmmm, checkCache(false, Mode::addressOf(ASX, SY, vdp.isEVR(), srcExt)));
 	calcFinishTime(tmpNX, tmpNY, 64 + 32 + 24);
 	phase = 0;
 }
@@ -1535,7 +1568,7 @@ void VDPCmdEngine::startLmmmHs(EmuTime time)
 template<typename Mode, typename LogOp>
 void VDPCmdEngine::executeLmmmHs(EmuTime limit)
 {
-	NY &= 1023;
+	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_2_pixel<Mode>(SX, DX, NX, ARG);
 	unsigned tmpNY = clipNY_2(SY, DY, NY, ARG);
 	int TX = (ARG & DIX) ? -1 : 1;
@@ -1545,14 +1578,14 @@ void VDPCmdEngine::executeLmmmHs(EmuTime limit)
 	bool dstExt  = (ARG & MXD) != 0;
 	bool doPoint = !srcExt || hasExtendedVRAM;
 	bool doPset  = !dstExt || hasExtendedVRAM;
-	unsigned dstAddr = Mode::addressOf(ADX, DY, dstExt);
+	unsigned dstAddr = Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt);
 	auto calculator = getSlotCalculator(limit);
 
 	switch (phase) {
 	case 0:
 loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 		if (doPoint) [[likely]] {
-		       tmpSrc = Mode::point(vram, ASX, SY, srcExt);
+		       tmpSrc = Mode::point(vram, ASX, SY, vdp.isEVR(), srcExt);
 		} else {
 		       tmpSrc = 0xFF;
 		}
@@ -1584,8 +1617,8 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 				break;
 			}
 		}
-		dstAddr = Mode::addressOf(ADX, DY, dstExt);
-		calculator.nextHs(1, vdp.isHS() ? 0 : waitLmmm, checkCache(false, Mode::addressOf(ASX, SY, srcExt)));
+		dstAddr = Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt);
+		calculator.nextHs(1, vdp.isHS() ? 0 : waitLmmm, checkCache(false, Mode::addressOf(ASX, SY, vdp.isEVR(), srcExt)));
 		goto loop;
 	}
 	default:
@@ -1600,9 +1633,9 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 template<typename Mode>
 void VDPCmdEngine::startLmcm(EmuTime time)
 {
-	vram.cmdReadWindow.setMask(0x3FFFF, ~0u << 18, time);
-	vram.cmdWriteWindow.disable(time);
-	NY &= 1023;
+	setReadMask(time, vram, vdp.hasEVR(), true);	//vram.cmdReadWindow.setMask(0x3FFFF, ~0u << 18, time);
+	setWriteMask(time, vram, vdp.hasEVR(), false);	//vram.cmdWriteWindow.disable(time);
+	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_pixel<Mode>(SX, NX, ARG);
 	ASX = SX;
 	ANX = tmpNX;
@@ -1618,7 +1651,7 @@ void VDPCmdEngine::executeLmcm(EmuTime limit)
 	if (!transfer) return;
 	if (engineTime >= limit) [[unlikely]] return;
 
-	NY &= 1023;
+	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_pixel<Mode>(SX, NX, ARG);
 	unsigned tmpNY = clipNY_1(SY, NY, ARG);
 	int TX = (ARG & DIX) ? -1 : 1;
@@ -1630,7 +1663,7 @@ void VDPCmdEngine::executeLmcm(EmuTime limit)
 	//  buffer it, and on a CPU-IO-read start the next read (just like how
 	//  regular reading from VRAM works).
 	if (bool doPoint = !srcExt || hasExtendedVRAM; doPoint) [[likely]] {
-		COL = Mode::point(vram, ASX, SY, srcExt);
+		COL = Mode::point(vram, ASX, SY, vdp.isEVR(), srcExt);
 	} else {
 		COL = 0xFF;
 	}
@@ -1649,16 +1682,16 @@ void VDPCmdEngine::executeLmcm(EmuTime limit)
 template<typename Mode>
 void VDPCmdEngine::startLmcmHs(EmuTime time)
 {
-	vram.cmdReadWindow.setMask(0x3FFFF, ~0u << 18, time);
-	vram.cmdWriteWindow.disable(time);
-	NY &= 1023;
+	setReadMask(time, vram, vdp.hasEVR(), true);	//vram.cmdReadWindow.setMask(0x3FFFF, ~0u << 18, time);
+	setWriteMask(time, vram, vdp.hasEVR(), false);	//vram.cmdWriteWindow.disable(time);
+	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_pixel<Mode>(SX, NX, ARG);
 	ASX = SX;
 	ANX = tmpNX;
 	transfer = true;
 	status |= TR;
 	bool srcExt  = (ARG & MXS) != 0;
-	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitLmcm, checkCache(false, Mode::addressOf(ASX, SY, srcExt)));
+	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitLmcm, checkCache(false, Mode::addressOf(ASX, SY, vdp.isEVR(), srcExt)));
 	setStatusChangeTime(EmuTime::zero());
 }
 
@@ -1668,7 +1701,7 @@ void VDPCmdEngine::executeLmcmHs(EmuTime limit)
 	if (!transfer) return;
 	if (engineTime >= limit) [[unlikely]] return;
 
-	NY &= 1023;
+	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_pixel<Mode>(SX, NX, ARG);
 	unsigned tmpNY = clipNY_1(SY, NY, ARG);
 	int TX = (ARG & DIX) ? -1 : 1;
@@ -1680,7 +1713,7 @@ void VDPCmdEngine::executeLmcmHs(EmuTime limit)
 	//  buffer it, and on a CPU-IO-read start the next read (just like how
 	//  regular reading from VRAM works).
 	if (bool doPoint = !srcExt || hasExtendedVRAM; doPoint) [[likely]] {
-		COL = Mode::point(vram, ASX, SY, srcExt);
+		COL = Mode::point(vram, ASX, SY, vdp.isEVR(), srcExt);
 	} else {
 		COL = 0xFF;
 	}
@@ -1701,9 +1734,9 @@ void VDPCmdEngine::executeLmcmHs(EmuTime limit)
 template<typename Mode>
 void VDPCmdEngine::startLmmc(EmuTime time)
 {
-	vram.cmdReadWindow.disable(time);
-	vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
-	NY &= 1023;
+	setReadMask(time, vram, vdp.hasEVR(), false);	//vram.cmdReadWindow.disable(time);
+	setWriteMask(time, vram, vdp.hasEVR(), true);	//vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
+	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_pixel<Mode>(DX, NX, ARG);
 	ADX = DX;
 	ANX = tmpNX;
@@ -1717,7 +1750,7 @@ void VDPCmdEngine::startLmmc(EmuTime time)
 template<typename Mode, typename LogOp>
 void VDPCmdEngine::executeLmmc(EmuTime limit)
 {
-	NY &= 1023;
+	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_pixel<Mode>(DX, NX, ARG);
 	unsigned tmpNY = clipNY_1(DY, NY, ARG);
 	int TX = (ARG & DIX) ? -1 : 1;
@@ -1734,7 +1767,7 @@ void VDPCmdEngine::executeLmmc(EmuTime limit)
 		//    - in next access slot read
 		//    - in next access slot write
 		if (doPset) [[likely]] {
-			unsigned addr = Mode::addressOf(ADX, DY, dstExt);
+			unsigned addr = Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt);
 			tmpDst = vram.cmdWriteWindow.readNP(addr);
 			Mode::pset(limit, vram, ADX, addr,
 			           tmpDst, col, LogOp());
@@ -1760,9 +1793,9 @@ void VDPCmdEngine::executeLmmc(EmuTime limit)
 template<typename Mode>
 void VDPCmdEngine::startLmmcHs(EmuTime time)
 {
-	vram.cmdReadWindow.disable(time);
-	vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
-	NY &= 1023;
+	setReadMask(time, vram, vdp.hasEVR(), false);	//vram.cmdReadWindow.disable(time);
+	setWriteMask(time, vram, vdp.hasEVR(), true);	//vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
+	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_pixel<Mode>(DX, NX, ARG);
 	ADX = DX;
 	ANX = tmpNX;
@@ -1771,13 +1804,13 @@ void VDPCmdEngine::startLmmcHs(EmuTime time)
 	// Baltak Rampage: characters in greetings part are one pixel offset
 	status |= TR;
 	bool dstExt = (ARG & MXD) != 0;
-	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitLmmc, checkCache(true, Mode::addressOf(ADX, DY, dstExt)));
+	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitLmmc, checkCache(true, Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt)));
 }
 
 template<typename Mode, typename LogOp>
 void VDPCmdEngine::executeLmmcHs(EmuTime limit)
 {
-	NY &= 1023;
+	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_pixel<Mode>(DX, NX, ARG);
 	unsigned tmpNY = clipNY_1(DY, NY, ARG);
 	int TX = (ARG & DIX) ? -1 : 1;
@@ -1794,7 +1827,7 @@ void VDPCmdEngine::executeLmmcHs(EmuTime limit)
 		//    - in next access slot read
 		//    - in next access slot write
 		if (doPset) [[likely]] {
-			unsigned addr = Mode::addressOf(ADX, DY, dstExt);
+			unsigned addr = Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt);
 			tmpDst = vram.cmdWriteWindow.readNP(addr);
 			Mode::pset(limit, vram, ADX, addr,
 			           tmpDst, col, LogOp());
@@ -1822,9 +1855,9 @@ void VDPCmdEngine::executeLmmcHs(EmuTime limit)
 template<typename Mode>
 void VDPCmdEngine::startHmmv(EmuTime time)
 {
-	vram.cmdReadWindow.disable(time);
-	vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
-	NY &= 1023;
+	setReadMask(time, vram, vdp.hasEVR(), false);	//vram.cmdReadWindow.disable(time);
+	setWriteMask(time, vram, vdp.hasEVR(), true);	//vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
+	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_byte<Mode>(DX, NX, ARG);
 	unsigned tmpNY = clipNY_1(DY, NY, ARG);
 	ADX = DX;
@@ -1836,7 +1869,7 @@ void VDPCmdEngine::startHmmv(EmuTime time)
 template<typename Mode>
 void VDPCmdEngine::executeHmmv(EmuTime limit)
 {
-	NY &= 1023;
+	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_byte<Mode>(DX, NX, ARG);
 	unsigned tmpNY = clipNY_1(DY, NY, ARG);
 	int TX = (ARG & DIX)
@@ -1850,7 +1883,7 @@ void VDPCmdEngine::executeHmmv(EmuTime limit)
 
 	while (!calculator.limitReached()) {
 		if (doPset) [[likely]] {
-			vram.cmdWrite(Mode::addressOf(ADX, DY, dstExt),
+			vram.cmdWrite(Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt),
 			              COL, calculator.getTime());
 		}
 		ADX += TX;
@@ -1873,7 +1906,7 @@ void VDPCmdEngine::executeHmmv(EmuTime limit)
 		bool doPset = !dstExt || hasExtendedVRAM;
 		while (engineTime < limit) {
 			if (doPset) [[likely]] {
-				vram.cmdWrite(Mode::addressOf(ADX, DY, dstExt),
+				vram.cmdWrite(Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt),
 					      COL, engineTime);
 			}
 			engineTime += delta;
@@ -1924,22 +1957,22 @@ void VDPCmdEngine::executeHmmv(EmuTime limit)
 template<typename Mode>
 void VDPCmdEngine::startHmmvHs(EmuTime time)
 {
-	vram.cmdReadWindow.disable(time);
-	vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
-	NY &= 1023;
+	setReadMask(time, vram, vdp.hasEVR(), false);	//vram.cmdReadWindow.disable(time);
+	setWriteMask(time, vram, vdp.hasEVR(), true);	//vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
+	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_byte<Mode>(DX, NX, ARG);
 	unsigned tmpNY = clipNY_1(DY, NY, ARG);
 	ADX = DX;
 	ANX = tmpNX;
 	bool dstExt = (ARG & MXD) != 0;
-	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitHmmv, checkCache(true, Mode::addressOf(ADX, DY, dstExt)));
+	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitHmmv, checkCache(true, Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt)));
 	calcFinishTime(tmpNX, tmpNY, 48);
 }
 
 template<typename Mode>
 void VDPCmdEngine::executeHmmvHs(EmuTime limit)
 {
-	NY &= 1023;
+	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_byte<Mode>(DX, NX, ARG);
 	unsigned tmpNY = clipNY_1(DY, NY, ARG);
 	int TX = (ARG & DIX)
@@ -1953,7 +1986,7 @@ void VDPCmdEngine::executeHmmvHs(EmuTime limit)
 
 	while (!calculator.limitReached()) {
 		if (doPset) [[likely]] {
-			vram.cmdWrite(Mode::addressOf(ADX, DY, dstExt),
+			vram.cmdWrite(Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt),
 			              COL, calculator.getTime());
 		}
 		ADX += TX;
@@ -1966,7 +1999,7 @@ void VDPCmdEngine::executeHmmvHs(EmuTime limit)
 				break;
 			}
 		}
-		calculator.nextHs(1, vdp.isHS() ? 0 : waitHmmv, checkCache(true, Mode::addressOf(ADX, DY, dstExt)));
+		calculator.nextHs(1, vdp.isHS() ? 0 : waitHmmv, checkCache(true, Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt)));
 	}
 	engineTime = calculator.getTime();
 	calcFinishTime(tmpNX, tmpNY, 48);
@@ -1977,9 +2010,9 @@ void VDPCmdEngine::executeHmmvHs(EmuTime limit)
 template<typename Mode>
 void VDPCmdEngine::startHmmm(EmuTime time)
 {
-	vram.cmdReadWindow .setMask(0x3FFFF, ~0u << 18, time);
-	vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
-	NY &= 1023;
+	setReadMask(time, vram, vdp.hasEVR(), true);	//vram.cmdReadWindow .setMask(0x3FFFF, ~0u << 18, time);
+	setWriteMask(time, vram, vdp.hasEVR(), true);	//vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
+	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_2_byte<Mode>(SX, DX, NX, ARG);
 	unsigned tmpNY = clipNY_2(SY, DY, NY, ARG);
 	ASX = SX;
@@ -1993,7 +2026,7 @@ void VDPCmdEngine::startHmmm(EmuTime time)
 template<typename Mode>
 void VDPCmdEngine::executeHmmm(EmuTime limit)
 {
-	NY &= 1023;
+	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_2_byte<Mode>(SX, DX, NX, ARG);
 	unsigned tmpNY = clipNY_2(SY, DY, NY, ARG);
 	int TX = (ARG & DIX)
@@ -2011,7 +2044,7 @@ void VDPCmdEngine::executeHmmm(EmuTime limit)
 	case 0:
 loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 		if (doPoint) [[likely]] {
-			tmpSrc = vram.cmdReadWindow.readNP(Mode::addressOf(ASX, SY, srcExt));
+			tmpSrc = vram.cmdReadWindow.readNP(Mode::addressOf(ASX, SY, vdp.isEVR(), srcExt));
 		} else {
 			tmpSrc = 0xFF;
 		}
@@ -2020,7 +2053,7 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 	case 1: {
 		if (calculator.limitReached()) [[unlikely]] { phase = 1; break; }
 		if (doPset) [[likely]] {
-			vram.cmdWrite(Mode::addressOf(ADX, DY, dstExt),
+			vram.cmdWrite(Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt),
 			              tmpSrc, calculator.getTime());
 		}
 		ASX += TX; ADX += TX;
@@ -2050,12 +2083,12 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 			if (doPset) [[likely]] {
 				auto p = [&] -> uint8_t {
 					if (doPoint) [[likely]] {
-						return vram.cmdReadWindow.readNP(Mode::addressOf(ASX, SY, srcExt));
+						return vram.cmdReadWindow.readNP(Mode::addressOf(ASX, SY, vdp.isEVR(), srcExt));
 					} else {
 						return 0xFF;
 					}
 				}();
-				vram.cmdWrite(Mode::addressOf(ADX, DY, dstExt),
+				vram.cmdWrite(Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt),
 					      p, engineTime);
 			}
 			engineTime += delta;
@@ -2111,16 +2144,16 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 template<typename Mode>
 void VDPCmdEngine::startHmmmHs(EmuTime time)
 {
-	vram.cmdReadWindow .setMask(0x3FFFF, ~0u << 18, time);
-	vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
-	NY &= 1023;
+	setReadMask(time, vram, vdp.hasEVR(), true);	//vram.cmdReadWindow .setMask(0x3FFFF, ~0u << 18, time);
+	setWriteMask(time, vram, vdp.hasEVR(), true);	//vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
+	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_2_byte<Mode>(SX, DX, NX, ARG);
 	unsigned tmpNY = clipNY_2(SY, DY, NY, ARG);
 	ASX = SX;
 	ADX = DX;
 	ANX = tmpNX;
 	bool srcExt  = (ARG & MXS) != 0;
-	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitHmmm, checkCache(false, Mode::addressOf(ASX, SY, srcExt)));
+	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitHmmm, checkCache(false, Mode::addressOf(ASX, SY, vdp.isEVR(), srcExt)));
 	calcFinishTime(tmpNX, tmpNY, 24 + 64);
 	phase = 0;
 }
@@ -2128,7 +2161,7 @@ void VDPCmdEngine::startHmmmHs(EmuTime time)
 template<typename Mode>
 void VDPCmdEngine::executeHmmmHs(EmuTime limit)
 {
-	NY &= 1023;
+	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_2_byte<Mode>(SX, DX, NX, ARG);
 	unsigned tmpNY = clipNY_2(SY, DY, NY, ARG);
 	int TX = (ARG & DIX)
@@ -2146,16 +2179,16 @@ void VDPCmdEngine::executeHmmmHs(EmuTime limit)
 	case 0:
 loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 		if (doPoint) [[likely]] {
-			tmpSrc = vram.cmdReadWindow.readNP(Mode::addressOf(ASX, SY, srcExt));
+			tmpSrc = vram.cmdReadWindow.readNP(Mode::addressOf(ASX, SY, vdp.isEVR(), srcExt));
 		} else {
 			tmpSrc = 0xFF;
 		}
-		calculator.nextHs(1, vdp.isHS() ? 0 : waitHmmm, checkCache(true, Mode::addressOf(ADX, DY, dstExt)));
+		calculator.nextHs(1, vdp.isHS() ? 0 : waitHmmm, checkCache(true, Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt)));
 		[[fallthrough]];
 	case 1: {
 		if (calculator.limitReached()) [[unlikely]] { phase = 1; break; }
 		if (doPset) [[likely]] {
-			vram.cmdWrite(Mode::addressOf(ADX, DY, dstExt),
+			vram.cmdWrite(Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt),
 			              tmpSrc, calculator.getTime());
 		}
 		ASX += TX; ADX += TX;
@@ -2170,7 +2203,7 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 				break;
 			}
 		}
-		calculator.nextHs(1, vdp.isHS() ? 0 : waitHmmm, checkCache(false, Mode::addressOf(ASX, SY, dstExt)));
+		calculator.nextHs(1, vdp.isHS() ? 0 : waitHmmm, checkCache(false, Mode::addressOf(ASX, SY, vdp.isEVR(), dstExt)));
 		goto loop;
 	}
 	default:
@@ -2185,9 +2218,9 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 template<typename Mode>
 void VDPCmdEngine::startYmmm(EmuTime time)
 {
-	vram.cmdReadWindow .setMask(0x3FFFF, ~0u << 18, time);
-	vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
-	NY &= 1023;
+	setReadMask(time, vram, vdp.hasEVR(), true);	//vram.cmdReadWindow .setMask(0x3FFFF, ~0u << 18, time);
+	setWriteMask(time, vram, vdp.hasEVR(), true);	//vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
+	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_byte<Mode>(DX, 512, ARG);
 		// large enough so that it gets clipped
 	unsigned tmpNY = clipNY_2(SY, DY, NY, ARG);
@@ -2201,7 +2234,7 @@ void VDPCmdEngine::startYmmm(EmuTime time)
 template<typename Mode>
 void VDPCmdEngine::executeYmmm(EmuTime limit)
 {
-	NY &= 1023;
+	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_byte<Mode>(DX, 512, ARG);
 		// large enough so that it gets clipped
 	unsigned tmpNY = clipNY_2(SY, DY, NY, ARG);
@@ -2222,14 +2255,14 @@ void VDPCmdEngine::executeYmmm(EmuTime limit)
 loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 		if (doPset) [[likely]] {
 			tmpSrc = vram.cmdReadWindow.readNP(
-			       Mode::addressOf(ADX, SY, dstExt));
+			       Mode::addressOf(ADX, SY, vdp.isEVR(), dstExt));
 		}
 		calculator.next(Delta::D24);
 		[[fallthrough]];
 	case 1:
 		if (calculator.limitReached()) [[unlikely]] { phase = 1; break; }
 		if (doPset) [[likely]] {
-			vram.cmdWrite(Mode::addressOf(ADX, DY, dstExt),
+			vram.cmdWrite(Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt),
 			              tmpSrc, calculator.getTime());
 		}
 		ADX += TX;
@@ -2256,8 +2289,8 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 		while (engineTime < limit) {
 			if (doPset) [[likely]] {
 				uint8_t p = vram.cmdReadWindow.readNP(
-					      Mode::addressOf(ADX, SY, dstExt));
-				vram.cmdWrite(Mode::addressOf(ADX, DY, dstExt),
+					      Mode::addressOf(ADX, SY, vdp.isEVR(), dstExt));
+				vram.cmdWrite(Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt),
 					      p, engineTime);
 			}
 			engineTime += delta;
@@ -2311,16 +2344,16 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 template<typename Mode>
 void VDPCmdEngine::startYmmmHs(EmuTime time)
 {
-	vram.cmdReadWindow .setMask(0x3FFFF, ~0u << 18, time);
-	vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
-	NY &= 1023;
+	setReadMask(time, vram, vdp.hasEVR(), true);	//vram.cmdReadWindow .setMask(0x3FFFF, ~0u << 18, time);
+	setWriteMask(time, vram, vdp.hasEVR(), true);	//vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
+	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_byte<Mode>(DX, 512, ARG);
 		// large enough so that it gets clipped
 	unsigned tmpNY = clipNY_2(SY, DY, NY, ARG);
 	ADX = DX;
 	ANX = tmpNX;
 	bool dstExt = (ARG & MXD) != 0;
-	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitYmmm, checkCache(false, Mode::addressOf(ADX, SY, dstExt)));
+	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitYmmm, checkCache(false, Mode::addressOf(ADX, SY, vdp.isEVR(), dstExt)));
 	calcFinishTime(tmpNX, tmpNY, 24 + 40);
 	phase = 0;
 }
@@ -2328,7 +2361,7 @@ void VDPCmdEngine::startYmmmHs(EmuTime time)
 template<typename Mode>
 void VDPCmdEngine::executeYmmmHs(EmuTime limit)
 {
-	NY &= 1023;
+	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_byte<Mode>(DX, 512, ARG);
 		// large enough so that it gets clipped
 	unsigned tmpNY = clipNY_2(SY, DY, NY, ARG);
@@ -2349,14 +2382,14 @@ void VDPCmdEngine::executeYmmmHs(EmuTime limit)
 loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 		if (doPset) [[likely]] {
 			tmpSrc = vram.cmdReadWindow.readNP(
-			       Mode::addressOf(ADX, SY, dstExt));
+			       Mode::addressOf(ADX, SY, vdp.isEVR(), dstExt));
 		}
-		calculator.nextHs(1, vdp.isHS() ? 0 : waitYmmm, checkCache(true, Mode::addressOf(ADX, DY, dstExt)));
+		calculator.nextHs(1, vdp.isHS() ? 0 : waitYmmm, checkCache(true, Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt)));
 		[[fallthrough]];
 	case 1:
 		if (calculator.limitReached()) [[unlikely]] { phase = 1; break; }
 		if (doPset) [[likely]] {
-			vram.cmdWrite(Mode::addressOf(ADX, DY, dstExt),
+			vram.cmdWrite(Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt),
 			              tmpSrc, calculator.getTime());
 		}
 		ADX += TX;
@@ -2370,7 +2403,7 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 				break;
 			}
 		}
-		calculator.nextHs(1, vdp.isHS() ? 0 : waitYmmm, checkCache(false, Mode::addressOf(ADX, SY, dstExt)));
+		calculator.nextHs(1, vdp.isHS() ? 0 : waitYmmm, checkCache(false, Mode::addressOf(ADX, SY, vdp.isEVR(), dstExt)));
 		goto loop;
 	default:
 		UNREACHABLE;
@@ -2384,9 +2417,9 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 template<typename Mode>
 void VDPCmdEngine::startHmmc(EmuTime time)
 {
-	vram.cmdReadWindow.disable(time);
-	vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
-	NY &= 1023;
+	setReadMask(time, vram, vdp.hasEVR(), false);	//vram.cmdReadWindow.disable(time);
+	setWriteMask(time, vram, vdp.hasEVR(), true);	//vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
+	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_byte<Mode>(DX, NX, ARG);
 	ADX = DX;
 	ANX = tmpNX;
@@ -2399,7 +2432,7 @@ void VDPCmdEngine::startHmmc(EmuTime time)
 template<typename Mode>
 void VDPCmdEngine::executeHmmc(EmuTime limit)
 {
-	NY &= 1023;
+	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_byte<Mode>(DX, NX, ARG);
 	unsigned tmpNY = clipNY_1(DY, NY, ARG);
 	int TX = (ARG & DIX)
@@ -2415,7 +2448,7 @@ void VDPCmdEngine::executeHmmc(EmuTime limit)
 		//  - wait for a byte
 		//  - on the next access slot write that byte
 		if (doPset) [[likely]] {
-			vram.cmdWrite(Mode::addressOf(ADX, DY, dstExt),
+			vram.cmdWrite(Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt),
 			              COL, limit);
 		}
 		transfer = false;
@@ -2435,9 +2468,9 @@ void VDPCmdEngine::executeHmmc(EmuTime limit)
 template<typename Mode>
 void VDPCmdEngine::startHmmcHs(EmuTime time)
 {
-	vram.cmdReadWindow.disable(time);
-	vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
-	NY &= 1023;
+	setReadMask(time, vram, vdp.hasEVR(), false);	//vram.cmdReadWindow.disable(time);
+	setWriteMask(time, vram, vdp.hasEVR(), true);	//vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
+	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_byte<Mode>(DX, NX, ARG);
 	ADX = DX;
 	ANX = tmpNX;
@@ -2445,13 +2478,13 @@ void VDPCmdEngine::startHmmcHs(EmuTime time)
 	// do not set 'transfer = true', see startLmmc()
 	status |= TR;
 	bool dstExt = (ARG & MXD) != 0;
-	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitHmmc, checkCache(true, Mode::addressOf(ADX, DY, dstExt)));
+	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitHmmc, checkCache(true, Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt)));
 }
 
 template<typename Mode>
 void VDPCmdEngine::executeHmmcHs(EmuTime limit)
 {
-	NY &= 1023;
+	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_byte<Mode>(DX, NX, ARG);
 	unsigned tmpNY = clipNY_1(DY, NY, ARG);
 	int TX = (ARG & DIX)
@@ -2467,7 +2500,7 @@ void VDPCmdEngine::executeHmmcHs(EmuTime limit)
 		//  - wait for a byte
 		//  - on the next access slot write that byte
 		if (doPset) [[likely]] {
-			vram.cmdWrite(Mode::addressOf(ADX, DY, dstExt),
+			vram.cmdWrite(Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt),
 			              COL, limit);
 		}
 		transfer = false;
@@ -2484,6 +2517,466 @@ void VDPCmdEngine::executeHmmcHs(EmuTime limit)
 	nextAccessSlotHs(limit); // inaccurate, but avoid assert
 }
 
+/** Logical draw font VRAM -> VRAM.
+  */
+template<typename Mode>
+void VDPCmdEngine::startLfmm(EmuTime time)
+{
+	setReadMask(time, vram, vdp.hasEVR(), true);	//vram.cmdReadWindow .setMask(0x3FFFF, ~0u << 18, time);
+	setWriteMask(time, vram, vdp.hasEVR(), true);	//vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
+	NY &= getYBitMask(vdp.isEVR());
+	unsigned tmpNX = clipNX_1_pixel<Mode>(DX, NX * 8, ARG);
+	unsigned tmpNY = NY;//clipNY_1(DY, NY, ARG);
+	ADX = DX;
+	ADY = DY;
+	ANX = tmpNX;
+	ANY = tmpNY;
+	bool srcExt  = (ARG & MXS) != 0;
+	fontWidthCount = 0;
+	nextAccessSlot(time);
+	calcFinishTime(tmpNX, tmpNY, 64 + 32 + 24);
+	phase = 0;
+}
+
+template<typename Mode, typename LogOp>
+void VDPCmdEngine::executeLfmm(EmuTime limit)
+{
+	NY &= getYBitMask(vdp.isEVR());
+	unsigned tmpNX = clipNX_1_pixel<Mode>(DX, NX * 8, ARG);
+	unsigned tmpNY = NY;//clipNY_1(DY, NY, ARG);
+	int TX = (ARG & DIX) ? -1 : 1;
+	int TY = (ARG & DIY) ? -1 : 1;
+	ANX = clipNX_1_pixel<Mode>(ADX, ANX, ARG);
+	bool dstExt  = (ARG & MXD) != 0;
+	bool doPset  = !dstExt || hasExtendedVRAM;
+	unsigned dstAddr = Mode::addressOf(ADX, ADY, vdp.isEVR(), dstExt);
+	auto calculator = getSlotCalculator(limit);
+
+	switch (phase) {
+	case 0:
+loop:	if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
+		if (fontWidthCount <= 0) {
+			tmpSrc = vram.cmdReadWindow.readNP(ASA++);
+			fontWidthCount = 8;
+			calculator.next(Delta::D1);
+		}
+		[[fallthrough]];
+	case 1:
+		if (calculator.limitReached()) [[unlikely]] { phase = 1; break; }
+		if (doPset) [[likely]] {
+			tmpDst = vram.cmdWriteWindow.readNP(dstAddr);
+		}
+		calculator.next(Delta::D1);
+		[[fallthrough]];
+	case 2: {
+		if (calculator.limitReached()) [[unlikely]] { phase = 2; break; }
+		if (doPset) [[likely]] {
+			uint8_t col = (tmpSrc & 0x80) ? COL : vdp.getFontBackgroundColor();
+			col &= Mode::COLOR_MASK;
+			Mode::pset(calculator.getTime(), vram, ADX, dstAddr,
+			           tmpDst, col, LogOp());
+		}
+		tmpSrc <<= 1;
+		fontWidthCount--;
+		ADX += TX;
+		if (--ANX == 0 || fontWidthCount == 0) {
+			fontWidthCount = 0;
+			if (--ANY == 0) {
+				ANY = NY;
+				ADY = DY;
+				DX += TX * 8;
+				if (tmpNX < 8) {
+					tmpNX = 0;
+				} else {
+					tmpNX -= 8;
+				}
+			} else {
+				ADY += TY;
+			}
+			ADX = DX;
+			ANX = tmpNX;
+			if (tmpNX <= 0) {
+				commandDone(calculator.getTime());
+				break;
+			}
+		}
+		dstAddr = Mode::addressOf(ADX, ADY, vdp.isEVR(), dstExt);
+		calculator.next(Delta::D1);
+		goto loop;
+	}
+	default:
+		UNREACHABLE;
+	}
+	engineTime = calculator.getTime();
+	this->calcFinishTime(tmpNX, tmpNY, 64 + 32 + 24);
+}
+
+template<typename Mode>
+void VDPCmdEngine::startLfmmHs(EmuTime time)
+{
+	setReadMask(time, vram, vdp.hasEVR(), true);	//vram.cmdReadWindow .setMask(0x3FFFF, ~0u << 18, time);
+	setWriteMask(time, vram, vdp.hasEVR(), true);	//vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
+	NY &= getYBitMask(vdp.isEVR());
+	unsigned tmpNX = clipNX_1_pixel<Mode>(DX, NX * 8, ARG);
+	unsigned tmpNY = NY;//clipNY_1(DY, NY, ARG);
+	ADX = DX;
+	ADY = DY;
+	ANX = tmpNX;
+	ANY = tmpNY;
+	bool srcExt  = (ARG & MXS) != 0;
+	fontWidthCount = 0;
+	nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitLfmm, checkCache(false, ASA));
+	calcFinishTime(tmpNX, tmpNY, 64 + 32 + 24);
+	phase = 0;
+}
+
+template<typename Mode, typename LogOp>
+void VDPCmdEngine::executeLfmmHs(EmuTime limit)
+{
+	NY &= getYBitMask(vdp.isEVR());
+	unsigned tmpNX = clipNX_1_pixel<Mode>(DX, NX * 8, ARG);
+	unsigned tmpNY = NY;//clipNY_1(DY, NY, ARG);
+	int TX = (ARG & DIX) ? -1 : 1;
+	int TY = (ARG & DIY) ? -1 : 1;
+	ANX = clipNX_1_pixel<Mode>(ADX, ANX, ARG);
+	bool dstExt  = (ARG & MXD) != 0;
+	bool doPset  = !dstExt || hasExtendedVRAM;
+	unsigned dstAddr = Mode::addressOf(ADX, ADY, vdp.isEVR(), dstExt);
+	auto calculator = getSlotCalculator(limit);
+
+	switch (phase) {
+	case 0:
+loop:	if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
+		if (fontWidthCount <= 0) {
+			tmpSrc = vram.cmdReadWindow.readNP(ASA++);
+			fontWidthCount = 8;
+		}
+		calculator.nextHs(1, vdp.isHS() ? 0 : waitLfmm, checkCache(false, dstAddr));
+		[[fallthrough]];
+	case 1:
+		if (calculator.limitReached()) [[unlikely]] { phase = 1; break; }
+		if (doPset) [[likely]] {
+			tmpDst = vram.cmdWriteWindow.readNP(dstAddr);
+		}
+		calculator.nextHs(1, vdp.isHS() ? 0 : waitLfmm, checkCache(true, dstAddr));
+		[[fallthrough]];
+	case 2: {
+		if (calculator.limitReached()) [[unlikely]] { phase = 2; break; }
+		if (doPset) [[likely]] {
+			uint8_t col = (tmpSrc & 0x80) ? COL : vdp.getFontBackgroundColor();
+			col &= Mode::COLOR_MASK;
+			Mode::pset(calculator.getTime(), vram, ADX, dstAddr,
+			           tmpDst, col, LogOp());
+		}
+		tmpSrc <<= 1;
+		fontWidthCount--;
+		ADX += TX;
+		if (--ANX == 0 || fontWidthCount == 0) {
+			fontWidthCount = 0;
+			if (--ANY == 0) {
+				ANY = NY;
+				ADY = DY;
+				DX += TX * 8;
+				if (tmpNX < 8) {
+					tmpNX = 0;
+				} else {
+					tmpNX -= 8;
+				}
+			} else {
+				ADY += TY;
+			}
+			ADX = DX;
+			ANX = tmpNX;
+			if (tmpNX <= 0) {
+				commandDone(calculator.getTime());
+				break;
+			}
+		}
+		dstAddr = Mode::addressOf(ADX, ADY, vdp.isEVR(), dstExt);
+		if (fontWidthCount <= 0) {
+			calculator.nextHs(1, vdp.isHS() ? 0 : waitLfmm, checkCache(false, ASA));
+		}
+		goto loop;
+	}
+	default:
+		UNREACHABLE;
+	}
+	engineTime = calculator.getTime();
+	this->calcFinishTime(tmpNX, tmpNY, 64 + 32 + 24);
+}
+
+/** Logical draw font CPU -> VRAM.
+  */
+template<typename Mode>
+void VDPCmdEngine::startLfmc(EmuTime time)
+{
+	setReadMask(time, vram, vdp.hasEVR(), false);	//vram.cmdReadWindow.disable(time);
+	setWriteMask(time, vram, vdp.hasEVR(), true);	//vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
+	NY &= getYBitMask(vdp.isEVR());
+	unsigned tmpNX = clipNX_1_pixel<Mode>(DX, NX, ARG);
+	ADX = DX;
+	ANX = tmpNX;
+	fontWidthCount = 0;
+	setStatusChangeTime(EmuTime::zero());
+	status |= TR;
+	nextAccessSlot(time);
+	phase = 0;
+}
+
+template<typename Mode, typename LogOp>
+void VDPCmdEngine::executeLfmc(EmuTime limit)
+{
+	NY &= getYBitMask(vdp.isEVR());
+	unsigned tmpNX = clipNX_1_pixel<Mode>(DX, NX, ARG);
+	unsigned tmpNY = clipNY_1(DY, NY, ARG);
+	int TX = (ARG & DIX) ? -1 : 1;
+	int TY = (ARG & DIY) ? -1 : 1;
+	ANX = clipNX_1_pixel<Mode>(ADX, ANX, ARG);
+	bool dstExt  = (ARG & MXD) != 0;
+	bool doPset  = !dstExt || hasExtendedVRAM;
+	unsigned dstAddr = Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt);
+	auto calculator = getSlotCalculator(limit);
+
+	switch (phase) {
+	case 0:
+loop:	if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
+		if (fontWidthCount <= 0) {
+			if (!transfer) { phase = 0; break; }
+			transfer = false;
+			tmpSrc = COL;
+			fontWidthCount = 8;
+		}
+		[[fallthrough]];
+	case 1:
+		if (calculator.limitReached()) [[unlikely]] { phase = 1; break; }
+		if (doPset) [[likely]] {
+			tmpDst = vram.cmdWriteWindow.readNP(dstAddr);
+		}
+		calculator.next(Delta::D1);
+		[[fallthrough]];
+	case 2: {
+		if (calculator.limitReached()) [[unlikely]] { phase = 2; break; }
+		if (doPset) [[likely]] {
+			uint8_t col = (tmpSrc & 0x80) ? COL : vdp.getFontBackgroundColor();
+			col &= Mode::COLOR_MASK;
+			Mode::pset(calculator.getTime(), vram, ADX, dstAddr,
+			           tmpDst, col, LogOp());
+		}
+		tmpSrc <<= 1;
+		fontWidthCount--;
+		ASX += TX; ADX += TX;
+		if (--ANX == 0) {
+			fontWidthCount = 0;
+			SY += TY; DY += TY; --NY;
+			ASX = SX; ADX = DX; ANX = tmpNX;
+			if (--tmpNY == 0) {
+				commandDone(calculator.getTime());
+				break;
+			}
+		}
+		dstAddr = Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt);
+		calculator.next(Delta::D1);
+		goto loop;
+	}
+	default:
+		UNREACHABLE;
+	}
+	engineTime = calculator.getTime();
+	this->calcFinishTime(tmpNX, tmpNY, 64 + 32 + 24);
+}
+
+/** Logical rotate VRAM -> VRAM.
+  */
+template<typename Mode>
+void VDPCmdEngine::startLrmm(EmuTime time)
+{
+	setReadMask(time, vram, vdp.hasEVR(), true);	//vram.cmdReadWindow .setMask(0x3FFFF, ~0u << 18, time);
+	setWriteMask(time, vram, vdp.hasEVR(), true);	//vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
+	NY &= getYBitMask(vdp.isEVR());
+	unsigned tmpNX = clipNX_1_pixel<Mode>(DX, NX, ARG);
+	unsigned tmpNY = clipNY_1(DY, NY, ARG);
+	ASX_12P8 = SX_12P8 = (SX << 8);// | ((SX & (1 << 11)) ? ~((1 << (12+8)) - 1): 0);
+	ASY_12P8 = SY_12P8 = (SY << 8);// | ((SY & (1 << 11)) ? ~((1 << (12+8)) - 1): 0);
+	ADX = DX;
+	ANX = tmpNX;
+	nextAccessSlot(time);
+	calcFinishTime(tmpNX, tmpNY, 64 + 32 + 24);
+	phase = 0;
+}
+
+template<typename Mode, typename LogOp>
+void VDPCmdEngine::executeLrmm(EmuTime limit)
+{
+	NY &= getYBitMask(vdp.isEVR());
+	unsigned tmpNX = clipNX_1_pixel<Mode>(DX, NX, ARG);
+	unsigned tmpNY = clipNY_1(DY, NY, ARG);
+	int TX = (ARG & DIX) ? -1 : 1;
+	int TY = (ARG & DIY) ? -1 : 1;
+	ANX = clipNX_1_pixel<Mode>(ADX, ANX, ARG);
+	bool srcExt  = (ARG & MXS) != 0;
+	bool dstExt  = (ARG & MXD) != 0;
+	bool doPoint = !srcExt || hasExtendedVRAM;
+	bool doPset  = !dstExt || hasExtendedVRAM;
+	unsigned dstAddr = Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt);
+	auto calculator = getSlotCalculator(limit);
+
+	switch (phase) {
+	case 0:
+loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
+		if (doPoint) [[likely]] {
+			signed x = ASX_12P8 / 256;
+			signed y = ASY_12P8 / 256;
+			if ((signed)WSX <= x && x <= (signed)WEX && (signed)WSY <= y && y <= (signed)WEY) {
+			    tmpSrc = Mode::point(vram, (unsigned)x, (unsigned)y, vdp.isEVR(), srcExt);
+			} else {
+				tmpSrc = COL;
+			}
+		} else {
+		       tmpSrc = 0xFF;
+		}
+		calculator.next(Delta::D1);
+		[[fallthrough]];
+	case 1:
+		if (calculator.limitReached()) [[unlikely]] { phase = 1; break; }
+		if (doPset) [[likely]] {
+			tmpDst = vram.cmdWriteWindow.readNP(dstAddr);
+		}
+		calculator.next(Delta::D1);
+		[[fallthrough]];
+	case 2: {
+		if (calculator.limitReached()) [[unlikely]] { phase = 2; break; }
+		if (doPset) [[likely]] {
+			Mode::pset(calculator.getTime(), vram, ADX, dstAddr,
+			           tmpDst, tmpSrc, LogOp());
+		}
+		if (ARG & XHR) ASX_12P8 += VX;
+		ASX_12P8 += VX;
+		ASY_12P8 += VY;
+		ADX += TX;
+		if (--ANX == 0) {
+			if (ARG & XHR) SX_12P8 -= VY;
+			SX_12P8 -= VY;
+			SY_12P8 += VX;
+			DY += TY; --NY;
+			ASX_12P8 = SX_12P8; ASY_12P8 = SY_12P8; ADX = DX; ANX = tmpNX;
+			if (--tmpNY == 0) {
+				commandDone(calculator.getTime());
+				break;
+			}
+		}
+		dstAddr = Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt);
+		calculator.next(Delta::D1);
+		goto loop;
+	}
+	default:
+		UNREACHABLE;
+	}
+	engineTime = calculator.getTime();
+	this->calcFinishTime(tmpNX, tmpNY, 64 + 32 + 24);
+}
+
+template<typename Mode>
+void VDPCmdEngine::startLrmmHs(EmuTime time)
+{
+	setReadMask(time, vram, vdp.hasEVR(), true);	//vram.cmdReadWindow .setMask(0x3FFFF, ~0u << 18, time);
+	setWriteMask(time, vram, vdp.hasEVR(), true);	//vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
+	NY &= getYBitMask(vdp.isEVR());
+	unsigned tmpNX = clipNX_1_pixel<Mode>(DX, NX, ARG);
+	unsigned tmpNY = clipNY_1(DY, NY, ARG);
+	ASX_12P8 = SX_12P8 = (SX << 8);// | ((SX & (1 << 11)) ? ~((1 << (12+8)) - 1): 0);
+	ASY_12P8 = SY_12P8 = (SY << 8);// | ((SY & (1 << 11)) ? ~((1 << (12+8)) - 1): 0);
+	ADX = DX;
+	ANX = tmpNX;
+	bool srcExt  = (ARG & MXS) != 0;
+	signed x = (signed)ASX_12P8 / 256;
+	signed y = (signed)ASY_12P8 / 256;
+	if ((signed)WSX <= x && x <= (signed)WEX && (signed)WSY <= y && y <= (signed)WEY) {
+		nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitLrmm, checkCache(false, Mode::addressOf(x, y, vdp.isEVR(), srcExt)));
+	} else {
+		nextAccessSlotHs(time, 1, vdp.isHS() ? 0 : waitLrmm, VDPCmdCache::CachePenalty::CACHE_NONE);
+	}
+	calcFinishTime(tmpNX, tmpNY, 64 + 32 + 24);
+	phase = 0;
+}
+
+template<typename Mode, typename LogOp>
+void VDPCmdEngine::executeLrmmHs(EmuTime limit)
+{
+	NY &= getYBitMask(vdp.isEVR());
+	unsigned tmpNX = clipNX_1_pixel<Mode>(DX, NX, ARG);
+	unsigned tmpNY = clipNY_1(DY, NY, ARG);
+	int TX = (ARG & DIX) ? -1 : 1;
+	int TY = (ARG & DIY) ? -1 : 1;
+	ANX = clipNX_1_pixel<Mode>(ADX, ANX, ARG);
+	bool srcExt  = (ARG & MXS) != 0;
+	bool dstExt  = (ARG & MXD) != 0;
+	bool doPoint = !srcExt || hasExtendedVRAM;
+	bool doPset  = !dstExt || hasExtendedVRAM;
+	unsigned dstAddr = Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt);
+	auto calculator = getSlotCalculator(limit);
+	signed x, y;
+	
+	switch (phase) {
+	case 0:
+loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
+		if (doPoint) [[likely]] {
+			x = ASX_12P8 / 256;
+			y = ASY_12P8 / 256;
+			if ((signed)WSX <= x && x <= (signed)WEX && (signed)WSY <= y && y <= (signed)WEY) {
+			    tmpSrc = Mode::point(vram, x, y, vdp.isEVR(), srcExt);
+			} else {
+				tmpSrc = COL;
+			}
+		} else {
+		       tmpSrc = 0xFF;
+		}
+		calculator.nextHs(1, vdp.isHS() ? 0 : waitLrmm, checkCache(false, dstAddr));
+		[[fallthrough]];
+	case 1:
+		if (calculator.limitReached()) [[unlikely]] { phase = 1; break; }
+		if (doPset) [[likely]] {
+			tmpDst = vram.cmdWriteWindow.readNP(dstAddr);
+		}
+		calculator.nextHs(1, vdp.isHS() ? 0 : waitLrmm, checkCache(true, dstAddr));
+		[[fallthrough]];
+	case 2: {
+		if (calculator.limitReached()) [[unlikely]] { phase = 2; break; }
+		if (doPset) [[likely]] {
+			Mode::pset(calculator.getTime(), vram, ADX, dstAddr,
+			           tmpDst, tmpSrc, LogOp());
+		}
+		if (ARG & XHR) ASX_12P8 += VX;
+		ASX_12P8 += VX;
+		ASY_12P8 += VY;
+		ADX += TX;
+		if (--ANX == 0) {
+			if (ARG & XHR) SX_12P8 -= VY;
+			SX_12P8 -= VY;
+			SY_12P8 += VX;
+			DY += TY; --NY;
+			ASX_12P8 = SX_12P8; ASY_12P8 = SY_12P8; ADX = DX; ANX = tmpNX;
+			if (--tmpNY == 0) {
+				commandDone(calculator.getTime());
+				break;
+			}
+		}
+		dstAddr = Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt);
+
+		x = ASX_12P8 / 256;
+		y = ASY_12P8 / 256;
+		if ((signed)WSX <= x && x <= (signed)WEX && (signed)WSY <= y && y <= (signed)WEY) {
+			calculator.nextHs(1, vdp.isHS() ? 0 : waitLrmm, checkCache(false, Mode::addressOf(x, y, vdp.isEVR(), srcExt)));
+		} else {
+			calculator.nextHs(1, vdp.isHS() ? 0 : waitLrmm, VDPCmdCache::CachePenalty::CACHE_NONE);
+		}
+		goto loop;
+	}
+	default:
+		UNREACHABLE;
+	}
+	engineTime = calculator.getTime();
+	this->calcFinishTime(tmpNX, tmpNY, 64 + 32 + 24);
+}
 
 VDPCmdEngine::VDPCmdEngine(VDP& vdp_, CommandController& commandController)
 	: vdp(vdp_), vram(vdp.getVRAM())
@@ -2516,6 +3009,11 @@ void VDPCmdEngine::reset(EmuTime time)
 	status = 0;
 	scrMode = -1;
 
+	WSX = 0;
+	WSY = 0;
+	WEX = 0x1FF;
+	WEY = 0x7FF;
+
 	cachePriority = 0;
 	for (auto& cb : cacheBuffer) cb.data_en = false;
 
@@ -2531,12 +3029,15 @@ void VDPCmdEngine::setCmdReg(uint8_t index, uint8_t value, EmuTime time)
 	switch (index) {
 	case 0x00: // source X low
 		SX = (SX & 0x100) | value;
+		ASA = (ASA & 0x3FF00) | value;
 		break;
 	case 0x01: // source X high
 		SX = (SX & 0x0FF) | ((value & 0x01) << 8);
+		ASA = (ASA & 0x300FF) | (value << 8);
 		break;
 	case 0x02: // source Y low
 		SY = (SY & 0x300) | value;
+		ASA = (ASA & 0x0FFFF) | ((value & 0x03) << 16);
 		break;
 	case 0x03: // source Y high
 		SY = (SY & 0x0FF) | ((value & 0x03) << 8);
@@ -2579,7 +3080,7 @@ void VDPCmdEngine::setCmdReg(uint8_t index, uint8_t value, EmuTime time)
 		transfer = true;
 		break;
 	case 0x0D: // argument
-		ARG = value;
+		ARG = value & (vdp.isECOM() ? 0xFF : 0x3F);
 		break;
 	case 0x0E: // command
 		CMD = value;
@@ -2588,6 +3089,44 @@ void VDPCmdEngine::setCmdReg(uint8_t index, uint8_t value, EmuTime time)
 		} else {
 			executeCommand(time);
 		}
+		break;
+	case 0x0F:	// R#47
+		VX = (VX & ~0xFF) | value;
+		break;
+	case 0x10:	// R#48
+		VX = (VX & 0xFF) | ((value & 0xFF) << 8);
+		if (VX & 0x8000) VX |= ~0xFFFF;
+		break;
+	case 0x11:	// R#49
+		VY = (VY & ~0xFF) | value;
+		break;
+	case 0x12:	// R#50
+		VY = (VY & 0xFF) | ((value & 0xFF) << 8);
+		if (VY & 0x8000) VY |= ~0xFFFF;
+		break;
+	case 0x13:	// R#51
+		WSX = (WSX & 0x0100) | value;
+		break;
+	case 0x14:	// R#52
+		WSX = (WSX & 0x00FF) | ((value & 0x01) << 8);
+		break;
+	case 0x15:	// R#53
+		WSY = (WSY & 0x0700) | value;
+		break;
+	case 0x16:	// R#54
+		WSY = (WSY & 0x00FF) | ((value & 0x07) << 8);
+		break;
+	case 0x17:	// R#55
+		WEX = (WEX & 0x0100) | value;
+		break;
+	case 0x18:	// R#56
+		WEX = (WEX & 0x00FF) | ((value & 0x01) << 8);
+		break;
+	case 0x19:	// R#57
+		WEY = (WEY & 0x0700) | value;
+		break;
+	case 0x1A:	// R#58
+		WEY = (WEY & 0x00FF) | ((value & 0x07) << 8);
 		break;
 	default:
 		UNREACHABLE;
@@ -2660,9 +3199,12 @@ void VDPCmdEngine::updateDisplayMode(DisplayMode mode, bool cmdBit, EmuTime time
 
 void VDPCmdEngine::executeCommand(EmuTime time)
 {
+	int tmpScrMode = scrMode;
+	if (ARG & FG4) tmpScrMode = 0;
+
 	// V9938 ops only work in SCREEN 5-8.
 	// V9958 ops work in non SCREEN 5-8 when CMD bit is set
-	if (scrMode < 0) {
+	if (tmpScrMode < 0) {
 		commandDone(time);
 		return;
 	}
@@ -2681,12 +3223,27 @@ void VDPCmdEngine::executeCommand(EmuTime time)
 	status |= CE;
 	executingProbe = true;
 
-	switch ((scrMode << 4) | (CMD >> 4)) {
+	switch ((tmpScrMode << 4) | (CMD >> 4)) {
 	case 0x00: case 0x10: case 0x20: case 0x30: case 0x40:
-	case 0x01: case 0x11: case 0x21: case 0x31: case 0x41:
-	case 0x02: case 0x12: case 0x22: case 0x32: case 0x42:
-	case 0x03: case 0x13: case 0x23: case 0x33: case 0x43:
 		startAbrt(time); break;
+
+	case 0x01: if (vdp.isECOM()) startLfmm<Graphic4Mode >(time); else startAbrt(time); break;
+	case 0x11: if (vdp.isECOM()) startLfmm<Graphic5Mode >(time); else startAbrt(time); break;
+	case 0x21: if (vdp.isECOM()) startLfmm<Graphic6Mode >(time); else startAbrt(time); break;
+	case 0x31: if (vdp.isECOM()) startLfmm<Graphic7Mode >(time); else startAbrt(time); break;
+	case 0x41: if (vdp.isECOM()) startLfmm<NonBitmapMode>(time); else startAbrt(time); break;
+
+	case 0x02: if (vdp.isECOM()) startLfmc<Graphic4Mode >(time); else startAbrt(time); break;
+	case 0x12: if (vdp.isECOM()) startLfmc<Graphic5Mode >(time); else startAbrt(time); break;
+	case 0x22: if (vdp.isECOM()) startLfmc<Graphic6Mode >(time); else startAbrt(time); break;
+	case 0x32: if (vdp.isECOM()) startLfmc<Graphic7Mode >(time); else startAbrt(time); break;
+	case 0x42: if (vdp.isECOM()) startLfmc<NonBitmapMode>(time); else startAbrt(time); break;
+
+	case 0x03: if (vdp.isECOM()) startLrmm<Graphic4Mode >(time); else startAbrt(time); break;
+	case 0x13: if (vdp.isECOM()) startLrmm<Graphic5Mode >(time); else startAbrt(time); break;
+	case 0x23: if (vdp.isECOM()) startLrmm<Graphic6Mode >(time); else startAbrt(time); break;
+	case 0x33: if (vdp.isECOM()) startLrmm<Graphic7Mode >(time); else startAbrt(time); break;
+	case 0x43: if (vdp.isECOM()) startLrmm<NonBitmapMode>(time); else startAbrt(time); break;
 
 	case 0x04: case 0x14: case 0x24: case 0x34: case 0x44:
 		startPoint(time); break;
@@ -2751,7 +3308,10 @@ void VDPCmdEngine::executeCommand(EmuTime time)
 
 void VDPCmdEngine::sync2(EmuTime time)
 {
-	switch ((scrMode << 8) | CMD) {
+	int tmpScrMode = scrMode;
+	if (ARG & FG4) tmpScrMode = 0;
+
+	switch ((tmpScrMode << 8) | CMD) {
 	case 0x000: case 0x100: case 0x200: case 0x300: case 0x400:
 	case 0x001: case 0x101: case 0x201: case 0x301: case 0x401:
 	case 0x002: case 0x102: case 0x202: case 0x302: case 0x402:
@@ -2768,55 +3328,190 @@ void VDPCmdEngine::sync2(EmuTime time)
 	case 0x00D: case 0x10D: case 0x20D: case 0x30D: case 0x40D:
 	case 0x00E: case 0x10E: case 0x20E: case 0x30E: case 0x40E:
 	case 0x00F: case 0x10F: case 0x20F: case 0x30F: case 0x40F:
-	case 0x010: case 0x110: case 0x210: case 0x310: case 0x410:
-	case 0x011: case 0x111: case 0x211: case 0x311: case 0x411:
-	case 0x012: case 0x112: case 0x212: case 0x312: case 0x412:
-	case 0x013: case 0x113: case 0x213: case 0x313: case 0x413:
-	case 0x014: case 0x114: case 0x214: case 0x314: case 0x414:
-	case 0x015: case 0x115: case 0x215: case 0x315: case 0x415:
-	case 0x016: case 0x116: case 0x216: case 0x316: case 0x416:
-	case 0x017: case 0x117: case 0x217: case 0x317: case 0x417:
-	case 0x018: case 0x118: case 0x218: case 0x318: case 0x418:
-	case 0x019: case 0x119: case 0x219: case 0x319: case 0x419:
-	case 0x01A: case 0x11A: case 0x21A: case 0x31A: case 0x41A:
-	case 0x01B: case 0x11B: case 0x21B: case 0x31B: case 0x41B:
-	case 0x01C: case 0x11C: case 0x21C: case 0x31C: case 0x41C:
-	case 0x01D: case 0x11D: case 0x21D: case 0x31D: case 0x41D:
-	case 0x01E: case 0x11E: case 0x21E: case 0x31E: case 0x41E:
-	case 0x01F: case 0x11F: case 0x21F: case 0x31F: case 0x41F:
-	case 0x020: case 0x120: case 0x220: case 0x320: case 0x420:
-	case 0x021: case 0x121: case 0x221: case 0x321: case 0x421:
-	case 0x022: case 0x122: case 0x222: case 0x322: case 0x422:
-	case 0x023: case 0x123: case 0x223: case 0x323: case 0x423:
-	case 0x024: case 0x124: case 0x224: case 0x324: case 0x424:
-	case 0x025: case 0x125: case 0x225: case 0x325: case 0x425:
-	case 0x026: case 0x126: case 0x226: case 0x326: case 0x426:
-	case 0x027: case 0x127: case 0x227: case 0x327: case 0x427:
-	case 0x028: case 0x128: case 0x228: case 0x328: case 0x428:
-	case 0x029: case 0x129: case 0x229: case 0x329: case 0x429:
-	case 0x02A: case 0x12A: case 0x22A: case 0x32A: case 0x42A:
-	case 0x02B: case 0x12B: case 0x22B: case 0x32B: case 0x42B:
-	case 0x02C: case 0x12C: case 0x22C: case 0x32C: case 0x42C:
-	case 0x02D: case 0x12D: case 0x22D: case 0x32D: case 0x42D:
-	case 0x02E: case 0x12E: case 0x22E: case 0x32E: case 0x42E:
-	case 0x02F: case 0x12F: case 0x22F: case 0x32F: case 0x42F:
-	case 0x030: case 0x130: case 0x230: case 0x330: case 0x430:
-	case 0x031: case 0x131: case 0x231: case 0x331: case 0x431:
-	case 0x032: case 0x132: case 0x232: case 0x332: case 0x432:
-	case 0x033: case 0x133: case 0x233: case 0x333: case 0x433:
-	case 0x034: case 0x134: case 0x234: case 0x334: case 0x434:
-	case 0x035: case 0x135: case 0x235: case 0x335: case 0x435:
-	case 0x036: case 0x136: case 0x236: case 0x336: case 0x436:
-	case 0x037: case 0x137: case 0x237: case 0x337: case 0x437:
-	case 0x038: case 0x138: case 0x238: case 0x338: case 0x438:
-	case 0x039: case 0x139: case 0x239: case 0x339: case 0x439:
-	case 0x03A: case 0x13A: case 0x23A: case 0x33A: case 0x43A:
-	case 0x03B: case 0x13B: case 0x23B: case 0x33B: case 0x43B:
-	case 0x03C: case 0x13C: case 0x23C: case 0x33C: case 0x43C:
-	case 0x03D: case 0x13D: case 0x23D: case 0x33D: case 0x43D:
-	case 0x03E: case 0x13E: case 0x23E: case 0x33E: case 0x43E:
-	case 0x03F: case 0x13F: case 0x23F: case 0x33F: case 0x43F:
 		UNREACHABLE; break;
+
+	case 0x010: executeLfmm<Graphic4Mode,  ImpOp>(time); break;
+	case 0x011: executeLfmm<Graphic4Mode,  AndOp>(time); break;
+	case 0x012: executeLfmm<Graphic4Mode,  OrOp >(time); break;
+	case 0x013: executeLfmm<Graphic4Mode,  XorOp>(time); break;
+	case 0x014: executeLfmm<Graphic4Mode,  NotOp>(time); break;
+	case 0x018: executeLfmm<Graphic4Mode, TImpOp>(time); break;
+	case 0x019: executeLfmm<Graphic4Mode, TAndOp>(time); break;
+	case 0x01A: executeLfmm<Graphic4Mode, TOrOp >(time); break;
+	case 0x01B: executeLfmm<Graphic4Mode, TXorOp>(time); break;
+	case 0x01C: executeLfmm<Graphic4Mode, TNotOp>(time); break;
+	case 0x015: case 0x016: case 0x017: case 0x01D: case 0x01E: case 0x01F:
+		executeLfmm<Graphic4Mode, DummyOp>(time); break;
+	case 0x110: executeLfmm<Graphic5Mode,  ImpOp>(time); break;
+	case 0x111: executeLfmm<Graphic5Mode,  AndOp>(time); break;
+	case 0x112: executeLfmm<Graphic5Mode,  OrOp >(time); break;
+	case 0x113: executeLfmm<Graphic5Mode,  XorOp>(time); break;
+	case 0x114: executeLfmm<Graphic5Mode,  NotOp>(time); break;
+	case 0x118: executeLfmm<Graphic5Mode, TImpOp>(time); break;
+	case 0x119: executeLfmm<Graphic5Mode, TAndOp>(time); break;
+	case 0x11A: executeLfmm<Graphic5Mode, TOrOp >(time); break;
+	case 0x11B: executeLfmm<Graphic5Mode, TXorOp>(time); break;
+	case 0x11C: executeLfmm<Graphic5Mode, TNotOp>(time); break;
+	case 0x115: case 0x116: case 0x117: case 0x11D: case 0x11E: case 0x11F:
+		executeLfmm<Graphic5Mode, DummyOp>(time); break;
+	case 0x210: executeLfmm<Graphic6Mode,  ImpOp>(time); break;
+	case 0x211: executeLfmm<Graphic6Mode,  AndOp>(time); break;
+	case 0x212: executeLfmm<Graphic6Mode,  OrOp >(time); break;
+	case 0x213: executeLfmm<Graphic6Mode,  XorOp>(time); break;
+	case 0x214: executeLfmm<Graphic6Mode,  NotOp>(time); break;
+	case 0x218: executeLfmm<Graphic6Mode, TImpOp>(time); break;
+	case 0x219: executeLfmm<Graphic6Mode, TAndOp>(time); break;
+	case 0x21A: executeLfmm<Graphic6Mode, TOrOp >(time); break;
+	case 0x21B: executeLfmm<Graphic6Mode, TXorOp>(time); break;
+	case 0x21C: executeLfmm<Graphic6Mode, TNotOp>(time); break;
+	case 0x215: case 0x216: case 0x217: case 0x21D: case 0x21E: case 0x21F:
+		executeLfmm<Graphic6Mode, DummyOp>(time); break;
+	case 0x310: executeLfmm<Graphic7Mode,  ImpOp>(time); break;
+	case 0x311: executeLfmm<Graphic7Mode,  AndOp>(time); break;
+	case 0x312: executeLfmm<Graphic7Mode,  OrOp >(time); break;
+	case 0x313: executeLfmm<Graphic7Mode,  XorOp>(time); break;
+	case 0x314: executeLfmm<Graphic7Mode,  NotOp>(time); break;
+	case 0x318: executeLfmm<Graphic7Mode, TImpOp>(time); break;
+	case 0x319: executeLfmm<Graphic7Mode, TAndOp>(time); break;
+	case 0x31A: executeLfmm<Graphic7Mode, TOrOp >(time); break;
+	case 0x31B: executeLfmm<Graphic7Mode, TXorOp>(time); break;
+	case 0x31C: executeLfmm<Graphic7Mode, TNotOp>(time); break;
+	case 0x315: case 0x316: case 0x317: case 0x31D: case 0x31E: case 0x31F:
+		executeLfmm<Graphic7Mode, DummyOp>(time); break;
+	case 0x410: executeLfmm<NonBitmapMode,  ImpOp>(time); break;
+	case 0x411: executeLfmm<NonBitmapMode,  AndOp>(time); break;
+	case 0x412: executeLfmm<NonBitmapMode,  OrOp >(time); break;
+	case 0x413: executeLfmm<NonBitmapMode,  XorOp>(time); break;
+	case 0x414: executeLfmm<NonBitmapMode,  NotOp>(time); break;
+	case 0x418: executeLfmm<NonBitmapMode, TImpOp>(time); break;
+	case 0x419: executeLfmm<NonBitmapMode, TAndOp>(time); break;
+	case 0x41A: executeLfmm<NonBitmapMode, TOrOp >(time); break;
+	case 0x41B: executeLfmm<NonBitmapMode, TXorOp>(time); break;
+	case 0x41C: executeLfmm<NonBitmapMode, TNotOp>(time); break;
+	case 0x415: case 0x416: case 0x417: case 0x41D: case 0x41E: case 0x41F:
+		executeLfmm<NonBitmapMode, DummyOp>(time); break;
+
+	case 0x020: executeLfmc<Graphic4Mode,  ImpOp>(time); break;
+	case 0x021: executeLfmc<Graphic4Mode,  AndOp>(time); break;
+	case 0x022: executeLfmc<Graphic4Mode,  OrOp >(time); break;
+	case 0x023: executeLfmc<Graphic4Mode,  XorOp>(time); break;
+	case 0x024: executeLfmc<Graphic4Mode,  NotOp>(time); break;
+	case 0x028: executeLfmc<Graphic4Mode, TImpOp>(time); break;
+	case 0x029: executeLfmc<Graphic4Mode, TAndOp>(time); break;
+	case 0x02A: executeLfmc<Graphic4Mode, TOrOp >(time); break;
+	case 0x02B: executeLfmc<Graphic4Mode, TXorOp>(time); break;
+	case 0x02C: executeLfmc<Graphic4Mode, TNotOp>(time); break;
+	case 0x025: case 0x026: case 0x027: case 0x02D: case 0x02E: case 0x02F:
+		executeLfmc<Graphic4Mode, DummyOp>(time); break;
+	case 0x120: executeLfmc<Graphic5Mode,  ImpOp>(time); break;
+	case 0x121: executeLfmc<Graphic5Mode,  AndOp>(time); break;
+	case 0x122: executeLfmc<Graphic5Mode,  OrOp >(time); break;
+	case 0x123: executeLfmc<Graphic5Mode,  XorOp>(time); break;
+	case 0x124: executeLfmc<Graphic5Mode,  NotOp>(time); break;
+	case 0x128: executeLfmc<Graphic5Mode, TImpOp>(time); break;
+	case 0x129: executeLfmc<Graphic5Mode, TAndOp>(time); break;
+	case 0x12A: executeLfmc<Graphic5Mode, TOrOp >(time); break;
+	case 0x12B: executeLfmc<Graphic5Mode, TXorOp>(time); break;
+	case 0x12C: executeLfmc<Graphic5Mode, TNotOp>(time); break;
+	case 0x125: case 0x126: case 0x127: case 0x12D: case 0x12E: case 0x12F:
+		executeLfmc<Graphic5Mode, DummyOp>(time); break;
+	case 0x220: executeLfmc<Graphic6Mode,  ImpOp>(time); break;
+	case 0x221: executeLfmc<Graphic6Mode,  AndOp>(time); break;
+	case 0x222: executeLfmc<Graphic6Mode,  OrOp >(time); break;
+	case 0x223: executeLfmc<Graphic6Mode,  XorOp>(time); break;
+	case 0x224: executeLfmc<Graphic6Mode,  NotOp>(time); break;
+	case 0x228: executeLfmc<Graphic6Mode, TImpOp>(time); break;
+	case 0x229: executeLfmc<Graphic6Mode, TAndOp>(time); break;
+	case 0x22A: executeLfmc<Graphic6Mode, TOrOp >(time); break;
+	case 0x22B: executeLfmc<Graphic6Mode, TXorOp>(time); break;
+	case 0x22C: executeLfmc<Graphic6Mode, TNotOp>(time); break;
+	case 0x225: case 0x226: case 0x227: case 0x22D: case 0x22E: case 0x22F:
+		executeLfmc<Graphic6Mode, DummyOp>(time); break;
+	case 0x320: executeLfmc<Graphic7Mode,  ImpOp>(time); break;
+	case 0x321: executeLfmc<Graphic7Mode,  AndOp>(time); break;
+	case 0x322: executeLfmc<Graphic7Mode,  OrOp >(time); break;
+	case 0x323: executeLfmc<Graphic7Mode,  XorOp>(time); break;
+	case 0x324: executeLfmc<Graphic7Mode,  NotOp>(time); break;
+	case 0x328: executeLfmc<Graphic7Mode, TImpOp>(time); break;
+	case 0x329: executeLfmc<Graphic7Mode, TAndOp>(time); break;
+	case 0x32A: executeLfmc<Graphic7Mode, TOrOp >(time); break;
+	case 0x32B: executeLfmc<Graphic7Mode, TXorOp>(time); break;
+	case 0x32C: executeLfmc<Graphic7Mode, TNotOp>(time); break;
+	case 0x325: case 0x326: case 0x327: case 0x32D: case 0x32E: case 0x32F:
+		executeLfmc<Graphic7Mode, DummyOp>(time); break;
+	case 0x420: executeLfmc<NonBitmapMode,  ImpOp>(time); break;
+	case 0x421: executeLfmc<NonBitmapMode,  AndOp>(time); break;
+	case 0x422: executeLfmc<NonBitmapMode,  OrOp >(time); break;
+	case 0x423: executeLfmc<NonBitmapMode,  XorOp>(time); break;
+	case 0x424: executeLfmc<NonBitmapMode,  NotOp>(time); break;
+	case 0x428: executeLfmc<NonBitmapMode, TImpOp>(time); break;
+	case 0x429: executeLfmc<NonBitmapMode, TAndOp>(time); break;
+	case 0x42A: executeLfmc<NonBitmapMode, TOrOp >(time); break;
+	case 0x42B: executeLfmc<NonBitmapMode, TXorOp>(time); break;
+	case 0x42C: executeLfmc<NonBitmapMode, TNotOp>(time); break;
+	case 0x425: case 0x426: case 0x427: case 0x42D: case 0x42E: case 0x42F:
+		executeLfmc<NonBitmapMode, DummyOp>(time); break;
+
+	case 0x030: executeLrmm<Graphic4Mode,  ImpOp>(time); break;
+	case 0x031: executeLrmm<Graphic4Mode,  AndOp>(time); break;
+	case 0x032: executeLrmm<Graphic4Mode,  OrOp >(time); break;
+	case 0x033: executeLrmm<Graphic4Mode,  XorOp>(time); break;
+	case 0x034: executeLrmm<Graphic4Mode,  NotOp>(time); break;
+	case 0x038: executeLrmm<Graphic4Mode, TImpOp>(time); break;
+	case 0x039: executeLrmm<Graphic4Mode, TAndOp>(time); break;
+	case 0x03A: executeLrmm<Graphic4Mode, TOrOp >(time); break;
+	case 0x03B: executeLrmm<Graphic4Mode, TXorOp>(time); break;
+	case 0x03C: executeLrmm<Graphic4Mode, TNotOp>(time); break;
+	case 0x035: case 0x036: case 0x037: case 0x03D: case 0x03E: case 0x03F:
+		executeLrmm<Graphic4Mode, DummyOp>(time); break;
+	case 0x130: executeLrmm<Graphic5Mode,  ImpOp>(time); break;
+	case 0x131: executeLrmm<Graphic5Mode,  AndOp>(time); break;
+	case 0x132: executeLrmm<Graphic5Mode,  OrOp >(time); break;
+	case 0x133: executeLrmm<Graphic5Mode,  XorOp>(time); break;
+	case 0x134: executeLrmm<Graphic5Mode,  NotOp>(time); break;
+	case 0x138: executeLrmm<Graphic5Mode, TImpOp>(time); break;
+	case 0x139: executeLrmm<Graphic5Mode, TAndOp>(time); break;
+	case 0x13A: executeLrmm<Graphic5Mode, TOrOp >(time); break;
+	case 0x13B: executeLrmm<Graphic5Mode, TXorOp>(time); break;
+	case 0x13C: executeLrmm<Graphic5Mode, TNotOp>(time); break;
+	case 0x135: case 0x136: case 0x137: case 0x13D: case 0x13E: case 0x13F:
+		executeLrmm<Graphic5Mode, DummyOp>(time); break;
+	case 0x230: executeLrmm<Graphic6Mode,  ImpOp>(time); break;
+	case 0x231: executeLrmm<Graphic6Mode,  AndOp>(time); break;
+	case 0x232: executeLrmm<Graphic6Mode,  OrOp >(time); break;
+	case 0x233: executeLrmm<Graphic6Mode,  XorOp>(time); break;
+	case 0x234: executeLrmm<Graphic6Mode,  NotOp>(time); break;
+	case 0x238: executeLrmm<Graphic6Mode, TImpOp>(time); break;
+	case 0x239: executeLrmm<Graphic6Mode, TAndOp>(time); break;
+	case 0x23A: executeLrmm<Graphic6Mode, TOrOp >(time); break;
+	case 0x23B: executeLrmm<Graphic6Mode, TXorOp>(time); break;
+	case 0x23C: executeLrmm<Graphic6Mode, TNotOp>(time); break;
+	case 0x235: case 0x236: case 0x237: case 0x23D: case 0x23E: case 0x23F:
+		executeLrmm<Graphic6Mode, DummyOp>(time); break;
+	case 0x330: executeLrmm<Graphic7Mode,  ImpOp>(time); break;
+	case 0x331: executeLrmm<Graphic7Mode,  AndOp>(time); break;
+	case 0x332: executeLrmm<Graphic7Mode,  OrOp >(time); break;
+	case 0x333: executeLrmm<Graphic7Mode,  XorOp>(time); break;
+	case 0x334: executeLrmm<Graphic7Mode,  NotOp>(time); break;
+	case 0x338: executeLrmm<Graphic7Mode, TImpOp>(time); break;
+	case 0x339: executeLrmm<Graphic7Mode, TAndOp>(time); break;
+	case 0x33A: executeLrmm<Graphic7Mode, TOrOp >(time); break;
+	case 0x33B: executeLrmm<Graphic7Mode, TXorOp>(time); break;
+	case 0x33C: executeLrmm<Graphic7Mode, TNotOp>(time); break;
+	case 0x335: case 0x336: case 0x337: case 0x33D: case 0x33E: case 0x33F:
+		executeLrmm<Graphic7Mode, DummyOp>(time); break;
+	case 0x430: executeLrmm<NonBitmapMode,  ImpOp>(time); break;
+	case 0x431: executeLrmm<NonBitmapMode,  AndOp>(time); break;
+	case 0x432: executeLrmm<NonBitmapMode,  OrOp >(time); break;
+	case 0x433: executeLrmm<NonBitmapMode,  XorOp>(time); break;
+	case 0x434: executeLrmm<NonBitmapMode,  NotOp>(time); break;
+	case 0x438: executeLrmm<NonBitmapMode, TImpOp>(time); break;
+	case 0x439: executeLrmm<NonBitmapMode, TAndOp>(time); break;
+	case 0x43A: executeLrmm<NonBitmapMode, TOrOp >(time); break;
+	case 0x43B: executeLrmm<NonBitmapMode, TXorOp>(time); break;
+	case 0x43C: executeLrmm<NonBitmapMode, TNotOp>(time); break;
+	case 0x435: case 0x436: case 0x437: case 0x43D: case 0x43E: case 0x43F:
+		executeLrmm<NonBitmapMode, DummyOp>(time); break;
 
 	case 0x040: case 0x041: case 0x042: case 0x043:
 	case 0x044: case 0x045: case 0x046: case 0x047:
@@ -3312,9 +4007,12 @@ void VDPCmdEngine::sync2(EmuTime time)
 
 void VDPCmdEngine::executeCommandHs(EmuTime time)
 {
+	int tmpScrMode = scrMode;
+	if (ARG & FG4) tmpScrMode = 0;
+
 	// V9938 ops only work in SCREEN 5-8.
 	// V9958 ops work in non SCREEN 5-8 when CMD bit is set
-	if (scrMode < 0) {
+	if (tmpScrMode < 0) {
 		commandDone(time);
 		return;
 	}
@@ -3333,12 +4031,27 @@ void VDPCmdEngine::executeCommandHs(EmuTime time)
 	status |= CE;
 	executingProbe = true;
 
-	switch ((scrMode << 4) | (CMD >> 4)) {
+	switch ((tmpScrMode << 4) | (CMD >> 4)) {
 	case 0x00: case 0x10: case 0x20: case 0x30: case 0x40:
-	case 0x01: case 0x11: case 0x21: case 0x31: case 0x41:
-	case 0x02: case 0x12: case 0x22: case 0x32: case 0x42:
-	case 0x03: case 0x13: case 0x23: case 0x33: case 0x43:
 		startAbrt(time); break;
+
+	case 0x01: if (vdp.isECOM()) startLfmmHs<Graphic4Mode >(time); else startAbrt(time); break;
+	case 0x11: if (vdp.isECOM()) startLfmmHs<Graphic5Mode >(time); else startAbrt(time); break;
+	case 0x21: if (vdp.isECOM()) startLfmmHs<Graphic6Mode >(time); else startAbrt(time); break;
+	case 0x31: if (vdp.isECOM()) startLfmmHs<Graphic7Mode >(time); else startAbrt(time); break;
+	case 0x41: if (vdp.isECOM()) startLfmmHs<NonBitmapMode>(time); else startAbrt(time); break;
+
+	case 0x02: if (vdp.isECOM()) startLfmc<Graphic4Mode >(time); else startAbrt(time); break;
+	case 0x12: if (vdp.isECOM()) startLfmc<Graphic5Mode >(time); else startAbrt(time); break;
+	case 0x22: if (vdp.isECOM()) startLfmc<Graphic6Mode >(time); else startAbrt(time); break;
+	case 0x32: if (vdp.isECOM()) startLfmc<Graphic7Mode >(time); else startAbrt(time); break;
+	case 0x42: if (vdp.isECOM()) startLfmc<NonBitmapMode>(time); else startAbrt(time); break;
+
+	case 0x03: if (vdp.isECOM()) startLrmmHs<Graphic4Mode >(time); else startAbrt(time); break;
+	case 0x13: if (vdp.isECOM()) startLrmmHs<Graphic5Mode >(time); else startAbrt(time); break;
+	case 0x23: if (vdp.isECOM()) startLrmmHs<Graphic6Mode >(time); else startAbrt(time); break;
+	case 0x33: if (vdp.isECOM()) startLrmmHs<Graphic7Mode >(time); else startAbrt(time); break;
+	case 0x43: if (vdp.isECOM()) startLrmmHs<NonBitmapMode>(time); else startAbrt(time); break;
 
 	case 0x04: startPointHs<Graphic4Mode >(time); break;
 	case 0x14: startPointHs<Graphic5Mode >(time); break;
@@ -3418,7 +4131,10 @@ void VDPCmdEngine::executeCommandHs(EmuTime time)
 
 void VDPCmdEngine::sync2Hs(EmuTime time)
 {
-	switch ((scrMode << 8) | CMD) {
+	int tmpScrMode = scrMode;
+	if (ARG & FG4) tmpScrMode = 0;
+
+	switch ((tmpScrMode << 8) | CMD) {
 	case 0x000: case 0x100: case 0x200: case 0x300: case 0x400:
 	case 0x001: case 0x101: case 0x201: case 0x301: case 0x401:
 	case 0x002: case 0x102: case 0x202: case 0x302: case 0x402:
@@ -3435,55 +4151,189 @@ void VDPCmdEngine::sync2Hs(EmuTime time)
 	case 0x00D: case 0x10D: case 0x20D: case 0x30D: case 0x40D:
 	case 0x00E: case 0x10E: case 0x20E: case 0x30E: case 0x40E:
 	case 0x00F: case 0x10F: case 0x20F: case 0x30F: case 0x40F:
-	case 0x010: case 0x110: case 0x210: case 0x310: case 0x410:
-	case 0x011: case 0x111: case 0x211: case 0x311: case 0x411:
-	case 0x012: case 0x112: case 0x212: case 0x312: case 0x412:
-	case 0x013: case 0x113: case 0x213: case 0x313: case 0x413:
-	case 0x014: case 0x114: case 0x214: case 0x314: case 0x414:
-	case 0x015: case 0x115: case 0x215: case 0x315: case 0x415:
-	case 0x016: case 0x116: case 0x216: case 0x316: case 0x416:
-	case 0x017: case 0x117: case 0x217: case 0x317: case 0x417:
-	case 0x018: case 0x118: case 0x218: case 0x318: case 0x418:
-	case 0x019: case 0x119: case 0x219: case 0x319: case 0x419:
-	case 0x01A: case 0x11A: case 0x21A: case 0x31A: case 0x41A:
-	case 0x01B: case 0x11B: case 0x21B: case 0x31B: case 0x41B:
-	case 0x01C: case 0x11C: case 0x21C: case 0x31C: case 0x41C:
-	case 0x01D: case 0x11D: case 0x21D: case 0x31D: case 0x41D:
-	case 0x01E: case 0x11E: case 0x21E: case 0x31E: case 0x41E:
-	case 0x01F: case 0x11F: case 0x21F: case 0x31F: case 0x41F:
-	case 0x020: case 0x120: case 0x220: case 0x320: case 0x420:
-	case 0x021: case 0x121: case 0x221: case 0x321: case 0x421:
-	case 0x022: case 0x122: case 0x222: case 0x322: case 0x422:
-	case 0x023: case 0x123: case 0x223: case 0x323: case 0x423:
-	case 0x024: case 0x124: case 0x224: case 0x324: case 0x424:
-	case 0x025: case 0x125: case 0x225: case 0x325: case 0x425:
-	case 0x026: case 0x126: case 0x226: case 0x326: case 0x426:
-	case 0x027: case 0x127: case 0x227: case 0x327: case 0x427:
-	case 0x028: case 0x128: case 0x228: case 0x328: case 0x428:
-	case 0x029: case 0x129: case 0x229: case 0x329: case 0x429:
-	case 0x02A: case 0x12A: case 0x22A: case 0x32A: case 0x42A:
-	case 0x02B: case 0x12B: case 0x22B: case 0x32B: case 0x42B:
-	case 0x02C: case 0x12C: case 0x22C: case 0x32C: case 0x42C:
-	case 0x02D: case 0x12D: case 0x22D: case 0x32D: case 0x42D:
-	case 0x02E: case 0x12E: case 0x22E: case 0x32E: case 0x42E:
-	case 0x02F: case 0x12F: case 0x22F: case 0x32F: case 0x42F:
-	case 0x030: case 0x130: case 0x230: case 0x330: case 0x430:
-	case 0x031: case 0x131: case 0x231: case 0x331: case 0x431:
-	case 0x032: case 0x132: case 0x232: case 0x332: case 0x432:
-	case 0x033: case 0x133: case 0x233: case 0x333: case 0x433:
-	case 0x034: case 0x134: case 0x234: case 0x334: case 0x434:
-	case 0x035: case 0x135: case 0x235: case 0x335: case 0x435:
-	case 0x036: case 0x136: case 0x236: case 0x336: case 0x436:
-	case 0x037: case 0x137: case 0x237: case 0x337: case 0x437:
-	case 0x038: case 0x138: case 0x238: case 0x338: case 0x438:
-	case 0x039: case 0x139: case 0x239: case 0x339: case 0x439:
-	case 0x03A: case 0x13A: case 0x23A: case 0x33A: case 0x43A:
-	case 0x03B: case 0x13B: case 0x23B: case 0x33B: case 0x43B:
-	case 0x03C: case 0x13C: case 0x23C: case 0x33C: case 0x43C:
-	case 0x03D: case 0x13D: case 0x23D: case 0x33D: case 0x43D:
-	case 0x03E: case 0x13E: case 0x23E: case 0x33E: case 0x43E:
-	case 0x03F: case 0x13F: case 0x23F: case 0x33F: case 0x43F:
-		UNREACHABLE; break;
+
+	case 0x010: executeLfmmHs<Graphic4Mode,  ImpOp>(time); break;
+	case 0x011: executeLfmmHs<Graphic4Mode,  AndOp>(time); break;
+	case 0x012: executeLfmmHs<Graphic4Mode,  OrOp >(time); break;
+	case 0x013: executeLfmmHs<Graphic4Mode,  XorOp>(time); break;
+	case 0x014: executeLfmmHs<Graphic4Mode,  NotOp>(time); break;
+	case 0x018: executeLfmmHs<Graphic4Mode, TImpOp>(time); break;
+	case 0x019: executeLfmmHs<Graphic4Mode, TAndOp>(time); break;
+	case 0x01A: executeLfmmHs<Graphic4Mode, TOrOp >(time); break;
+	case 0x01B: executeLfmmHs<Graphic4Mode, TXorOp>(time); break;
+	case 0x01C: executeLfmmHs<Graphic4Mode, TNotOp>(time); break;
+	case 0x015: case 0x016: case 0x017: case 0x01D: case 0x01E: case 0x01F:
+		executeLfmmHs<Graphic4Mode, DummyOp>(time); break;
+	case 0x110: executeLfmmHs<Graphic5Mode,  ImpOp>(time); break;
+	case 0x111: executeLfmmHs<Graphic5Mode,  AndOp>(time); break;
+	case 0x112: executeLfmmHs<Graphic5Mode,  OrOp >(time); break;
+	case 0x113: executeLfmmHs<Graphic5Mode,  XorOp>(time); break;
+	case 0x114: executeLfmmHs<Graphic5Mode,  NotOp>(time); break;
+	case 0x118: executeLfmmHs<Graphic5Mode, TImpOp>(time); break;
+	case 0x119: executeLfmmHs<Graphic5Mode, TAndOp>(time); break;
+	case 0x11A: executeLfmmHs<Graphic5Mode, TOrOp >(time); break;
+	case 0x11B: executeLfmmHs<Graphic5Mode, TXorOp>(time); break;
+	case 0x11C: executeLfmmHs<Graphic5Mode, TNotOp>(time); break;
+	case 0x115: case 0x116: case 0x117: case 0x11D: case 0x11E: case 0x11F:
+		executeLfmmHs<Graphic5Mode, DummyOp>(time); break;
+	case 0x210: executeLfmmHs<Graphic6Mode,  ImpOp>(time); break;
+	case 0x211: executeLfmmHs<Graphic6Mode,  AndOp>(time); break;
+	case 0x212: executeLfmmHs<Graphic6Mode,  OrOp >(time); break;
+	case 0x213: executeLfmmHs<Graphic6Mode,  XorOp>(time); break;
+	case 0x214: executeLfmmHs<Graphic6Mode,  NotOp>(time); break;
+	case 0x218: executeLfmmHs<Graphic6Mode, TImpOp>(time); break;
+	case 0x219: executeLfmmHs<Graphic6Mode, TAndOp>(time); break;
+	case 0x21A: executeLfmmHs<Graphic6Mode, TOrOp >(time); break;
+	case 0x21B: executeLfmmHs<Graphic6Mode, TXorOp>(time); break;
+	case 0x21C: executeLfmmHs<Graphic6Mode, TNotOp>(time); break;
+	case 0x215: case 0x216: case 0x217: case 0x21D: case 0x21E: case 0x21F:
+		executeLfmmHs<Graphic6Mode, DummyOp>(time); break;
+	case 0x310: executeLfmmHs<Graphic7Mode,  ImpOp>(time); break;
+	case 0x311: executeLfmmHs<Graphic7Mode,  AndOp>(time); break;
+	case 0x312: executeLfmmHs<Graphic7Mode,  OrOp >(time); break;
+	case 0x313: executeLfmmHs<Graphic7Mode,  XorOp>(time); break;
+	case 0x314: executeLfmmHs<Graphic7Mode,  NotOp>(time); break;
+	case 0x318: executeLfmmHs<Graphic7Mode, TImpOp>(time); break;
+	case 0x319: executeLfmmHs<Graphic7Mode, TAndOp>(time); break;
+	case 0x31A: executeLfmmHs<Graphic7Mode, TOrOp >(time); break;
+	case 0x31B: executeLfmmHs<Graphic7Mode, TXorOp>(time); break;
+	case 0x31C: executeLfmmHs<Graphic7Mode, TNotOp>(time); break;
+	case 0x315: case 0x316: case 0x317: case 0x31D: case 0x31E: case 0x31F:
+		executeLfmmHs<Graphic7Mode, DummyOp>(time); break;
+	case 0x410: executeLfmmHs<NonBitmapMode,  ImpOp>(time); break;
+	case 0x411: executeLfmmHs<NonBitmapMode,  AndOp>(time); break;
+	case 0x412: executeLfmmHs<NonBitmapMode,  OrOp >(time); break;
+	case 0x413: executeLfmmHs<NonBitmapMode,  XorOp>(time); break;
+	case 0x414: executeLfmmHs<NonBitmapMode,  NotOp>(time); break;
+	case 0x418: executeLfmmHs<NonBitmapMode, TImpOp>(time); break;
+	case 0x419: executeLfmmHs<NonBitmapMode, TAndOp>(time); break;
+	case 0x41A: executeLfmmHs<NonBitmapMode, TOrOp >(time); break;
+	case 0x41B: executeLfmmHs<NonBitmapMode, TXorOp>(time); break;
+	case 0x41C: executeLfmmHs<NonBitmapMode, TNotOp>(time); break;
+	case 0x415: case 0x416: case 0x417: case 0x41D: case 0x41E: case 0x41F:
+		executeLfmmHs<NonBitmapMode, DummyOp>(time); break;
+
+	case 0x020: executeLfmc<Graphic4Mode,  ImpOp>(time); break;
+	case 0x021: executeLfmc<Graphic4Mode,  AndOp>(time); break;
+	case 0x022: executeLfmc<Graphic4Mode,  OrOp >(time); break;
+	case 0x023: executeLfmc<Graphic4Mode,  XorOp>(time); break;
+	case 0x024: executeLfmc<Graphic4Mode,  NotOp>(time); break;
+	case 0x028: executeLfmc<Graphic4Mode, TImpOp>(time); break;
+	case 0x029: executeLfmc<Graphic4Mode, TAndOp>(time); break;
+	case 0x02A: executeLfmc<Graphic4Mode, TOrOp >(time); break;
+	case 0x02B: executeLfmc<Graphic4Mode, TXorOp>(time); break;
+	case 0x02C: executeLfmc<Graphic4Mode, TNotOp>(time); break;
+	case 0x025: case 0x026: case 0x027: case 0x02D: case 0x02E: case 0x02F:
+		executeLfmc<Graphic4Mode, DummyOp>(time); break;
+	case 0x120: executeLfmc<Graphic5Mode,  ImpOp>(time); break;
+	case 0x121: executeLfmc<Graphic5Mode,  AndOp>(time); break;
+	case 0x122: executeLfmc<Graphic5Mode,  OrOp >(time); break;
+	case 0x123: executeLfmc<Graphic5Mode,  XorOp>(time); break;
+	case 0x124: executeLfmc<Graphic5Mode,  NotOp>(time); break;
+	case 0x128: executeLfmc<Graphic5Mode, TImpOp>(time); break;
+	case 0x129: executeLfmc<Graphic5Mode, TAndOp>(time); break;
+	case 0x12A: executeLfmc<Graphic5Mode, TOrOp >(time); break;
+	case 0x12B: executeLfmc<Graphic5Mode, TXorOp>(time); break;
+	case 0x12C: executeLfmc<Graphic5Mode, TNotOp>(time); break;
+	case 0x125: case 0x126: case 0x127: case 0x12D: case 0x12E: case 0x12F:
+		executeLfmc<Graphic5Mode, DummyOp>(time); break;
+	case 0x220: executeLfmc<Graphic6Mode,  ImpOp>(time); break;
+	case 0x221: executeLfmc<Graphic6Mode,  AndOp>(time); break;
+	case 0x222: executeLfmc<Graphic6Mode,  OrOp >(time); break;
+	case 0x223: executeLfmc<Graphic6Mode,  XorOp>(time); break;
+	case 0x224: executeLfmc<Graphic6Mode,  NotOp>(time); break;
+	case 0x228: executeLfmc<Graphic6Mode, TImpOp>(time); break;
+	case 0x229: executeLfmc<Graphic6Mode, TAndOp>(time); break;
+	case 0x22A: executeLfmc<Graphic6Mode, TOrOp >(time); break;
+	case 0x22B: executeLfmc<Graphic6Mode, TXorOp>(time); break;
+	case 0x22C: executeLfmc<Graphic6Mode, TNotOp>(time); break;
+	case 0x225: case 0x226: case 0x227: case 0x22D: case 0x22E: case 0x22F:
+		executeLfmc<Graphic6Mode, DummyOp>(time); break;
+	case 0x320: executeLfmc<Graphic7Mode,  ImpOp>(time); break;
+	case 0x321: executeLfmc<Graphic7Mode,  AndOp>(time); break;
+	case 0x322: executeLfmc<Graphic7Mode,  OrOp >(time); break;
+	case 0x323: executeLfmc<Graphic7Mode,  XorOp>(time); break;
+	case 0x324: executeLfmc<Graphic7Mode,  NotOp>(time); break;
+	case 0x328: executeLfmc<Graphic7Mode, TImpOp>(time); break;
+	case 0x329: executeLfmc<Graphic7Mode, TAndOp>(time); break;
+	case 0x32A: executeLfmc<Graphic7Mode, TOrOp >(time); break;
+	case 0x32B: executeLfmc<Graphic7Mode, TXorOp>(time); break;
+	case 0x32C: executeLfmc<Graphic7Mode, TNotOp>(time); break;
+	case 0x325: case 0x326: case 0x327: case 0x32D: case 0x32E: case 0x32F:
+		executeLfmc<Graphic7Mode, DummyOp>(time); break;
+	case 0x420: executeLfmc<NonBitmapMode,  ImpOp>(time); break;
+	case 0x421: executeLfmc<NonBitmapMode,  AndOp>(time); break;
+	case 0x422: executeLfmc<NonBitmapMode,  OrOp >(time); break;
+	case 0x423: executeLfmc<NonBitmapMode,  XorOp>(time); break;
+	case 0x424: executeLfmc<NonBitmapMode,  NotOp>(time); break;
+	case 0x428: executeLfmc<NonBitmapMode, TImpOp>(time); break;
+	case 0x429: executeLfmc<NonBitmapMode, TAndOp>(time); break;
+	case 0x42A: executeLfmc<NonBitmapMode, TOrOp >(time); break;
+	case 0x42B: executeLfmc<NonBitmapMode, TXorOp>(time); break;
+	case 0x42C: executeLfmc<NonBitmapMode, TNotOp>(time); break;
+	case 0x425: case 0x426: case 0x427: case 0x42D: case 0x42E: case 0x42F:
+		executeLfmc<NonBitmapMode, DummyOp>(time); break;
+
+	case 0x030: executeLrmmHs<Graphic4Mode,  ImpOp>(time); break;
+	case 0x031: executeLrmmHs<Graphic4Mode,  AndOp>(time); break;
+	case 0x032: executeLrmmHs<Graphic4Mode,  OrOp >(time); break;
+	case 0x033: executeLrmmHs<Graphic4Mode,  XorOp>(time); break;
+	case 0x034: executeLrmmHs<Graphic4Mode,  NotOp>(time); break;
+	case 0x038: executeLrmmHs<Graphic4Mode, TImpOp>(time); break;
+	case 0x039: executeLrmmHs<Graphic4Mode, TAndOp>(time); break;
+	case 0x03A: executeLrmmHs<Graphic4Mode, TOrOp >(time); break;
+	case 0x03B: executeLrmmHs<Graphic4Mode, TXorOp>(time); break;
+	case 0x03C: executeLrmmHs<Graphic4Mode, TNotOp>(time); break;
+	case 0x035: case 0x036: case 0x037: case 0x03D: case 0x03E: case 0x03F:
+		executeLrmmHs<Graphic4Mode, DummyOp>(time); break;
+	case 0x130: executeLrmmHs<Graphic5Mode,  ImpOp>(time); break;
+	case 0x131: executeLrmmHs<Graphic5Mode,  AndOp>(time); break;
+	case 0x132: executeLrmmHs<Graphic5Mode,  OrOp >(time); break;
+	case 0x133: executeLrmmHs<Graphic5Mode,  XorOp>(time); break;
+	case 0x134: executeLrmmHs<Graphic5Mode,  NotOp>(time); break;
+	case 0x138: executeLrmmHs<Graphic5Mode, TImpOp>(time); break;
+	case 0x139: executeLrmmHs<Graphic5Mode, TAndOp>(time); break;
+	case 0x13A: executeLrmmHs<Graphic5Mode, TOrOp >(time); break;
+	case 0x13B: executeLrmmHs<Graphic5Mode, TXorOp>(time); break;
+	case 0x13C: executeLrmmHs<Graphic5Mode, TNotOp>(time); break;
+	case 0x135: case 0x136: case 0x137: case 0x13D: case 0x13E: case 0x13F:
+		executeLrmmHs<Graphic5Mode, DummyOp>(time); break;
+	case 0x230: executeLrmmHs<Graphic6Mode,  ImpOp>(time); break;
+	case 0x231: executeLrmmHs<Graphic6Mode,  AndOp>(time); break;
+	case 0x232: executeLrmmHs<Graphic6Mode,  OrOp >(time); break;
+	case 0x233: executeLrmmHs<Graphic6Mode,  XorOp>(time); break;
+	case 0x234: executeLrmmHs<Graphic6Mode,  NotOp>(time); break;
+	case 0x238: executeLrmmHs<Graphic6Mode, TImpOp>(time); break;
+	case 0x239: executeLrmmHs<Graphic6Mode, TAndOp>(time); break;
+	case 0x23A: executeLrmmHs<Graphic6Mode, TOrOp >(time); break;
+	case 0x23B: executeLrmmHs<Graphic6Mode, TXorOp>(time); break;
+	case 0x23C: executeLrmmHs<Graphic6Mode, TNotOp>(time); break;
+	case 0x235: case 0x236: case 0x237: case 0x23D: case 0x23E: case 0x23F:
+		executeLrmmHs<Graphic6Mode, DummyOp>(time); break;
+	case 0x330: executeLrmmHs<Graphic7Mode,  ImpOp>(time); break;
+	case 0x331: executeLrmmHs<Graphic7Mode,  AndOp>(time); break;
+	case 0x332: executeLrmmHs<Graphic7Mode,  OrOp >(time); break;
+	case 0x333: executeLrmmHs<Graphic7Mode,  XorOp>(time); break;
+	case 0x334: executeLrmmHs<Graphic7Mode,  NotOp>(time); break;
+	case 0x338: executeLrmmHs<Graphic7Mode, TImpOp>(time); break;
+	case 0x339: executeLrmmHs<Graphic7Mode, TAndOp>(time); break;
+	case 0x33A: executeLrmmHs<Graphic7Mode, TOrOp >(time); break;
+	case 0x33B: executeLrmmHs<Graphic7Mode, TXorOp>(time); break;
+	case 0x33C: executeLrmmHs<Graphic7Mode, TNotOp>(time); break;
+	case 0x335: case 0x336: case 0x337: case 0x33D: case 0x33E: case 0x33F:
+		executeLrmmHs<Graphic7Mode, DummyOp>(time); break;
+	case 0x430: executeLrmmHs<NonBitmapMode,  ImpOp>(time); break;
+	case 0x431: executeLrmmHs<NonBitmapMode,  AndOp>(time); break;
+	case 0x432: executeLrmmHs<NonBitmapMode,  OrOp >(time); break;
+	case 0x433: executeLrmmHs<NonBitmapMode,  XorOp>(time); break;
+	case 0x434: executeLrmmHs<NonBitmapMode,  NotOp>(time); break;
+	case 0x438: executeLrmmHs<NonBitmapMode, TImpOp>(time); break;
+	case 0x439: executeLrmmHs<NonBitmapMode, TAndOp>(time); break;
+	case 0x43A: executeLrmmHs<NonBitmapMode, TOrOp >(time); break;
+	case 0x43B: executeLrmmHs<NonBitmapMode, TXorOp>(time); break;
+	case 0x43C: executeLrmmHs<NonBitmapMode, TNotOp>(time); break;
+	case 0x435: case 0x436: case 0x437: case 0x43D: case 0x43E: case 0x43F:
+		executeLrmmHs<NonBitmapMode, DummyOp>(time); break;
 
 	case 0x040: case 0x041: case 0x042: case 0x043:
 	case 0x044: case 0x045: case 0x046: case 0x047:

@@ -355,6 +355,13 @@ public:
 		return controlRegs[12] & 0x0F;
 	}
 
+	/** Gets the current back color for drawing font.
+	  * @return Color index [0..15].
+	  */
+	[[nodiscard]] uint8_t getFontBackgroundColor() const {
+		return controlRegs[12] & 0xFF;
+	}
+
 	/** Gets the current blink state.
 	  * @return True iff alternate colors / page should be displayed.
 	  */
