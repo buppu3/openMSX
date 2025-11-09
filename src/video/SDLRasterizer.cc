@@ -517,6 +517,14 @@ void SDLRasterizer::drawBorder(
 	}
 }
 
+static unsigned convInterleaveToFlat(bool flat, unsigned addr)
+{
+	if (!flat) return addr;
+	return ( addr       & ~0x1FF) |		// page
+		   ((addr << 1) &  0x1FE) |		// line
+		   ((addr >> 8) &  0x001);		// even/odd
+}
+
 void SDLRasterizer::drawDisplay(
 	int /*fromX*/, int fromY,
 	int displayX, int displayY,
@@ -584,14 +592,15 @@ void SDLRasterizer::drawDisplay(
 			//   but now do it per line. Per-line is actually only
 			//   needed when vdp.isFastBlinkEnabled() is true.
 			//   Idea: can be cheaply calculated incrementally.
+			bool filMode = vdp.isFIL();
 			unsigned pageMaskOdd = (mode.isPlanar() ? 0x000 : 0x200) |
-				vdp.getEvenOddMask(y);
+				(filMode ? (vdp.getEvenOdd() ? 0x100 : 0x000) : vdp.getEvenOddMask(y));
 			unsigned pageMaskEven = vdp.isMultiPageScrolling()
 				? (pageMaskOdd & ~0x100)
 				: pageMaskOdd;
-			const std::array<unsigned, 2> vramLine = {							// ToDo: check FIL bit
-				(vram.nameTable.getMask() >> 7) & (pageMaskEven | displayY),
-				(vram.nameTable.getMask() >> 7) & (pageMaskOdd  | displayY)
+			const std::array<unsigned, 2> vramLine = {
+				convInterleaveToFlat(filMode, ((filMode ? 0x100 : 0) | (vram.nameTable.getMask() >> 7)) & (pageMaskEven | displayY)),
+				convInterleaveToFlat(filMode, ((filMode ? 0x100 : 0) | (vram.nameTable.getMask() >> 7)) & (pageMaskOdd  | displayY))
 			};
 
 			std::array<Pixel, 512> buf;

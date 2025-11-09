@@ -663,7 +663,7 @@ void VDP::frameStart(EmuTime time)
 	// TODO: Interlace is effectuated in border height, according to
 	//       the data book. Exactly when is the fixation point?
 	palTiming = (controlRegs[9] & 0x02) != 0;
-	interlaced = !isFastBlinkEnabled() && ((controlRegs[9] & 0x08) != 0);
+	interlaced = !isFastBlinkEnabled() && (((controlRegs[9] & 0x08) != 0) || isFIL());
 
 	// Blinking.
 	if ((blinkCount != 0) && !isFastBlinkEnabled()) { // counter active?
