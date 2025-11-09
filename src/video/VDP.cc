@@ -867,7 +867,7 @@ uint8_t VDP::peekRegister(unsigned address, EmuTime time) const
 {
 	if (address < 0x20) {
 		return controlRegs[address];
-	} else if (address < 0x2F) {
+	} else if (address < 0x3B) {
 		return cmdEngine->peekCmdReg(narrow<uint8_t>(address - 0x20), time);
 	} else {
 		return 0xFF;

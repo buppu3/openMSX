@@ -589,7 +589,7 @@ void SDLRasterizer::drawDisplay(
 			unsigned pageMaskEven = vdp.isMultiPageScrolling()
 				? (pageMaskOdd & ~0x100)
 				: pageMaskOdd;
-			const std::array<unsigned, 2> vramLine = {
+			const std::array<unsigned, 2> vramLine = {							// ToDo: check FIL bit
 				(vram.nameTable.getMask() >> 7) & (pageMaskEven | displayY),
 				(vram.nameTable.getMask() >> 7) & (pageMaskOdd  | displayY)
 			};

@@ -169,6 +169,10 @@ public:
 		return hasFID() & ((controlRegs[21] & 0x01) == 0);
 	}
 
+	[[nodiscard]] bool isV9968() const {
+		return (version & VM_V9968) != 0;
+	}
+
 	/** Is this an MSX1 VDP?
 	  * @return True if this is an MSX1 VDP
 	  *   False otherwise.

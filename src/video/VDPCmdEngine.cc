@@ -3163,6 +3163,20 @@ uint8_t VDPCmdEngine::peekCmdReg(uint8_t index, EmuTime time)
 	case 0x0C: return COL;
 	case 0x0D: return ARG;
 	case 0x0E: return CMD;
+
+	case 0x0F: return narrow_cast<uint8_t>(VX & 0xFF);
+	case 0x10: return narrow_cast<uint8_t>(VX >> 8);
+	case 0x11: return narrow_cast<uint8_t>(VY & 0xFF);
+	case 0x12: return narrow_cast<uint8_t>(VY >> 8);
+	case 0x13: return narrow_cast<uint8_t>(WSX & 0xFF);
+	case 0x14: return narrow_cast<uint8_t>(WSX >> 8);
+	case 0x15: return narrow_cast<uint8_t>(WSY & 0xFF);
+	case 0x16: return narrow_cast<uint8_t>(WSY >> 8);
+	case 0x17: return narrow_cast<uint8_t>(WEX & 0xFF);
+	case 0x18: return narrow_cast<uint8_t>(WEX >> 8);
+	case 0x19: return narrow_cast<uint8_t>(WEY & 0xFF);
+	case 0x1A: return narrow_cast<uint8_t>(WEY >> 8);
+
 	default: UNREACHABLE;
 	}
 }
