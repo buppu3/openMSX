@@ -250,12 +250,13 @@ public:
 		assert((size & 1) == 0);
 		unsigned endIndex = index + size - 1;
 		unsigned areaBits = Math::floodRight(index ^ endIndex);
-		areaBits = ((areaBits << 16) | (areaBits >> 1)) & 0x3FFFF & sizeMask;
+		areaBits = ((areaBits & 0x20000) | ((areaBits << 16) & 0x10000) | ((areaBits >> 1) & 0x0FFFF)) & sizeMask;
 		(void)areaBits;
 		assert((areaBits & effectiveBaseMask) == areaBits);
 		assert((areaBits & ~indexMask)        == areaBits);
 		assert(isEnabled());
-		unsigned addr = effectiveBaseMask & (indexMask | ((index >> 1) & 0x0FFFF) | (index & 0x20000));
+		index = (index & 0x20000) | ((index >> 1) & 0xFFFF);
+		unsigned addr = effectiveBaseMask & (indexMask | index);
 		const uint8_t* ptr0 = &data[addr | 0x00000];
 		const uint8_t* ptr1 = &data[addr | 0x10000];
 		return {std::span<const uint8_t, size / 2>{ptr0, size / 2},

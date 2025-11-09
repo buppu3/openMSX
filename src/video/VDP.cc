@@ -1540,8 +1540,8 @@ void VDP::updateSpriteAttributeBase(EmuTime time)
 		break;
 	}
 	if (displayMode.isPlanar()) {
-		baseMask = ((baseMask << 16) | (baseMask >> 1)) & (hasEVR() ? 0x3FFFF : 0x1FFFF);
-		indexMask = (((indexMask << 16) & 0x10000) | (indexMask & 0x20000) | ~(3 << 16)) & (indexMask >> 1);
+		baseMask = ((baseMask & 0x20000) | ((baseMask << 16) & 0x10000) | ((baseMask >> 1) & 0x0FFFF)) & (hasEVR() ? 0x3FFFF : 0x1FFFF);
+		indexMask = ((indexMask << 16) |  ~(1 << 16)) & (((indexMask >> 1) & 0x0FFFF) | (indexMask & 0x20000));
 	}
 	vram->spriteAttribTable.setMask(baseMask, indexMask, time);
 }
@@ -1555,7 +1555,7 @@ void VDP::updateSpritePatternBase(EmuTime time)
 		unsigned indexMask = ~0u << 11;
 		if (displayMode.isPlanar()) {
 			baseMask = ((baseMask & 0x20000) | ((baseMask << 16) & 0x10000) | ((baseMask >> 1) & 0x0FFFF)) & (hasEVR() ? 0x3FFFF : 0x1FFFF);
-			indexMask = (((indexMask << 16) & 0x10000) | (indexMask & 0x20000) | ~(3 << 16)) & (indexMask >> 1);
+			indexMask = ((indexMask << 16) | ~(1 << 16)) & (((indexMask >> 1) & 0x0FFFF) | (indexMask & 0x20000));
 		}
 		vram->spritePatternTable.setMask(baseMask, indexMask, time);
 		break;
