@@ -560,7 +560,7 @@ inline void SpriteChecker::checkSprites3(int minLine, int maxLine)
 			if (rvy) {
 				spriteLine = (mgy - spriteLine) - 1;
 			}
-			unsigned srcY = (16 + (sz << 4)) * spriteLine / mgy;
+			unsigned srcY = (16 << sz) * spriteLine / mgy;
 			unsigned row = ((pts << 8) | (py << 4)) + srcY;
 			unsigned offset = vdp.getSpritePatternTableBase() + ((row << 7) | (px << 3));
 			auto patternPtr = vram.spritePatternTable.getReadArea<8>(offset);
