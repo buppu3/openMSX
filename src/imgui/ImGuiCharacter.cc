@@ -307,15 +307,15 @@ void ImGuiCharacter::paint(MSXMotherBoard* motherBoard)
 		int lines = manRows ? manualLines : vdpLines;
 		int color0 = manColor0 ? manualColor0 : vdpColor0;
 
-		VramTable patTable(vram);
+		VramTable patTable(vram, vdp->hasEVR());
 		unsigned patReg = (manPat ? (manualPatBase | (patMult(manualMode) - 1)) : vdp->getPatternTableBase()) >> 11;
 		patTable.setRegister(patReg, 11);
 
-		VramTable colTable(vram);
+		VramTable colTable(vram, vdp->hasEVR());
 		unsigned colReg = (manCol ? (manualColBase | (colMult(manualMode) - 1)) : vdp->getColorTableBase()) >> 6;
 		colTable.setRegister(colReg, 6);
 
-		VramTable namTable(vram);
+		VramTable namTable(vram, vdp->hasEVR());
 		unsigned namReg = (manNam ? (manualNamBase | (namMult(manualMode) - 1)) : vdp->getNameTableBase()) >> 10;
 		namTable.setRegister(namReg, 10);
 		namTable.setIndexSize((mode == TEXT80) ? 12 : 10);

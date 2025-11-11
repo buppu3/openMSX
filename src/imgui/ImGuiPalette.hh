@@ -23,6 +23,7 @@ public:
 	void paint(MSXMotherBoard* motherBoard) override;
 
 	std::array<uint32_t, 256> getPalette(const VDP* vdp) const;
+	std::array<uint32_t, 4 * 256> getPaletteWithTP(const VDP* vdp) const;
 
 public:
 	im::WindowStatus window;

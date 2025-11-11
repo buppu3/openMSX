@@ -1,7 +1,5 @@
 - LFMC コマンド
 
-- ImGuiSpriteViewer の SP3 対応
-
 - CPU からの VRAM read/write のタイミング
 
 - CPU と VDP command の VRAM アクセスタイミングが競合した時に VDP command 側を 1アクセススロット遅延させる

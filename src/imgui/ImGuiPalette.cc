@@ -81,15 +81,15 @@ static void insertRGB(bool hasEPAL, std::span<uint16_t, 256> msxPalette, unsigne
 	}
 }
 
-[[nodiscard]] static uint32_t toRGBA(bool hasEPAL, uint16_t msxColor)
+[[nodiscard]] static uint32_t toRGBA(bool hasEPAL, uint16_t msxColor, float a = 1.0f)
 {
 	auto [r, g, b] = extractRGB(hasEPAL, msxColor);
 	if (hasEPAL) {
 		static constexpr float scale = 1.0f / 31.0f;
-		return ImColor(float(r) * scale, float(g) * scale, float(b) * scale);
+		return ImColor(float(r) * scale, float(g) * scale, float(b) * scale, a);
 	}
 	static constexpr float scale = 1.0f / 7.0f;
-	return ImColor(float(r) * scale, float(g) * scale, float(b) * scale);
+	return ImColor(float(r) * scale, float(g) * scale, float(b) * scale, a);
 }
 
 static bool coloredButton(const char* id, ImU32 color, ImVec2 size)
@@ -129,6 +129,39 @@ std::array<uint32_t, 256> ImGuiPalette::getPalette(const VDP* vdp) const
 		}();
 		for (auto i : xrange(256)) {
 			result[i] = toRGBA(vdp->hasEPAL(), rgb[i]);
+		}
+	}
+	return result;
+}
+
+std::array<uint32_t, 4 * 256> ImGuiPalette::getPaletteWithTP(const VDP* vdp) const
+{
+	std::array<uint32_t, 4 * 256> result;
+	if (vdp && vdp->isMSX1VDP() && (whichPalette != PALETTE_CUSTOM)) {
+		auto rgb = vdp->getMSX1Palette();
+		for (auto i : xrange(256)) {
+			if (i < 16) {
+				auto [r, g, b] = rgb[i];
+				result[i] = ImColor(r, g, b);
+			} else {
+				result[i] = 0;
+			}
+		}
+	} else {
+		auto rgb = [&] -> std::span<const uint16_t, 256> {
+			if (whichPalette == PALETTE_CUSTOM) {
+				return customPalette;
+			} else if (whichPalette == PALETTE_VDP && vdp && !vdp->isMSX1VDP()) {
+				return vdp->getPalette();
+			} else {
+				return fixedPalette;
+			}
+		}();
+		for (auto i : xrange(256)) {
+			result[256 * 0 + i] = toRGBA(vdp->hasEPAL(), rgb[i], 1.00f);
+			result[256 * 1 + i] = toRGBA(vdp->hasEPAL(), rgb[i], 0.75f);
+			result[256 * 2 + i] = toRGBA(vdp->hasEPAL(), rgb[i], 0.50f);
+			result[256 * 3 + i] = toRGBA(vdp->hasEPAL(), rgb[i], 0.25f);
 		}
 	}
 	return result;

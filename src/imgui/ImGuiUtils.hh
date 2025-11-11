@@ -377,8 +377,8 @@ std::optional<ImGuiKeyChord> parseKeyChord(std::string_view name);
 //  shared between ImGuiCharacter, ImGuiSpriteViewer
 class VramTable {
 public:
-	explicit VramTable(std::span<const uint8_t> vram_, bool planar_ = false)
-		: vram(vram_), planar(planar_) {}
+	explicit VramTable(std::span<const uint8_t> vram_, bool evr_, bool planar_ = false)
+		: vram(vram_), evr(evr_), planar(planar_) {}
 
 	void setRegister(unsigned value, unsigned extraLsbBits) {
 		registerMask = (value << extraLsbBits) | ~(~0u << extraLsbBits);
@@ -393,7 +393,11 @@ public:
 	[[nodiscard]] uint8_t operator[](unsigned index) const {
 		auto addr = getAddress(index);
 		if (planar) {
-			addr = ((addr << 16) | (addr >> 1)) & 0x1'FFFF;
+			if (evr) {
+				addr = (addr & 0x20000) | ((addr << 16) & 0x10000) | ((addr >> 1) & 0x0FFFF);
+			} else {
+				addr = ((addr << 16) | (addr >> 1)) & 0x1'FFFF;
+			}
 		}
 		return vram[addr];
 	}
@@ -402,6 +406,7 @@ private:
 	unsigned registerMask = 0;
 	unsigned indexMask = 0;
 	bool planar = false;
+	bool evr = false;
 };
 
 inline std::string freq2note(float freq)

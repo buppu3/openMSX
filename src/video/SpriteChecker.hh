@@ -56,6 +56,10 @@ public:
 		SpritePattern pattern2;
 	};
 
+	static uint8_t swapNibble(uint8_t val) {
+		return ((val << 4) & 0xF0) | (val >> 4);
+	}
+
 	static constexpr SpritePattern doublePattern(SpritePattern a)
 	{
 		// bit-pattern "abcd...." gets expanded to "aabbccdd"
@@ -355,10 +359,6 @@ private:
 	void checkSprites2(int minLine, int maxLine);
 
 	void checkSprites3(int minLine, int maxLine);
-
-	uint8_t swapNibble(uint8_t val) {
-		return ((val << 4) & 0xF0) | (val >> 4);
-	}
 
 private:
 	using UpdateSpritesMethod = void (SpriteChecker::*)(int limit);
