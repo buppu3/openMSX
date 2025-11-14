@@ -791,6 +791,7 @@ void VDP::writeIO(uint16_t port, uint8_t value, EmuTime time_)
 			if (++paletteDataPointer >= 3) {
 				paletteDataPointer = 0;
 				controlRegs[16] = (index + 1) & 0xFF;
+				setPalette(index, grb, time);
 			}
 		} else {
 			if (paletteDataStored) {
