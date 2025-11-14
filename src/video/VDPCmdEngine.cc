@@ -2803,8 +2803,8 @@ void VDPCmdEngine::startLrmm(EmuTime time)
 	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_pixel<Mode>(DX, NX, ARG);
 	unsigned tmpNY = clipNY_1(DY, NY, ARG);
-	ASX_12P8 = SX_12P8 = (SX << 8);// | ((SX & (1 << 11)) ? ~((1 << (12+8)) - 1): 0);
-	ASY_12P8 = SY_12P8 = (SY << 8);// | ((SY & (1 << 11)) ? ~((1 << (12+8)) - 1): 0);
+	ASX_12P8 = SX_12P8 = (SX << 8);
+	ASY_12P8 = SY_12P8 = (ARG & XHR) ? (SY << 9) : (SY << 8);
 	ADX = DX;
 	ANX = tmpNX;
 	nextAccessSlot(time);
@@ -2827,13 +2827,14 @@ void VDPCmdEngine::executeLrmm(EmuTime limit)
 	bool doPset  = !dstExt || hasExtendedVRAM;
 	unsigned dstAddr = Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt);
 	auto calculator = getSlotCalculator(limit);
+	signed x, y;
 
 	switch (phase) {
 	case 0:
 loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 		if (doPoint) [[likely]] {
-			signed x = ASX_12P8 / 256;
-			signed y = ASY_12P8 / 256;
+			x = ASX_12P8 / 256;
+			y = (ARG & XHR) ? (ASY_12P8 / 512) : (ASY_12P8 / 256);
 			if ((signed)WSX <= x && x <= (signed)WEX && (signed)WSY <= y && y <= (signed)WEY) {
 			    tmpSrc = Mode::point(vram, (unsigned)x, (unsigned)y, vdp.isEVR(), srcExt);
 			} else {
@@ -2857,16 +2858,22 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 			Mode::pset(calculator.getTime(), vram, ADX, dstAddr,
 			           tmpDst, tmpSrc, LogOp());
 		}
-		if (ARG & XHR) ASX_12P8 += VX;
 		ASX_12P8 += VX;
 		ASY_12P8 += VY;
 		ADX += TX;
 		if (--ANX == 0) {
-			if (ARG & XHR) SX_12P8 -= VY;
-			SX_12P8 -= VY;
-			SY_12P8 += VX;
+			if (ARG & XHR) {
+				SX_12P8 -= VY * 2;
+				SY_12P8 += VX * 2;
+			} else {
+				SX_12P8 -= VY;
+				SY_12P8 += VX;
+			}
 			DY += TY; --NY;
-			ASX_12P8 = SX_12P8; ASY_12P8 = SY_12P8; ADX = DX; ANX = tmpNX;
+			ASX_12P8 = SX_12P8;
+			ASY_12P8 = SY_12P8;
+			ADX = DX;
+			ANX = tmpNX;
 			if (--tmpNY == 0) {
 				commandDone(calculator.getTime());
 				break;
@@ -2891,8 +2898,8 @@ void VDPCmdEngine::startLrmmHs(EmuTime time)
 	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_pixel<Mode>(DX, NX, ARG);
 	unsigned tmpNY = clipNY_1(DY, NY, ARG);
-	ASX_12P8 = SX_12P8 = (SX << 8);// | ((SX & (1 << 11)) ? ~((1 << (12+8)) - 1): 0);
-	ASY_12P8 = SY_12P8 = (SY << 8);// | ((SY & (1 << 11)) ? ~((1 << (12+8)) - 1): 0);
+	ASX_12P8 = SX_12P8 = (SX << 8);
+	ASY_12P8 = SY_12P8 = (ARG & XHR) ? (SY << 9) : (SY << 8);
 	ADX = DX;
 	ANX = tmpNX;
 	bool srcExt  = getMXS(ARG, vdp.hasEVR());
@@ -2929,7 +2936,7 @@ void VDPCmdEngine::executeLrmmHs(EmuTime limit)
 loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 		if (doPoint) [[likely]] {
 			x = ASX_12P8 / 256;
-			y = ASY_12P8 / 256;
+			y = (ARG & XHR) ? (ASY_12P8 / 512) : (ASY_12P8 / 256);
 			if ((signed)WSX <= x && x <= (signed)WEX && (signed)WSY <= y && y <= (signed)WEY) {
 			    tmpSrc = Mode::point(vram, x, y, vdp.isEVR(), srcExt);
 			} else {
@@ -2953,16 +2960,22 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 			Mode::pset(calculator.getTime(), vram, ADX, dstAddr,
 			           tmpDst, tmpSrc, LogOp());
 		}
-		if (ARG & XHR) ASX_12P8 += VX;
 		ASX_12P8 += VX;
 		ASY_12P8 += VY;
 		ADX += TX;
 		if (--ANX == 0) {
-			if (ARG & XHR) SX_12P8 -= VY;
-			SX_12P8 -= VY;
-			SY_12P8 += VX;
+			if (ARG & XHR) {
+				SX_12P8 -= VY * 2;
+				SY_12P8 += VX * 2;
+			} else {
+				SX_12P8 -= VY;
+				SY_12P8 += VX;
+			}
 			DY += TY; --NY;
-			ASX_12P8 = SX_12P8; ASY_12P8 = SY_12P8; ADX = DX; ANX = tmpNX;
+			ASX_12P8 = SX_12P8;
+			ASY_12P8 = SY_12P8;
+			ADX = DX;
+			ANX = tmpNX;
 			if (--tmpNY == 0) {
 				commandDone(calculator.getTime());
 				break;
@@ -2971,7 +2984,7 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 		dstAddr = Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt);
 
 		x = ASX_12P8 / 256;
-		y = ASY_12P8 / 256;
+		y = (ARG & XHR) ? (ASY_12P8 / 512) : (ASY_12P8 / 256);
 		if ((signed)WSX <= x && x <= (signed)WEX && (signed)WSY <= y && y <= (signed)WEY) {
 			calculator.nextHs(1, vdp.isHS() ? 0 : waitLrmm, checkCache(false, Mode::addressOf(x, y, vdp.isEVR(), srcExt)));
 		} else {
