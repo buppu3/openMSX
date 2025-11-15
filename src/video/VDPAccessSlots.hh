@@ -111,6 +111,7 @@ private:
 [[nodiscard]] EmuTime getAccessSlot(EmuTime frame, EmuTime time, Delta delta,
                       const VDP& vdp);
 [[nodiscard]] EmuTime getAccessSlot(EmuTime frame_, EmuTime time, int delay, int wait, VDPCmdCache::CachePenalty penalty, const VDP& vdp);
+[[nodiscard]] EmuTime getCpuAccessSlot(EmuTime frame, EmuTime time, const VDP& vdp);
 
 /** When many calls to getAccessSlot() are needed, it's more efficient to
   * instead use this function. */

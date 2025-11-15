@@ -1,5 +1,3 @@
 - LFMC コマンド
 
-- CPU からの VRAM read/write のタイミング
-
 - CPU と VDP command の VRAM アクセスタイミングが競合した時に VDP command 側を 1アクセススロット遅延させる

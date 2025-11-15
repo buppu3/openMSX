@@ -955,10 +955,13 @@ void VDP::scheduleCpuVramAccess(bool isRead, uint8_t write, EmuTime time)
 			// other variables that influence the exact timing (7
 			// vs 8 cycles).
 			pendingCpuAccess = true;
-			auto delta = useHS() ? VDPAccessSlots::Delta::D0 :
-						 isMSX1VDP() ? VDPAccessSlots::Delta::D28
-						 : VDPAccessSlots::Delta::D16;
-			syncCpuVramAccess.setSyncPoint(getAccessSlot(time, delta));
+			if (useHS()) {
+				syncCpuVramAccess.setSyncPoint(getCpuAccessSlot(time));
+			} else {
+				auto delta = isMSX1VDP() ? VDPAccessSlots::Delta::D28
+							 : VDPAccessSlots::Delta::D16;
+				syncCpuVramAccess.setSyncPoint(getAccessSlot(time, delta));
+			}
 		}
 	}
 }
@@ -1020,6 +1023,12 @@ EmuTime VDP::getAccessSlot(EmuTime time, int delay, int wait, VDPCmdCache::Cache
 {
 	return VDPAccessSlots::getAccessSlot(
 		getFrameStartTime(), time, delay, wait, penalty, *this);
+}
+
+EmuTime VDP::getCpuAccessSlot(EmuTime time) const
+{
+	return VDPAccessSlots::getCpuAccessSlot(
+		getFrameStartTime(), time, *this);
 }
 
 VDPAccessSlots::Calculator VDP::getAccessSlotCalculator(

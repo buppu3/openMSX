@@ -148,481 +148,3636 @@ static constexpr std::array<int16_t, 91 + 18> slotsMsx1Text = {
 // 5:cmd			5:cmd		5:cmd
 // 6:cmd			6:cmd
 // 7:cmd			7:cmd
-static constexpr std::array<int16_t, 352> slotsV9968ScreenOff = {
-//	bmp   bmp   spr   cmd   cmd   cmd   cmd   cmd
-	   0,   16,   32,   48,   64,   80,   96,  112,	// -40
-	       144,  160,  176,  192,  208,  224,  240,	// -32 128=REFRESH
-	 256,  272,  288,  304,  320,  336,  352,  368,	// -24
-	 384,  400,  416,  432,  448,  464,  480,  496,	// -16
-	 512,  528,  544,  560,  576,  592,  608,  624,	// -8
-	 640,  656,  672,  688,  704,  720,  736,  752,	// 0
-	 768,  784,  800,  816,  832,  848,  864,  880,
-	 896,  912,  928,  944,  960,  976,  992, 1008,
-	1024, 1040, 1056, 1072, 1088, 1104, 1120, 1136,
-	1152, 1168, 1184, 1200, 1216, 1232, 1248, 1264,
-	1280, 1296, 1312, 1328, 1344, 1360, 1376, 1392,
-	1408, 1424, 1440, 1456, 1472, 1488, 1504, 1520,
-	1536, 1552, 1568, 1584, 1600, 1616, 1632, 1648,
-	1664, 1680, 1696, 1712, 1728, 1744, 1760, 1776,
-	1792, 1808, 1824, 1840, 1856, 1872, 1888, 1904,
-	1920, 1936, 1952, 1968, 1984, 2000, 2016, 2032,
-	2048, 2064, 2080, 2096, 2112, 2128, 2144, 2160,
-	2176, 2192, 2208, 2224, 2240, 2256, 2272, 2288,
-	2304, 2320, 2336, 2352, 2368, 2384, 2400, 2416,
-	2432, 2448, 2464, 2480, 2496, 2512, 2528, 2544,
-	2560, 2576, 2592, 2608, 2624, 2640, 2656, 2672,
-	2688, 2704, 2720, 2736, 2752, 2768, 2784, 2800,
-	2816, 2832, 2848, 2864, 2880, 2896, 2912, 2928,
-	2944, 2960, 2976, 2992, 3008, 3024, 3040, 3056,
-	3072, 3088, 3104, 3120, 3136, 3152, 3168, 3184,
-	3200, 3216, 3232, 3248, 3264, 3280, 3296, 3312,
-	3328, 3344, 3360, 3376, 3392, 3408, 3424, 3440,
-	3456, 3472, 3488, 3504, 3520, 3536, 3552, 3568,
-	3584, 3600, 3616, 3632, 3648, 3664, 3680, 3696,
-	3712, 3728, 3744, 3760, 3776, 3792, 3808, 3824,
-	3840, 3856, 3872, 3888, 3904, 3920, 3936, 3952,
-	3968, 3984, 4000, 4016, 4032, 4048, 4064, 4080,
-	4096, 4112, 4128, 4144, 4160, 4176, 4192, 4208,
-	4224, 4240, 4256, 4272, 4288, 4304, 4320, 4336,
-	4352, 4368, 4384, 4400, 4416, 4432, 4448, 4464,
-	4480, 4496, 4512, 4528, 4544, 4560, 4576, 4592,
-	4608, 4624, 4640, 4656, 4672, 4688, 4704, 4720,
-	4736, 4752, 4768, 4784, 4800, 4816, 4832, 4848,	// 256
-	4864, 4880, 4896, 4912, 4928, 4944, 4960, 4976,	// 264
-	4992, 5008, 5024, 5040, 5056, 5072, 5088, 5104,
-	5120, 5136, 5152, 5168, 5184, 5200, 5216, 5232,
-	5248, 5264, 5280, 5296, 5312, 5328, 5344, 5360,
-	5376, 5392, 5408, 5424, 5440, 5456,
-	5472, 5488, 5504, 5520, 5536, 5552, 5568, 5584,	// -40
-	      5616										// -32 5600 = REFRESH
+static constexpr int16_t CPU_EN = 0x8000u;
+static constexpr int16_t SLOT_MASK = 0x7FFFu;
+static constexpr int16_t c_timming_a = 1;
+static constexpr int16_t c_timming_b = 9;
+
+static constexpr std::array<int16_t, 700> slotsV9968ScreenOff = {
+	0000 * 16 + c_timming_a,	CPU_EN | (0000 * 16 + c_timming_b),	// -40
+	0001 * 16 + c_timming_a,	CPU_EN | (0001 * 16 + c_timming_b),	// -39
+	0002 * 16 + c_timming_a,	CPU_EN | (0002 * 16 + c_timming_b),	// -38
+	0003 * 16 + c_timming_a,	CPU_EN | (0003 * 16 + c_timming_b),	// -37
+	0004 * 16 + c_timming_a,	CPU_EN | (0004 * 16 + c_timming_b),	// -36
+	0005 * 16 + c_timming_a,	CPU_EN | (0005 * 16 + c_timming_b),	// -35
+	0006 * 16 + c_timming_a,	CPU_EN | (0006 * 16 + c_timming_b),	// -34
+	0007 * 16 + c_timming_a,	CPU_EN | (0007 * 16 + c_timming_b),	// -33
+
+	/* REFRESH */													// -32
+	0011 * 16 + c_timming_a,	CPU_EN | (0011 * 16 + c_timming_b),	// -31
+	0012 * 16 + c_timming_a,	CPU_EN | (0012 * 16 + c_timming_b),	// -30
+	0013 * 16 + c_timming_a,	CPU_EN | (0013 * 16 + c_timming_b),	// -29
+	0014 * 16 + c_timming_a,	CPU_EN | (0014 * 16 + c_timming_b),	// -28
+	0015 * 16 + c_timming_a,	CPU_EN | (0015 * 16 + c_timming_b),	// -27
+	0016 * 16 + c_timming_a,	CPU_EN | (0016 * 16 + c_timming_b),	// -26
+	0017 * 16 + c_timming_a,	CPU_EN | (0017 * 16 + c_timming_b),	// -25
+
+	0020 * 16 + c_timming_a,	CPU_EN | (0020 * 16 + c_timming_b),	// -24
+	0021 * 16 + c_timming_a,	CPU_EN | (0021 * 16 + c_timming_b),	// -23
+	0022 * 16 + c_timming_a,	CPU_EN | (0022 * 16 + c_timming_b),	// -22
+	0023 * 16 + c_timming_a,	CPU_EN | (0023 * 16 + c_timming_b),	// -21
+	0024 * 16 + c_timming_a,	CPU_EN | (0024 * 16 + c_timming_b),	// -20
+	0025 * 16 + c_timming_a,	CPU_EN | (0025 * 16 + c_timming_b),	// -19
+	0026 * 16 + c_timming_a,	CPU_EN | (0026 * 16 + c_timming_b),	// -18
+	0027 * 16 + c_timming_a,	CPU_EN | (0027 * 16 + c_timming_b),	// -17
+
+	0030 * 16 + c_timming_a,	CPU_EN | (0030 * 16 + c_timming_b),	// -16
+	0031 * 16 + c_timming_a,	CPU_EN | (0031 * 16 + c_timming_b),	// -15
+	0032 * 16 + c_timming_a,	CPU_EN | (0032 * 16 + c_timming_b),	// -14
+	0033 * 16 + c_timming_a,	CPU_EN | (0033 * 16 + c_timming_b),	// -13
+	0034 * 16 + c_timming_a,	CPU_EN | (0034 * 16 + c_timming_b),	// -12
+	0035 * 16 + c_timming_a,	CPU_EN | (0035 * 16 + c_timming_b),	// -11
+	0036 * 16 + c_timming_a,	CPU_EN | (0036 * 16 + c_timming_b),	// -10
+	0037 * 16 + c_timming_a,	CPU_EN | (0037 * 16 + c_timming_b),	// -9
+
+	0040 * 16 + c_timming_a,	CPU_EN | (0040 * 16 + c_timming_b),	// -8
+	0041 * 16 + c_timming_a,	CPU_EN | (0041 * 16 + c_timming_b),	// -7
+	0042 * 16 + c_timming_a,	CPU_EN | (0042 * 16 + c_timming_b),	// -6
+	0043 * 16 + c_timming_a,	CPU_EN | (0043 * 16 + c_timming_b),	// -5
+	0044 * 16 + c_timming_a,	CPU_EN | (0044 * 16 + c_timming_b),	// -4
+	0045 * 16 + c_timming_a,	CPU_EN | (0045 * 16 + c_timming_b),	// -3
+	0046 * 16 + c_timming_a,	CPU_EN | (0046 * 16 + c_timming_b),	// -2
+	0047 * 16 + c_timming_a,	CPU_EN | (0047 * 16 + c_timming_b),	// -1
+
+	0050 * 16 + c_timming_a,	CPU_EN | (0050 * 16 + c_timming_b),	// 0
+	0051 * 16 + c_timming_a,	CPU_EN | (0051 * 16 + c_timming_b),	// 1
+	0052 * 16 + c_timming_a,	CPU_EN | (0052 * 16 + c_timming_b),	// 2
+	0053 * 16 + c_timming_a,	CPU_EN | (0053 * 16 + c_timming_b),	// 3
+	0054 * 16 + c_timming_a,	CPU_EN | (0054 * 16 + c_timming_b),	// 4
+	0055 * 16 + c_timming_a,	CPU_EN | (0055 * 16 + c_timming_b),	// 5
+	0056 * 16 + c_timming_a,	CPU_EN | (0056 * 16 + c_timming_b),	// 6
+	0057 * 16 + c_timming_a,	CPU_EN | (0057 * 16 + c_timming_b),	// 7
+
+	0060 * 16 + c_timming_a,	CPU_EN | (0060 * 16 + c_timming_b),	// 8
+	0061 * 16 + c_timming_a,	CPU_EN | (0061 * 16 + c_timming_b),	// 9
+	0062 * 16 + c_timming_a,	CPU_EN | (0062 * 16 + c_timming_b),	// 10
+	0063 * 16 + c_timming_a,	CPU_EN | (0063 * 16 + c_timming_b),	// 11
+	0064 * 16 + c_timming_a,	CPU_EN | (0064 * 16 + c_timming_b),	// 12
+	0065 * 16 + c_timming_a,	CPU_EN | (0065 * 16 + c_timming_b),	// 13
+	0066 * 16 + c_timming_a,	CPU_EN | (0066 * 16 + c_timming_b),	// 14
+	0067 * 16 + c_timming_a,	CPU_EN | (0067 * 16 + c_timming_b),	// 15
+
+	0070 * 16 + c_timming_a,	CPU_EN | (0070 * 16 + c_timming_b),	// 16
+	0071 * 16 + c_timming_a,	CPU_EN | (0071 * 16 + c_timming_b),	// 17
+	0072 * 16 + c_timming_a,	CPU_EN | (0072 * 16 + c_timming_b),	// 18
+	0073 * 16 + c_timming_a,	CPU_EN | (0073 * 16 + c_timming_b),	// 19
+	0074 * 16 + c_timming_a,	CPU_EN | (0074 * 16 + c_timming_b),	// 20
+	0075 * 16 + c_timming_a,	CPU_EN | (0075 * 16 + c_timming_b),	// 21
+	0076 * 16 + c_timming_a,	CPU_EN | (0076 * 16 + c_timming_b),	// 22
+	0077 * 16 + c_timming_a,	CPU_EN | (0077 * 16 + c_timming_b),	// 23
+
+	0100 * 16 + c_timming_a,	CPU_EN | (0100 * 16 + c_timming_b),	// 24
+	0101 * 16 + c_timming_a,	CPU_EN | (0101 * 16 + c_timming_b),	// 25
+	0102 * 16 + c_timming_a,	CPU_EN | (0102 * 16 + c_timming_b),	// 26
+	0103 * 16 + c_timming_a,	CPU_EN | (0103 * 16 + c_timming_b),	// 27
+	0104 * 16 + c_timming_a,	CPU_EN | (0104 * 16 + c_timming_b),	// 28
+	0105 * 16 + c_timming_a,	CPU_EN | (0105 * 16 + c_timming_b),	// 29
+	0106 * 16 + c_timming_a,	CPU_EN | (0106 * 16 + c_timming_b),	// 30
+	0107 * 16 + c_timming_a,	CPU_EN | (0107 * 16 + c_timming_b),	// 31
+
+	0110 * 16 + c_timming_a,	CPU_EN | (0110 * 16 + c_timming_b),	// 32
+	0111 * 16 + c_timming_a,	CPU_EN | (0111 * 16 + c_timming_b),	// 33
+	0112 * 16 + c_timming_a,	CPU_EN | (0112 * 16 + c_timming_b),	// 34
+	0113 * 16 + c_timming_a,	CPU_EN | (0113 * 16 + c_timming_b),	// 35
+	0114 * 16 + c_timming_a,	CPU_EN | (0114 * 16 + c_timming_b),	// 36
+	0115 * 16 + c_timming_a,	CPU_EN | (0115 * 16 + c_timming_b),	// 37
+	0116 * 16 + c_timming_a,	CPU_EN | (0116 * 16 + c_timming_b),	// 38
+	0117 * 16 + c_timming_a,	CPU_EN | (0117 * 16 + c_timming_b),	// 39
+
+	0120 * 16 + c_timming_a,	CPU_EN | (0120 * 16 + c_timming_b),	// 40
+	0121 * 16 + c_timming_a,	CPU_EN | (0121 * 16 + c_timming_b),	// 41
+	0122 * 16 + c_timming_a,	CPU_EN | (0122 * 16 + c_timming_b),	// 42
+	0123 * 16 + c_timming_a,	CPU_EN | (0123 * 16 + c_timming_b),	// 43
+	0124 * 16 + c_timming_a,	CPU_EN | (0124 * 16 + c_timming_b),	// 44
+	0125 * 16 + c_timming_a,	CPU_EN | (0125 * 16 + c_timming_b),	// 45
+	0126 * 16 + c_timming_a,	CPU_EN | (0126 * 16 + c_timming_b),	// 46
+	0127 * 16 + c_timming_a,	CPU_EN | (0127 * 16 + c_timming_b),	// 47
+
+	0130 * 16 + c_timming_a,	CPU_EN | (0130 * 16 + c_timming_b),	// 48
+	0131 * 16 + c_timming_a,	CPU_EN | (0131 * 16 + c_timming_b),	// 49
+	0132 * 16 + c_timming_a,	CPU_EN | (0132 * 16 + c_timming_b),	// 50
+	0133 * 16 + c_timming_a,	CPU_EN | (0133 * 16 + c_timming_b),	// 51
+	0134 * 16 + c_timming_a,	CPU_EN | (0134 * 16 + c_timming_b),	// 52
+	0135 * 16 + c_timming_a,	CPU_EN | (0135 * 16 + c_timming_b),	// 53
+	0136 * 16 + c_timming_a,	CPU_EN | (0136 * 16 + c_timming_b),	// 54
+	0137 * 16 + c_timming_a,	CPU_EN | (0137 * 16 + c_timming_b),	// 55
+
+	0140 * 16 + c_timming_a,	CPU_EN | (0140 * 16 + c_timming_b),	// 56
+	0141 * 16 + c_timming_a,	CPU_EN | (0141 * 16 + c_timming_b),	// 57
+	0142 * 16 + c_timming_a,	CPU_EN | (0142 * 16 + c_timming_b),	// 58
+	0143 * 16 + c_timming_a,	CPU_EN | (0143 * 16 + c_timming_b),	// 59
+	0144 * 16 + c_timming_a,	CPU_EN | (0144 * 16 + c_timming_b),	// 60
+	0145 * 16 + c_timming_a,	CPU_EN | (0145 * 16 + c_timming_b),	// 61
+	0146 * 16 + c_timming_a,	CPU_EN | (0146 * 16 + c_timming_b),	// 62
+	0147 * 16 + c_timming_a,	CPU_EN | (0147 * 16 + c_timming_b),	// 63
+
+	0150 * 16 + c_timming_a,	CPU_EN | (0150 * 16 + c_timming_b),	// 64
+	0151 * 16 + c_timming_a,	CPU_EN | (0151 * 16 + c_timming_b),	// 65
+	0152 * 16 + c_timming_a,	CPU_EN | (0152 * 16 + c_timming_b),	// 66
+	0153 * 16 + c_timming_a,	CPU_EN | (0153 * 16 + c_timming_b),	// 67
+	0154 * 16 + c_timming_a,	CPU_EN | (0154 * 16 + c_timming_b),	// 68
+	0155 * 16 + c_timming_a,	CPU_EN | (0155 * 16 + c_timming_b),	// 69
+	0156 * 16 + c_timming_a,	CPU_EN | (0156 * 16 + c_timming_b),	// 70
+	0157 * 16 + c_timming_a,	CPU_EN | (0157 * 16 + c_timming_b),	// 71
+
+	0160 * 16 + c_timming_a,	CPU_EN | (0160 * 16 + c_timming_b),	// 72
+	0161 * 16 + c_timming_a,	CPU_EN | (0161 * 16 + c_timming_b),	// 73
+	0162 * 16 + c_timming_a,	CPU_EN | (0162 * 16 + c_timming_b),	// 74
+	0163 * 16 + c_timming_a,	CPU_EN | (0163 * 16 + c_timming_b),	// 75
+	0164 * 16 + c_timming_a,	CPU_EN | (0164 * 16 + c_timming_b),	// 76
+	0165 * 16 + c_timming_a,	CPU_EN | (0165 * 16 + c_timming_b),	// 77
+	0166 * 16 + c_timming_a,	CPU_EN | (0166 * 16 + c_timming_b),	// 78
+	0167 * 16 + c_timming_a,	CPU_EN | (0167 * 16 + c_timming_b),	// 79
+
+	0170 * 16 + c_timming_a,	CPU_EN | (0170 * 16 + c_timming_b),	// 80
+	0171 * 16 + c_timming_a,	CPU_EN | (0171 * 16 + c_timming_b),	// 81
+	0172 * 16 + c_timming_a,	CPU_EN | (0172 * 16 + c_timming_b),	// 82
+	0173 * 16 + c_timming_a,	CPU_EN | (0173 * 16 + c_timming_b),	// 83
+	0174 * 16 + c_timming_a,	CPU_EN | (0174 * 16 + c_timming_b),	// 84
+	0175 * 16 + c_timming_a,	CPU_EN | (0175 * 16 + c_timming_b),	// 85
+	0176 * 16 + c_timming_a,	CPU_EN | (0176 * 16 + c_timming_b),	// 86
+	0177 * 16 + c_timming_a,	CPU_EN | (0177 * 16 + c_timming_b),	// 87
+
+	0200 * 16 + c_timming_a,	CPU_EN | (0200 * 16 + c_timming_b),	// 88
+	0201 * 16 + c_timming_a,	CPU_EN | (0201 * 16 + c_timming_b),	// 89
+	0202 * 16 + c_timming_a,	CPU_EN | (0202 * 16 + c_timming_b),	// 90
+	0203 * 16 + c_timming_a,	CPU_EN | (0203 * 16 + c_timming_b),	// 91
+	0204 * 16 + c_timming_a,	CPU_EN | (0204 * 16 + c_timming_b),	// 92
+	0205 * 16 + c_timming_a,	CPU_EN | (0205 * 16 + c_timming_b),	// 93
+	0206 * 16 + c_timming_a,	CPU_EN | (0206 * 16 + c_timming_b),	// 94
+	0207 * 16 + c_timming_a,	CPU_EN | (0207 * 16 + c_timming_b),	// 95
+
+	0210 * 16 + c_timming_a,	CPU_EN | (0210 * 16 + c_timming_b),	// 96
+	0211 * 16 + c_timming_a,	CPU_EN | (0211 * 16 + c_timming_b),	// 97
+	0212 * 16 + c_timming_a,	CPU_EN | (0212 * 16 + c_timming_b),	// 98
+	0213 * 16 + c_timming_a,	CPU_EN | (0213 * 16 + c_timming_b),	// 99
+	0214 * 16 + c_timming_a,	CPU_EN | (0214 * 16 + c_timming_b),	// 100
+	0215 * 16 + c_timming_a,	CPU_EN | (0215 * 16 + c_timming_b),	// 101
+	0216 * 16 + c_timming_a,	CPU_EN | (0216 * 16 + c_timming_b),	// 102
+	0217 * 16 + c_timming_a,	CPU_EN | (0217 * 16 + c_timming_b),	// 103
+
+	0220 * 16 + c_timming_a,	CPU_EN | (0220 * 16 + c_timming_b),	// 104
+	0221 * 16 + c_timming_a,	CPU_EN | (0221 * 16 + c_timming_b),	// 105
+	0222 * 16 + c_timming_a,	CPU_EN | (0222 * 16 + c_timming_b),	// 106
+	0223 * 16 + c_timming_a,	CPU_EN | (0223 * 16 + c_timming_b),	// 107
+	0224 * 16 + c_timming_a,	CPU_EN | (0224 * 16 + c_timming_b),	// 108
+	0225 * 16 + c_timming_a,	CPU_EN | (0225 * 16 + c_timming_b),	// 109
+	0226 * 16 + c_timming_a,	CPU_EN | (0226 * 16 + c_timming_b),	// 110
+	0227 * 16 + c_timming_a,	CPU_EN | (0227 * 16 + c_timming_b),	// 111
+
+	0230 * 16 + c_timming_a,	CPU_EN | (0230 * 16 + c_timming_b),	// 112
+	0231 * 16 + c_timming_a,	CPU_EN | (0231 * 16 + c_timming_b),	// 113
+	0232 * 16 + c_timming_a,	CPU_EN | (0232 * 16 + c_timming_b),	// 114
+	0233 * 16 + c_timming_a,	CPU_EN | (0233 * 16 + c_timming_b),	// 115
+	0234 * 16 + c_timming_a,	CPU_EN | (0234 * 16 + c_timming_b),	// 116
+	0235 * 16 + c_timming_a,	CPU_EN | (0235 * 16 + c_timming_b),	// 117
+	0236 * 16 + c_timming_a,	CPU_EN | (0236 * 16 + c_timming_b),	// 118
+	0237 * 16 + c_timming_a,	CPU_EN | (0237 * 16 + c_timming_b),	// 119
+
+	0240 * 16 + c_timming_a,	CPU_EN | (0240 * 16 + c_timming_b),	// 120
+	0241 * 16 + c_timming_a,	CPU_EN | (0241 * 16 + c_timming_b),	// 121
+	0242 * 16 + c_timming_a,	CPU_EN | (0242 * 16 + c_timming_b),	// 122
+	0243 * 16 + c_timming_a,	CPU_EN | (0243 * 16 + c_timming_b),	// 123
+	0244 * 16 + c_timming_a,	CPU_EN | (0244 * 16 + c_timming_b),	// 124
+	0245 * 16 + c_timming_a,	CPU_EN | (0245 * 16 + c_timming_b),	// 125
+	0246 * 16 + c_timming_a,	CPU_EN | (0246 * 16 + c_timming_b),	// 126
+	0247 * 16 + c_timming_a,	CPU_EN | (0247 * 16 + c_timming_b),	// 127
+
+	0250 * 16 + c_timming_a,	CPU_EN | (0250 * 16 + c_timming_b),	// 128
+	0251 * 16 + c_timming_a,	CPU_EN | (0251 * 16 + c_timming_b),	// 129
+	0252 * 16 + c_timming_a,	CPU_EN | (0252 * 16 + c_timming_b),	// 130
+	0253 * 16 + c_timming_a,	CPU_EN | (0253 * 16 + c_timming_b),	// 131
+	0254 * 16 + c_timming_a,	CPU_EN | (0254 * 16 + c_timming_b),	// 132
+	0255 * 16 + c_timming_a,	CPU_EN | (0255 * 16 + c_timming_b),	// 133
+	0256 * 16 + c_timming_a,	CPU_EN | (0256 * 16 + c_timming_b),	// 134
+	0257 * 16 + c_timming_a,	CPU_EN | (0257 * 16 + c_timming_b),	// 135
+
+	0260 * 16 + c_timming_a,	CPU_EN | (0260 * 16 + c_timming_b),	// 136
+	0261 * 16 + c_timming_a,	CPU_EN | (0261 * 16 + c_timming_b),	// 137
+	0262 * 16 + c_timming_a,	CPU_EN | (0262 * 16 + c_timming_b),	// 138
+	0263 * 16 + c_timming_a,	CPU_EN | (0263 * 16 + c_timming_b),	// 139
+	0264 * 16 + c_timming_a,	CPU_EN | (0264 * 16 + c_timming_b),	// 140
+	0265 * 16 + c_timming_a,	CPU_EN | (0265 * 16 + c_timming_b),	// 141
+	0266 * 16 + c_timming_a,	CPU_EN | (0266 * 16 + c_timming_b),	// 142
+	0267 * 16 + c_timming_a,	CPU_EN | (0267 * 16 + c_timming_b),	// 143
+
+	0270 * 16 + c_timming_a,	CPU_EN | (0270 * 16 + c_timming_b),	// 144
+	0271 * 16 + c_timming_a,	CPU_EN | (0271 * 16 + c_timming_b),	// 145
+	0272 * 16 + c_timming_a,	CPU_EN | (0272 * 16 + c_timming_b),	// 146
+	0273 * 16 + c_timming_a,	CPU_EN | (0273 * 16 + c_timming_b),	// 147
+	0274 * 16 + c_timming_a,	CPU_EN | (0274 * 16 + c_timming_b),	// 148
+	0275 * 16 + c_timming_a,	CPU_EN | (0275 * 16 + c_timming_b),	// 149
+	0276 * 16 + c_timming_a,	CPU_EN | (0276 * 16 + c_timming_b),	// 150
+	0277 * 16 + c_timming_a,	CPU_EN | (0277 * 16 + c_timming_b),	// 151
+
+	0300 * 16 + c_timming_a,	CPU_EN | (0300 * 16 + c_timming_b),	// 152
+	0301 * 16 + c_timming_a,	CPU_EN | (0301 * 16 + c_timming_b),	// 153
+	0302 * 16 + c_timming_a,	CPU_EN | (0302 * 16 + c_timming_b),	// 154
+	0303 * 16 + c_timming_a,	CPU_EN | (0303 * 16 + c_timming_b),	// 155
+	0304 * 16 + c_timming_a,	CPU_EN | (0304 * 16 + c_timming_b),	// 156
+	0305 * 16 + c_timming_a,	CPU_EN | (0305 * 16 + c_timming_b),	// 157
+	0306 * 16 + c_timming_a,	CPU_EN | (0306 * 16 + c_timming_b),	// 158
+	0307 * 16 + c_timming_a,	CPU_EN | (0307 * 16 + c_timming_b),	// 159
+
+	0310 * 16 + c_timming_a,	CPU_EN | (0310 * 16 + c_timming_b),	// 160
+	0311 * 16 + c_timming_a,	CPU_EN | (0311 * 16 + c_timming_b),	// 161
+	0312 * 16 + c_timming_a,	CPU_EN | (0312 * 16 + c_timming_b),	// 162
+	0313 * 16 + c_timming_a,	CPU_EN | (0313 * 16 + c_timming_b),	// 163
+	0314 * 16 + c_timming_a,	CPU_EN | (0314 * 16 + c_timming_b),	// 164
+	0315 * 16 + c_timming_a,	CPU_EN | (0315 * 16 + c_timming_b),	// 165
+	0316 * 16 + c_timming_a,	CPU_EN | (0316 * 16 + c_timming_b),	// 166
+	0317 * 16 + c_timming_a,	CPU_EN | (0317 * 16 + c_timming_b),	// 167
+
+	0320 * 16 + c_timming_a,	CPU_EN | (0320 * 16 + c_timming_b),	// 168
+	0321 * 16 + c_timming_a,	CPU_EN | (0321 * 16 + c_timming_b),	// 169
+	0322 * 16 + c_timming_a,	CPU_EN | (0322 * 16 + c_timming_b),	// 170
+	0323 * 16 + c_timming_a,	CPU_EN | (0323 * 16 + c_timming_b),	// 171
+	0324 * 16 + c_timming_a,	CPU_EN | (0324 * 16 + c_timming_b),	// 172
+	0325 * 16 + c_timming_a,	CPU_EN | (0325 * 16 + c_timming_b),	// 173
+	0326 * 16 + c_timming_a,	CPU_EN | (0326 * 16 + c_timming_b),	// 174
+	0327 * 16 + c_timming_a,	CPU_EN | (0327 * 16 + c_timming_b),	// 175
+
+	0330 * 16 + c_timming_a,	CPU_EN | (0330 * 16 + c_timming_b),	// 176
+	0331 * 16 + c_timming_a,	CPU_EN | (0331 * 16 + c_timming_b),	// 177
+	0332 * 16 + c_timming_a,	CPU_EN | (0332 * 16 + c_timming_b),	// 178
+	0333 * 16 + c_timming_a,	CPU_EN | (0333 * 16 + c_timming_b),	// 179
+	0334 * 16 + c_timming_a,	CPU_EN | (0334 * 16 + c_timming_b),	// 180
+	0335 * 16 + c_timming_a,	CPU_EN | (0335 * 16 + c_timming_b),	// 181
+	0336 * 16 + c_timming_a,	CPU_EN | (0336 * 16 + c_timming_b),	// 182
+	0337 * 16 + c_timming_a,	CPU_EN | (0337 * 16 + c_timming_b),	// 183
+
+	0340 * 16 + c_timming_a,	CPU_EN | (0340 * 16 + c_timming_b),	// 184
+	0341 * 16 + c_timming_a,	CPU_EN | (0341 * 16 + c_timming_b),	// 185
+	0342 * 16 + c_timming_a,	CPU_EN | (0342 * 16 + c_timming_b),	// 186
+	0343 * 16 + c_timming_a,	CPU_EN | (0343 * 16 + c_timming_b),	// 187
+	0344 * 16 + c_timming_a,	CPU_EN | (0344 * 16 + c_timming_b),	// 188
+	0345 * 16 + c_timming_a,	CPU_EN | (0345 * 16 + c_timming_b),	// 189
+	0346 * 16 + c_timming_a,	CPU_EN | (0346 * 16 + c_timming_b),	// 190
+	0347 * 16 + c_timming_a,	CPU_EN | (0347 * 16 + c_timming_b),	// 191
+
+	0350 * 16 + c_timming_a,	CPU_EN | (0350 * 16 + c_timming_b),	// 192
+	0351 * 16 + c_timming_a,	CPU_EN | (0351 * 16 + c_timming_b),	// 193
+	0352 * 16 + c_timming_a,	CPU_EN | (0352 * 16 + c_timming_b),	// 194
+	0353 * 16 + c_timming_a,	CPU_EN | (0353 * 16 + c_timming_b),	// 195
+	0354 * 16 + c_timming_a,	CPU_EN | (0354 * 16 + c_timming_b),	// 196
+	0355 * 16 + c_timming_a,	CPU_EN | (0355 * 16 + c_timming_b),	// 197
+	0356 * 16 + c_timming_a,	CPU_EN | (0356 * 16 + c_timming_b),	// 198
+	0357 * 16 + c_timming_a,	CPU_EN | (0357 * 16 + c_timming_b),	// 199
+
+	0360 * 16 + c_timming_a,	CPU_EN | (0360 * 16 + c_timming_b),	// 200
+	0361 * 16 + c_timming_a,	CPU_EN | (0361 * 16 + c_timming_b),	// 201
+	0362 * 16 + c_timming_a,	CPU_EN | (0362 * 16 + c_timming_b),	// 202
+	0363 * 16 + c_timming_a,	CPU_EN | (0363 * 16 + c_timming_b),	// 203
+	0364 * 16 + c_timming_a,	CPU_EN | (0364 * 16 + c_timming_b),	// 204
+	0365 * 16 + c_timming_a,	CPU_EN | (0365 * 16 + c_timming_b),	// 205
+	0366 * 16 + c_timming_a,	CPU_EN | (0366 * 16 + c_timming_b),	// 206
+	0367 * 16 + c_timming_a,	CPU_EN | (0367 * 16 + c_timming_b),	// 207
+
+	0370 * 16 + c_timming_a,	CPU_EN | (0370 * 16 + c_timming_b),	// 208
+	0371 * 16 + c_timming_a,	CPU_EN | (0371 * 16 + c_timming_b),	// 209
+	0372 * 16 + c_timming_a,	CPU_EN | (0372 * 16 + c_timming_b),	// 210
+	0373 * 16 + c_timming_a,	CPU_EN | (0373 * 16 + c_timming_b),	// 211
+	0374 * 16 + c_timming_a,	CPU_EN | (0374 * 16 + c_timming_b),	// 212
+	0375 * 16 + c_timming_a,	CPU_EN | (0375 * 16 + c_timming_b),	// 213
+	0376 * 16 + c_timming_a,	CPU_EN | (0376 * 16 + c_timming_b),	// 214
+	0377 * 16 + c_timming_a,	CPU_EN | (0377 * 16 + c_timming_b),	// 215
+
+	0400 * 16 + c_timming_a,	CPU_EN | (0400 * 16 + c_timming_b),	// 216
+	0401 * 16 + c_timming_a,	CPU_EN | (0401 * 16 + c_timming_b),	// 217
+	0402 * 16 + c_timming_a,	CPU_EN | (0402 * 16 + c_timming_b),	// 218
+	0403 * 16 + c_timming_a,	CPU_EN | (0403 * 16 + c_timming_b),	// 219
+	0404 * 16 + c_timming_a,	CPU_EN | (0404 * 16 + c_timming_b),	// 220
+	0405 * 16 + c_timming_a,	CPU_EN | (0405 * 16 + c_timming_b),	// 221
+	0406 * 16 + c_timming_a,	CPU_EN | (0406 * 16 + c_timming_b),	// 222
+	0407 * 16 + c_timming_a,	CPU_EN | (0407 * 16 + c_timming_b),	// 223
+
+	0410 * 16 + c_timming_a,	CPU_EN | (0410 * 16 + c_timming_b),	// 224
+	0411 * 16 + c_timming_a,	CPU_EN | (0411 * 16 + c_timming_b),	// 225
+	0412 * 16 + c_timming_a,	CPU_EN | (0412 * 16 + c_timming_b),	// 226
+	0413 * 16 + c_timming_a,	CPU_EN | (0413 * 16 + c_timming_b),	// 227
+	0414 * 16 + c_timming_a,	CPU_EN | (0414 * 16 + c_timming_b),	// 228
+	0415 * 16 + c_timming_a,	CPU_EN | (0415 * 16 + c_timming_b),	// 229
+	0416 * 16 + c_timming_a,	CPU_EN | (0416 * 16 + c_timming_b),	// 230
+	0417 * 16 + c_timming_a,	CPU_EN | (0417 * 16 + c_timming_b),	// 231
+
+	0420 * 16 + c_timming_a,	CPU_EN | (0420 * 16 + c_timming_b),	// 232
+	0421 * 16 + c_timming_a,	CPU_EN | (0421 * 16 + c_timming_b),	// 233
+	0422 * 16 + c_timming_a,	CPU_EN | (0422 * 16 + c_timming_b),	// 234
+	0423 * 16 + c_timming_a,	CPU_EN | (0423 * 16 + c_timming_b),	// 235
+	0424 * 16 + c_timming_a,	CPU_EN | (0424 * 16 + c_timming_b),	// 236
+	0425 * 16 + c_timming_a,	CPU_EN | (0425 * 16 + c_timming_b),	// 237
+	0426 * 16 + c_timming_a,	CPU_EN | (0426 * 16 + c_timming_b),	// 238
+	0427 * 16 + c_timming_a,	CPU_EN | (0427 * 16 + c_timming_b),	// 239
+
+	0430 * 16 + c_timming_a,	CPU_EN | (0430 * 16 + c_timming_b),	// 240
+	0431 * 16 + c_timming_a,	CPU_EN | (0431 * 16 + c_timming_b),	// 241
+	0432 * 16 + c_timming_a,	CPU_EN | (0432 * 16 + c_timming_b),	// 242
+	0433 * 16 + c_timming_a,	CPU_EN | (0433 * 16 + c_timming_b),	// 243
+	0434 * 16 + c_timming_a,	CPU_EN | (0434 * 16 + c_timming_b),	// 244
+	0435 * 16 + c_timming_a,	CPU_EN | (0435 * 16 + c_timming_b),	// 245
+	0436 * 16 + c_timming_a,	CPU_EN | (0436 * 16 + c_timming_b),	// 246
+	0437 * 16 + c_timming_a,	CPU_EN | (0437 * 16 + c_timming_b),	// 247
+
+	0440 * 16 + c_timming_a,	CPU_EN | (0440 * 16 + c_timming_b),	// 248
+	0441 * 16 + c_timming_a,	CPU_EN | (0441 * 16 + c_timming_b),	// 249
+	0442 * 16 + c_timming_a,	CPU_EN | (0442 * 16 + c_timming_b),	// 250
+	0443 * 16 + c_timming_a,	CPU_EN | (0443 * 16 + c_timming_b),	// 251
+	0444 * 16 + c_timming_a,	CPU_EN | (0444 * 16 + c_timming_b),	// 252
+	0445 * 16 + c_timming_a,	CPU_EN | (0445 * 16 + c_timming_b),	// 253
+	0446 * 16 + c_timming_a,	CPU_EN | (0446 * 16 + c_timming_b),	// 254
+	0447 * 16 + c_timming_a,	CPU_EN | (0447 * 16 + c_timming_b),	// 255
+
+	0450 * 16 + c_timming_a,	CPU_EN | (0450 * 16 + c_timming_b),	// 256
+	0451 * 16 + c_timming_a,	CPU_EN | (0451 * 16 + c_timming_b),	// 257
+	0452 * 16 + c_timming_a,	CPU_EN | (0452 * 16 + c_timming_b),	// 258
+	0453 * 16 + c_timming_a,	CPU_EN | (0453 * 16 + c_timming_b),	// 259
+	0454 * 16 + c_timming_a,	CPU_EN | (0454 * 16 + c_timming_b),	// 260
+	0455 * 16 + c_timming_a,	CPU_EN | (0455 * 16 + c_timming_b),	// 261
+	0456 * 16 + c_timming_a,	CPU_EN | (0456 * 16 + c_timming_b),	// 262
+	0457 * 16 + c_timming_a,	CPU_EN | (0457 * 16 + c_timming_b),	// 263
+
+	0460 * 16 + c_timming_a,	CPU_EN | (0460 * 16 + c_timming_b),	// 264
+	0461 * 16 + c_timming_a,	CPU_EN | (0461 * 16 + c_timming_b),	// 265
+	0462 * 16 + c_timming_a,	CPU_EN | (0462 * 16 + c_timming_b),	// 266
+	0463 * 16 + c_timming_a,	CPU_EN | (0463 * 16 + c_timming_b),	// 267
+	0464 * 16 + c_timming_a,	CPU_EN | (0464 * 16 + c_timming_b),	// 268
+	0465 * 16 + c_timming_a,	CPU_EN | (0465 * 16 + c_timming_b),	// 269
+	0466 * 16 + c_timming_a,	CPU_EN | (0466 * 16 + c_timming_b),	// 270
+	0467 * 16 + c_timming_a,	CPU_EN | (0467 * 16 + c_timming_b),	// 271
+
+	0470 * 16 + c_timming_a,	CPU_EN | (0470 * 16 + c_timming_b),	// 272
+	0471 * 16 + c_timming_a,	CPU_EN | (0471 * 16 + c_timming_b),	// 273
+	0472 * 16 + c_timming_a,	CPU_EN | (0472 * 16 + c_timming_b),	// 274
+	0473 * 16 + c_timming_a,	CPU_EN | (0473 * 16 + c_timming_b),	// 275
+	0474 * 16 + c_timming_a,	CPU_EN | (0474 * 16 + c_timming_b),	// 276
+	0475 * 16 + c_timming_a,	CPU_EN | (0475 * 16 + c_timming_b),	// 277
+	0476 * 16 + c_timming_a,	CPU_EN | (0476 * 16 + c_timming_b),	// 278
+	0477 * 16 + c_timming_a,	CPU_EN | (0477 * 16 + c_timming_b),	// 279
+
+	0500 * 16 + c_timming_a,	CPU_EN | (0500 * 16 + c_timming_b),	// 280
+	0501 * 16 + c_timming_a,	CPU_EN | (0501 * 16 + c_timming_b),	// 281
+	0502 * 16 + c_timming_a,	CPU_EN | (0502 * 16 + c_timming_b),	// 282
+	0503 * 16 + c_timming_a,	CPU_EN | (0503 * 16 + c_timming_b),	// 283
+	0504 * 16 + c_timming_a,	CPU_EN | (0504 * 16 + c_timming_b),	// 284
+	0505 * 16 + c_timming_a,	CPU_EN | (0505 * 16 + c_timming_b),	// 285
+	0506 * 16 + c_timming_a,	CPU_EN | (0506 * 16 + c_timming_b),	// 286
+	0507 * 16 + c_timming_a,	CPU_EN | (0507 * 16 + c_timming_b),	// 287
+
+	0510 * 16 + c_timming_a,	CPU_EN | (0510 * 16 + c_timming_b),	// 288
+	0511 * 16 + c_timming_a,	CPU_EN | (0511 * 16 + c_timming_b),	// 289
+	0512 * 16 + c_timming_a,	CPU_EN | (0512 * 16 + c_timming_b),	// 290
+	0513 * 16 + c_timming_a,	CPU_EN | (0513 * 16 + c_timming_b),	// 291
+	0514 * 16 + c_timming_a,	CPU_EN | (0514 * 16 + c_timming_b),	// 292
+	0515 * 16 + c_timming_a,	CPU_EN | (0515 * 16 + c_timming_b),	// 293
+	0516 * 16 + c_timming_a,	CPU_EN | (0516 * 16 + c_timming_b),	// 294
+	0517 * 16 + c_timming_a,	CPU_EN | (0517 * 16 + c_timming_b),	// 295
+
+	0520 * 16 + c_timming_a,	CPU_EN | (0520 * 16 + c_timming_b),	// 296
+	0521 * 16 + c_timming_a,	CPU_EN | (0521 * 16 + c_timming_b),	// 297
+	0522 * 16 + c_timming_a,	CPU_EN | (0522 * 16 + c_timming_b),	// 298
+	0523 * 16 + c_timming_a,	CPU_EN | (0523 * 16 + c_timming_b),	// 299
+	0524 * 16 + c_timming_a,	CPU_EN | (0524 * 16 + c_timming_b),	// 300
+	0525 * 16 + c_timming_a,	CPU_EN | (0525 * 16 + c_timming_b),	// 301
+
+	0526 * 16 + c_timming_a,	CPU_EN | (0526 * 16 + c_timming_b),	// -40
+	0527 * 16 + c_timming_a,	CPU_EN | (0527 * 16 + c_timming_b),	// -39
+	0530 * 16 + c_timming_a,	CPU_EN | (0530 * 16 + c_timming_b),	// -38
+	0531 * 16 + c_timming_a,	CPU_EN | (0531 * 16 + c_timming_b),	// -37
+	0532 * 16 + c_timming_a,	CPU_EN | (0532 * 16 + c_timming_b),	// -36
+	0533 * 16 + c_timming_a,	CPU_EN | (0533 * 16 + c_timming_b),	// -35
+	0534 * 16 + c_timming_a,	CPU_EN | (0534 * 16 + c_timming_b),	// -34
+	0535 * 16 + c_timming_a,	CPU_EN | (0535 * 16 + c_timming_b),	// -33
+
+	/* REFRESH */													// -32
+	0537 * 16 + c_timming_a,	CPU_EN | (0537 * 16 + c_timming_b),	// -31
 };
 
 // screen0:width40
-static constexpr std::array<int16_t, 232> slotsV9968TextLow = {
-//	name  pat   pat   clr   cmd   cmd
-	   0,   16,   32,   48,   64,   80, // -42
-	  96,  112,        144,  160,  176,	// -36 128=REFRESH
-	 192,  208,  224,  240,  256,  272, // -30
-	 288,  304,  320,  336,  352,  368,	// -24
-	 384,  400,  416,  432,  448,  464,	// -18
-	 480,  496,  512,  528,  544,  560, // -12
-	             608,      	 640,  656, // -6
-	             704,        736,  752,	// 0
-	             800,        832,  848,	// 6
-	           	 896,        928,  944,	// 12
-	             992,      	1024, 1040,	// 18
-	            1088,       1120, 1136,
-	            1184,       1216, 1232,
-	            1280,       1312, 1328,
-	            1376,       1408, 1424,
-	            1472,       1504, 1520,
-	            1568,       1600, 1616,
-	           	1664,       1696, 1712,
-	            1760,      	1792, 1808,
-	            1856,       1888, 1904,
-	            1952,       1984, 2000,
-	           	2048,       2080, 2096,
-	            2144,      	2176, 2192,
-	            2240,       2272, 2288,
-	            2336,       2368, 2384,
-	           	2432,       2464, 2480,
-	            2528,      	2560, 2576,
-	            2624,       2656, 2672,
-	            2720,       2752, 2768,
-	           	2816,       2848, 2864,
-	            2912,      	2944, 2960,
-	            3008,       3040, 3056,
-	            3104,       3136, 3152,
-	           	3200,       3232, 3248,
-	            3296,      	3328, 3344,
-	            3392,       3424, 3440,
-	            3488,       3520, 3536,
-	           	3584,       3616, 3632,
-	            3680,      	3712, 3728,
-	            3776,       3808, 3824,
-	            3872,       3904, 3920,
-	           	3968,       4000, 4016,
-	            4064,      	4096, 4112,
-	            4160,       4192, 4208,
-	            4256,       4288, 4304,
-	           	4352,       4384, 4400,
-	4416, 4432, 4448, 4464,	4480, 4496,
-	4512, 4528, 4544, 4560, 4576, 4592,	// 240
-	4608, 4624, 4640, 4656, 4672, 4688,
-	4704, 4720,	4736, 4752, 4768, 4784,
-	4800, 4816, 4832, 4848,	4864, 4880,
-	4896, 4912, 4928, 4944, 4960, 4976,
-	4992, 5008, 5024, 5040, 5056, 5072,
-	5088, 5104,	5120, 5136, 5152, 5168,
-	5184, 5200, 5216, 5232,	5248, 5264,
-	5280, 5296, 5312, 5328, 5344, 5360,
-	5376, 5392, 5408, 5424, 5440, 5456,
-	5472, 5488, 5504, 5520, 5536, 5552,	// -42
-	5568, 5584,	      5616				// -36 5600=REFRESH
+static constexpr std::array<int16_t, 580> slotsV9968TextLow = {
+	0000 * 16 + c_timming_a,	CPU_EN | (0000 * 16 + c_timming_b),	// -42
+	0001 * 16 + c_timming_a,	CPU_EN | (0001 * 16 + c_timming_b),	// -41
+	0002 * 16 + c_timming_a,	CPU_EN | (0002 * 16 + c_timming_b),	// -40
+	0003 * 16 + c_timming_a,	CPU_EN | (0003 * 16 + c_timming_b),	// -39
+	0004 * 16 + c_timming_a,	CPU_EN | (0004 * 16 + c_timming_b),	// -38
+	0005 * 16 + c_timming_a,	CPU_EN | (0005 * 16 + c_timming_b),	// -37
+
+	0006 * 16 + c_timming_a,	CPU_EN | (0006 * 16 + c_timming_b),	// -36
+	0007 * 16 + c_timming_a,	CPU_EN | (0007 * 16 + c_timming_b),	// -35
+	/* REFRESH */													// -34
+	0011 * 16 + c_timming_a,	CPU_EN | (0011 * 16 + c_timming_b),	// -33
+	0012 * 16 + c_timming_a,	CPU_EN | (0012 * 16 + c_timming_b),	// -32
+	0013 * 16 + c_timming_a,	CPU_EN | (0013 * 16 + c_timming_b),	// -31
+
+	0014 * 16 + c_timming_a,	CPU_EN | (0014 * 16 + c_timming_b),	// -30
+	0015 * 16 + c_timming_a,	CPU_EN | (0015 * 16 + c_timming_b),	// -29
+	0016 * 16 + c_timming_a,	CPU_EN | (0016 * 16 + c_timming_b),	// -28
+	0017 * 16 + c_timming_a,	CPU_EN | (0017 * 16 + c_timming_b),	// -27
+	0020 * 16 + c_timming_a,	CPU_EN | (0020 * 16 + c_timming_b),	// -26
+	0021 * 16 + c_timming_a,	CPU_EN | (0021 * 16 + c_timming_b),	// -25
+
+	0022 * 16 + c_timming_a,	CPU_EN | (0022 * 16 + c_timming_b),	// -24
+	0023 * 16 + c_timming_a,	CPU_EN | (0023 * 16 + c_timming_b),	// -23
+	0024 * 16 + c_timming_a,	CPU_EN | (0024 * 16 + c_timming_b),	// -22
+	0025 * 16 + c_timming_a,	CPU_EN | (0025 * 16 + c_timming_b),	// -21
+	0026 * 16 + c_timming_a,	CPU_EN | (0026 * 16 + c_timming_b),	// -20
+	0027 * 16 + c_timming_a,	CPU_EN | (0027 * 16 + c_timming_b),	// -19
+
+	0030 * 16 + c_timming_a,	CPU_EN | (0030 * 16 + c_timming_b),	// -18
+	0031 * 16 + c_timming_a,	CPU_EN | (0031 * 16 + c_timming_b),	// -17
+	0032 * 16 + c_timming_a,	CPU_EN | (0032 * 16 + c_timming_b),	// -16
+	0033 * 16 + c_timming_a,	CPU_EN | (0033 * 16 + c_timming_b),	// -15
+	0034 * 16 + c_timming_a,	CPU_EN | (0034 * 16 + c_timming_b),	// -14
+	0035 * 16 + c_timming_a,	CPU_EN | (0035 * 16 + c_timming_b),	// -13
+
+	0036 * 16 + c_timming_a,	CPU_EN | (0036 * 16 + c_timming_b),	// -12
+	0037 * 16 + c_timming_a,	CPU_EN | (0037 * 16 + c_timming_b),	// -11
+	0040 * 16 + c_timming_a,	CPU_EN | (0040 * 16 + c_timming_b),	// -10
+	0041 * 16 + c_timming_a,	CPU_EN | (0041 * 16 + c_timming_b),	// -9
+	0042 * 16 + c_timming_a,	CPU_EN | (0042 * 16 + c_timming_b),	// -8
+	0043 * 16 + c_timming_a,	CPU_EN | (0043 * 16 + c_timming_b),	// -7
+
+	/* NAME */					CPU_EN | (0044 * 16 + c_timming_b),	// -6
+	/* PATTERN */				CPU_EN | (0045 * 16 + c_timming_b),	// -5
+	0046 * 16 + c_timming_a,	CPU_EN | (0046 * 16 + c_timming_b),	// -4
+	/* COLOR */					CPU_EN | (0047 * 16 + c_timming_b),	// -3
+	0050 * 16 + c_timming_a,	CPU_EN | (0050 * 16 + c_timming_b),	// -2
+	0051 * 16 + c_timming_a,	CPU_EN | (0051 * 16 + c_timming_b),	// -1
+
+	/* NAME */					CPU_EN | (0052 * 16 + c_timming_b),	// 0
+	/* PATTERN */				CPU_EN | (0053 * 16 + c_timming_b),	// 1
+	0054 * 16 + c_timming_a,	CPU_EN | (0054 * 16 + c_timming_b),	// 2
+	/* COLOR */					CPU_EN | (0055 * 16 + c_timming_b),	// 3
+	0056 * 16 + c_timming_a,	CPU_EN | (0056 * 16 + c_timming_b),	// 4
+	0057 * 16 + c_timming_a,	CPU_EN | (0057 * 16 + c_timming_b),	// 5
+
+	/* NAME */					CPU_EN | (0060 * 16 + c_timming_b),	// 6
+	/* PATTERN */				CPU_EN | (0061 * 16 + c_timming_b),	// 7
+	0062 * 16 + c_timming_a,	CPU_EN | (0062 * 16 + c_timming_b),	// 8
+	/* COLOR */					CPU_EN | (0063 * 16 + c_timming_b),	// 9
+	0064 * 16 + c_timming_a,	CPU_EN | (0064 * 16 + c_timming_b),	// 10
+	0065 * 16 + c_timming_a,	CPU_EN | (0065 * 16 + c_timming_b),	// 11
+
+	/* NAME */					CPU_EN | (0066 * 16 + c_timming_b),	// 12
+	/* PATTERN */				CPU_EN | (0067 * 16 + c_timming_b),	// 13
+	0070 * 16 + c_timming_a,	CPU_EN | (0070 * 16 + c_timming_b),	// 14
+	/* COLOR */					CPU_EN | (0071 * 16 + c_timming_b),	// 15
+	0072 * 16 + c_timming_a,	CPU_EN | (0072 * 16 + c_timming_b),	// 16
+	0073 * 16 + c_timming_a,	CPU_EN | (0073 * 16 + c_timming_b),	// 17
+
+	/* NAME */					CPU_EN | (0074 * 16 + c_timming_b),	// 18
+	/* PATTERN */				CPU_EN | (0075 * 16 + c_timming_b),	// 19
+	0076 * 16 + c_timming_a,	CPU_EN | (0076 * 16 + c_timming_b),	// 20
+	/* COLOR */					CPU_EN | (0077 * 16 + c_timming_b),	// 21
+	0100 * 16 + c_timming_a,	CPU_EN | (0100 * 16 + c_timming_b),	// 22
+	0101 * 16 + c_timming_a,	CPU_EN | (0101 * 16 + c_timming_b),	// 23
+
+	/* NAME */					CPU_EN | (0102 * 16 + c_timming_b),	// 24
+	/* PATTERN */				CPU_EN | (0103 * 16 + c_timming_b),	// 25
+	0104 * 16 + c_timming_a,	CPU_EN | (0104 * 16 + c_timming_b),	// 26
+	/* COLOR */					CPU_EN | (0105 * 16 + c_timming_b),	// 27
+	0106 * 16 + c_timming_a,	CPU_EN | (0106 * 16 + c_timming_b),	// 28
+	0107 * 16 + c_timming_a,	CPU_EN | (0107 * 16 + c_timming_b),	// 29
+
+	/* NAME */					CPU_EN | (0110 * 16 + c_timming_b),	// 30
+	/* PATTERN */				CPU_EN | (0111 * 16 + c_timming_b),	// 31
+	0112 * 16 + c_timming_a,	CPU_EN | (0112 * 16 + c_timming_b),	// 32
+	/* COLOR */					CPU_EN | (0113 * 16 + c_timming_b),	// 33
+	0114 * 16 + c_timming_a,	CPU_EN | (0114 * 16 + c_timming_b),	// 34
+	0115 * 16 + c_timming_a,	CPU_EN | (0115 * 16 + c_timming_b),	// 35
+
+	/* NAME */					CPU_EN | (0116 * 16 + c_timming_b),	// 36
+	/* PATTERN */				CPU_EN | (0117 * 16 + c_timming_b),	// 37
+	0120 * 16 + c_timming_a,	CPU_EN | (0120 * 16 + c_timming_b),	// 38
+	/* COLOR */					CPU_EN | (0121 * 16 + c_timming_b),	// 39
+	0122 * 16 + c_timming_a,	CPU_EN | (0122 * 16 + c_timming_b),	// 40
+	0123 * 16 + c_timming_a,	CPU_EN | (0123 * 16 + c_timming_b),	// 41
+
+	/* NAME */					CPU_EN | (0124 * 16 + c_timming_b),	// 42
+	/* PATTERN */				CPU_EN | (0125 * 16 + c_timming_b),	// 43
+	0126 * 16 + c_timming_a,	CPU_EN | (0126 * 16 + c_timming_b),	// 44
+	/* COLOR */					CPU_EN | (0127 * 16 + c_timming_b),	// 45
+	0130 * 16 + c_timming_a,	CPU_EN | (0130 * 16 + c_timming_b),	// 46
+	0131 * 16 + c_timming_a,	CPU_EN | (0131 * 16 + c_timming_b),	// 47
+
+	/* NAME */					CPU_EN | (0132 * 16 + c_timming_b),	// 48
+	/* PATTERN */				CPU_EN | (0133 * 16 + c_timming_b),	// 49
+	0134 * 16 + c_timming_a,	CPU_EN | (0134 * 16 + c_timming_b),	// 50
+	/* COLOR */					CPU_EN | (0135 * 16 + c_timming_b),	// 51
+	0136 * 16 + c_timming_a,	CPU_EN | (0136 * 16 + c_timming_b),	// 52
+	0137 * 16 + c_timming_a,	CPU_EN | (0137 * 16 + c_timming_b),	// 53
+
+	/* NAME */					CPU_EN | (0140 * 16 + c_timming_b),	// 54
+	/* PATTERN */				CPU_EN | (0141 * 16 + c_timming_b),	// 55
+	0142 * 16 + c_timming_a,	CPU_EN | (0142 * 16 + c_timming_b),	// 56
+	/* COLOR */					CPU_EN | (0143 * 16 + c_timming_b),	// 57
+	0144 * 16 + c_timming_a,	CPU_EN | (0144 * 16 + c_timming_b),	// 58
+	0145 * 16 + c_timming_a,	CPU_EN | (0145 * 16 + c_timming_b),	// 59
+
+	/* NAME */					CPU_EN | (0146 * 16 + c_timming_b),	// 60
+	/* PATTERN */				CPU_EN | (0147 * 16 + c_timming_b),	// 61
+	0150 * 16 + c_timming_a,	CPU_EN | (0150 * 16 + c_timming_b),	// 62
+	/* COLOR */					CPU_EN | (0151 * 16 + c_timming_b),	// 63
+	0152 * 16 + c_timming_a,	CPU_EN | (0152 * 16 + c_timming_b),	// 64
+	0153 * 16 + c_timming_a,	CPU_EN | (0153 * 16 + c_timming_b),	// 65
+
+	/* NAME */					CPU_EN | (0154 * 16 + c_timming_b),	// 66
+	/* PATTERN */				CPU_EN | (0155 * 16 + c_timming_b),	// 67
+	0156 * 16 + c_timming_a,	CPU_EN | (0156 * 16 + c_timming_b),	// 68
+	/* COLOR */					CPU_EN | (0157 * 16 + c_timming_b),	// 69
+	0160 * 16 + c_timming_a,	CPU_EN | (0160 * 16 + c_timming_b),	// 70
+	0161 * 16 + c_timming_a,	CPU_EN | (0161 * 16 + c_timming_b),	// 71
+
+	/* NAME */					CPU_EN | (0162 * 16 + c_timming_b),	// 72
+	/* PATTERN */				CPU_EN | (0163 * 16 + c_timming_b),	// 73
+	0164 * 16 + c_timming_a,	CPU_EN | (0164 * 16 + c_timming_b),	// 74
+	/* COLOR */					CPU_EN | (0165 * 16 + c_timming_b),	// 75
+	0166 * 16 + c_timming_a,	CPU_EN | (0166 * 16 + c_timming_b),	// 76
+	0167 * 16 + c_timming_a,	CPU_EN | (0167 * 16 + c_timming_b),	// 77
+
+	/* NAME */					CPU_EN | (0170 * 16 + c_timming_b),	// 78
+	/* PATTERN */				CPU_EN | (0171 * 16 + c_timming_b),	// 79
+	0172 * 16 + c_timming_a,	CPU_EN | (0172 * 16 + c_timming_b),	// 80
+	/* COLOR */					CPU_EN | (0173 * 16 + c_timming_b),	// 81
+	0174 * 16 + c_timming_a,	CPU_EN | (0174 * 16 + c_timming_b),	// 82
+	0175 * 16 + c_timming_a,	CPU_EN | (0175 * 16 + c_timming_b),	// 83
+
+	/* NAME */					CPU_EN | (0176 * 16 + c_timming_b),	// 84
+	/* PATTERN */				CPU_EN | (0177 * 16 + c_timming_b),	// 85
+	0200 * 16 + c_timming_a,	CPU_EN | (0200 * 16 + c_timming_b),	// 86
+	/* COLOR */					CPU_EN | (0201 * 16 + c_timming_b),	// 87
+	0202 * 16 + c_timming_a,	CPU_EN | (0202 * 16 + c_timming_b),	// 88
+	0203 * 16 + c_timming_a,	CPU_EN | (0203 * 16 + c_timming_b),	// 89
+
+	/* NAME */					CPU_EN | (0204 * 16 + c_timming_b),	// 90
+	/* PATTERN */				CPU_EN | (0205 * 16 + c_timming_b),	// 91
+	0206 * 16 + c_timming_a,	CPU_EN | (0206 * 16 + c_timming_b),	// 92
+	/* COLOR */					CPU_EN | (0207 * 16 + c_timming_b),	// 93
+	0210 * 16 + c_timming_a,	CPU_EN | (0210 * 16 + c_timming_b),	// 94
+	0211 * 16 + c_timming_a,	CPU_EN | (0211 * 16 + c_timming_b),	// 95
+
+	/* NAME */					CPU_EN | (0212 * 16 + c_timming_b),	// 96
+	/* PATTERN */				CPU_EN | (0213 * 16 + c_timming_b),	// 97
+	0214 * 16 + c_timming_a,	CPU_EN | (0214 * 16 + c_timming_b),	// 98
+	/* COLOR */					CPU_EN | (0215 * 16 + c_timming_b),	// 99
+	0216 * 16 + c_timming_a,	CPU_EN | (0216 * 16 + c_timming_b),	// 100
+	0217 * 16 + c_timming_a,	CPU_EN | (0217 * 16 + c_timming_b),	// 101
+
+	/* NAME */					CPU_EN | (0220 * 16 + c_timming_b),	// 102
+	/* PATTERN */				CPU_EN | (0221 * 16 + c_timming_b),	// 103
+	0222 * 16 + c_timming_a,	CPU_EN | (0222 * 16 + c_timming_b),	// 104
+	/* COLOR */					CPU_EN | (0223 * 16 + c_timming_b),	// 105
+	0224 * 16 + c_timming_a,	CPU_EN | (0224 * 16 + c_timming_b),	// 106
+	0225 * 16 + c_timming_a,	CPU_EN | (0225 * 16 + c_timming_b),	// 107
+
+	/* NAME */					CPU_EN | (0226 * 16 + c_timming_b),	// 108
+	/* PATTERN */				CPU_EN | (0227 * 16 + c_timming_b),	// 109
+	0230 * 16 + c_timming_a,	CPU_EN | (0230 * 16 + c_timming_b),	// 110
+	/* COLOR */					CPU_EN | (0231 * 16 + c_timming_b),	// 111
+	0232 * 16 + c_timming_a,	CPU_EN | (0232 * 16 + c_timming_b),	// 112
+	0233 * 16 + c_timming_a,	CPU_EN | (0233 * 16 + c_timming_b),	// 113
+
+	/* NAME */					CPU_EN | (0234 * 16 + c_timming_b),	// 114
+	/* PATTERN */				CPU_EN | (0235 * 16 + c_timming_b),	// 115
+	0236 * 16 + c_timming_a,	CPU_EN | (0236 * 16 + c_timming_b),	// 116
+	/* COLOR */					CPU_EN | (0237 * 16 + c_timming_b),	// 117
+	0240 * 16 + c_timming_a,	CPU_EN | (0240 * 16 + c_timming_b),	// 118
+	0241 * 16 + c_timming_a,	CPU_EN | (0241 * 16 + c_timming_b),	// 119
+
+	/* NAME */					CPU_EN | (0242 * 16 + c_timming_b),	// 120
+	/* PATTERN */				CPU_EN | (0243 * 16 + c_timming_b),	// 121
+	0244 * 16 + c_timming_a,	CPU_EN | (0244 * 16 + c_timming_b),	// 122
+	/* COLOR */					CPU_EN | (0245 * 16 + c_timming_b),	// 123
+	0246 * 16 + c_timming_a,	CPU_EN | (0246 * 16 + c_timming_b),	// 124
+	0247 * 16 + c_timming_a,	CPU_EN | (0247 * 16 + c_timming_b),	// 125
+
+	/* NAME */					CPU_EN | (0250 * 16 + c_timming_b),	// 126
+	/* PATTERN */				CPU_EN | (0251 * 16 + c_timming_b),	// 127
+	0252 * 16 + c_timming_a,	CPU_EN | (0252 * 16 + c_timming_b),	// 128
+	/* COLOR */					CPU_EN | (0253 * 16 + c_timming_b),	// 129
+	0254 * 16 + c_timming_a,	CPU_EN | (0254 * 16 + c_timming_b),	// 130
+	0255 * 16 + c_timming_a,	CPU_EN | (0255 * 16 + c_timming_b),	// 131
+
+	/* NAME */					CPU_EN | (0256 * 16 + c_timming_b),	// 132
+	/* PATTERN */				CPU_EN | (0257 * 16 + c_timming_b),	// 133
+	0260 * 16 + c_timming_a,	CPU_EN | (0260 * 16 + c_timming_b),	// 134
+	/* COLOR */					CPU_EN | (0261 * 16 + c_timming_b),	// 135
+	0262 * 16 + c_timming_a,	CPU_EN | (0262 * 16 + c_timming_b),	// 136
+	0263 * 16 + c_timming_a,	CPU_EN | (0263 * 16 + c_timming_b),	// 137
+
+	/* NAME */					CPU_EN | (0264 * 16 + c_timming_b),	// 138
+	/* PATTERN */				CPU_EN | (0265 * 16 + c_timming_b),	// 139
+	0266 * 16 + c_timming_a,	CPU_EN | (0266 * 16 + c_timming_b),	// 140
+	/* COLOR */					CPU_EN | (0267 * 16 + c_timming_b),	// 141
+	0270 * 16 + c_timming_a,	CPU_EN | (0270 * 16 + c_timming_b),	// 142
+	0271 * 16 + c_timming_a,	CPU_EN | (0271 * 16 + c_timming_b),	// 143
+
+	/* NAME */					CPU_EN | (0272 * 16 + c_timming_b),	// 144
+	/* PATTERN */				CPU_EN | (0273 * 16 + c_timming_b),	// 145
+	0274 * 16 + c_timming_a,	CPU_EN | (0274 * 16 + c_timming_b),	// 146
+	/* COLOR */					CPU_EN | (0275 * 16 + c_timming_b),	// 147
+	0276 * 16 + c_timming_a,	CPU_EN | (0276 * 16 + c_timming_b),	// 148
+	0277 * 16 + c_timming_a,	CPU_EN | (0277 * 16 + c_timming_b),	// 149
+
+	/* NAME */					CPU_EN | (0300 * 16 + c_timming_b),	// 150
+	/* PATTERN */				CPU_EN | (0301 * 16 + c_timming_b),	// 151
+	0302 * 16 + c_timming_a,	CPU_EN | (0302 * 16 + c_timming_b),	// 152
+	/* COLOR */					CPU_EN | (0303 * 16 + c_timming_b),	// 153
+	0304 * 16 + c_timming_a,	CPU_EN | (0304 * 16 + c_timming_b),	// 154
+	0305 * 16 + c_timming_a,	CPU_EN | (0305 * 16 + c_timming_b),	// 155
+
+	/* NAME */					CPU_EN | (0306 * 16 + c_timming_b),	// 156
+	/* PATTERN */				CPU_EN | (0307 * 16 + c_timming_b),	// 157
+	0310 * 16 + c_timming_a,	CPU_EN | (0310 * 16 + c_timming_b),	// 158
+	/* COLOR */					CPU_EN | (0311 * 16 + c_timming_b),	// 159
+	0312 * 16 + c_timming_a,	CPU_EN | (0312 * 16 + c_timming_b),	// 160
+	0313 * 16 + c_timming_a,	CPU_EN | (0313 * 16 + c_timming_b),	// 161
+
+	/* NAME */					CPU_EN | (0314 * 16 + c_timming_b),	// 162
+	/* PATTERN */				CPU_EN | (0315 * 16 + c_timming_b),	// 163
+	0316 * 16 + c_timming_a,	CPU_EN | (0316 * 16 + c_timming_b),	// 164
+	/* COLOR */					CPU_EN | (0317 * 16 + c_timming_b),	// 165
+	0320 * 16 + c_timming_a,	CPU_EN | (0320 * 16 + c_timming_b),	// 166
+	0321 * 16 + c_timming_a,	CPU_EN | (0321 * 16 + c_timming_b),	// 167
+
+	/* NAME */					CPU_EN | (0322 * 16 + c_timming_b),	// 168
+	/* PATTERN */				CPU_EN | (0323 * 16 + c_timming_b),	// 169
+	0324 * 16 + c_timming_a,	CPU_EN | (0324 * 16 + c_timming_b),	// 170
+	/* COLOR */					CPU_EN | (0325 * 16 + c_timming_b),	// 171
+	0326 * 16 + c_timming_a,	CPU_EN | (0326 * 16 + c_timming_b),	// 172
+	0327 * 16 + c_timming_a,	CPU_EN | (0327 * 16 + c_timming_b),	// 173
+
+	/* NAME */					CPU_EN | (0330 * 16 + c_timming_b),	// 174
+	/* PATTERN */				CPU_EN | (0331 * 16 + c_timming_b),	// 175
+	0332 * 16 + c_timming_a,	CPU_EN | (0332 * 16 + c_timming_b),	// 176
+	/* COLOR */					CPU_EN | (0333 * 16 + c_timming_b),	// 177
+	0334 * 16 + c_timming_a,	CPU_EN | (0334 * 16 + c_timming_b),	// 178
+	0335 * 16 + c_timming_a,	CPU_EN | (0335 * 16 + c_timming_b),	// 179
+
+	/* NAME */					CPU_EN | (0336 * 16 + c_timming_b),	// 180
+	/* PATTERN */				CPU_EN | (0337 * 16 + c_timming_b),	// 181
+	0340 * 16 + c_timming_a,	CPU_EN | (0340 * 16 + c_timming_b),	// 182
+	/* COLOR */					CPU_EN | (0341 * 16 + c_timming_b),	// 183
+	0342 * 16 + c_timming_a,	CPU_EN | (0342 * 16 + c_timming_b),	// 184
+	0343 * 16 + c_timming_a,	CPU_EN | (0343 * 16 + c_timming_b),	// 185
+
+	/* NAME */					CPU_EN | (0344 * 16 + c_timming_b),	// 186
+	/* PATTERN */				CPU_EN | (0345 * 16 + c_timming_b),	// 187
+	0346 * 16 + c_timming_a,	CPU_EN | (0346 * 16 + c_timming_b),	// 188
+	/* COLOR */					CPU_EN | (0347 * 16 + c_timming_b),	// 189
+	0350 * 16 + c_timming_a,	CPU_EN | (0350 * 16 + c_timming_b),	// 190
+	0351 * 16 + c_timming_a,	CPU_EN | (0351 * 16 + c_timming_b),	// 191
+
+	/* NAME */					CPU_EN | (0352 * 16 + c_timming_b),	// 192
+	/* PATTERN */				CPU_EN | (0353 * 16 + c_timming_b),	// 193
+	0354 * 16 + c_timming_a,	CPU_EN | (0354 * 16 + c_timming_b),	// 194
+	/* COLOR */					CPU_EN | (0355 * 16 + c_timming_b),	// 195
+	0356 * 16 + c_timming_a,	CPU_EN | (0356 * 16 + c_timming_b),	// 196
+	0357 * 16 + c_timming_a,	CPU_EN | (0357 * 16 + c_timming_b),	// 197
+
+	/* NAME */					CPU_EN | (0360 * 16 + c_timming_b),	// 198
+	/* PATTERN */				CPU_EN | (0361 * 16 + c_timming_b),	// 199
+	0362 * 16 + c_timming_a,	CPU_EN | (0362 * 16 + c_timming_b),	// 200
+	/* COLOR */					CPU_EN | (0363 * 16 + c_timming_b),	// 201
+	0364 * 16 + c_timming_a,	CPU_EN | (0364 * 16 + c_timming_b),	// 202
+	0365 * 16 + c_timming_a,	CPU_EN | (0365 * 16 + c_timming_b),	// 203
+
+	/* NAME */					CPU_EN | (0366 * 16 + c_timming_b),	// 204
+	/* PATTERN */				CPU_EN | (0367 * 16 + c_timming_b),	// 205
+	0370 * 16 + c_timming_a,	CPU_EN | (0370 * 16 + c_timming_b),	// 206
+	/* COLOR */					CPU_EN | (0371 * 16 + c_timming_b),	// 205
+	0372 * 16 + c_timming_a,	CPU_EN | (0372 * 16 + c_timming_b),	// 208
+	0373 * 16 + c_timming_a,	CPU_EN | (0373 * 16 + c_timming_b),	// 209
+
+	/* NAME */					CPU_EN | (0374 * 16 + c_timming_b),	// 210
+	/* PATTERN */				CPU_EN | (0375 * 16 + c_timming_b),	// 211
+	0376 * 16 + c_timming_a,	CPU_EN | (0376 * 16 + c_timming_b),	// 212
+	/* COLOR */					CPU_EN | (0377 * 16 + c_timming_b),	// 213
+	0400 * 16 + c_timming_a,	CPU_EN | (0400 * 16 + c_timming_b),	// 214
+	0401 * 16 + c_timming_a,	CPU_EN | (0401 * 16 + c_timming_b),	// 215
+
+	/* NAME */					CPU_EN | (0402 * 16 + c_timming_b),	// 216
+	/* PATTERN */				CPU_EN | (0403 * 16 + c_timming_b),	// 217
+	0404 * 16 + c_timming_a,	CPU_EN | (0404 * 16 + c_timming_b),	// 218
+	/* COLOR */					CPU_EN | (0405 * 16 + c_timming_b),	// 219
+	0406 * 16 + c_timming_a,	CPU_EN | (0406 * 16 + c_timming_b),	// 220
+	0407 * 16 + c_timming_a,	CPU_EN | (0407 * 16 + c_timming_b),	// 221
+
+	/* NAME */					CPU_EN | (0410 * 16 + c_timming_b),	// 222
+	/* PATTERN */				CPU_EN | (0411 * 16 + c_timming_b),	// 223
+	0412 * 16 + c_timming_a,	CPU_EN | (0412 * 16 + c_timming_b),	// 224
+	/* COLOR */					CPU_EN | (0413 * 16 + c_timming_b),	// 225
+	0414 * 16 + c_timming_a,	CPU_EN | (0414 * 16 + c_timming_b),	// 226
+	0415 * 16 + c_timming_a,	CPU_EN | (0415 * 16 + c_timming_b),	// 227
+
+	/* NAME */					CPU_EN | (0416 * 16 + c_timming_b),	// 228
+	/* PATTERN */				CPU_EN | (0417 * 16 + c_timming_b),	// 229
+	0420 * 16 + c_timming_a,	CPU_EN | (0420 * 16 + c_timming_b),	// 230
+	/* COLOR */					CPU_EN | (0421 * 16 + c_timming_b),	// 231
+	0422 * 16 + c_timming_a,	CPU_EN | (0422 * 16 + c_timming_b),	// 232
+	0423 * 16 + c_timming_a,	CPU_EN | (0423 * 16 + c_timming_b),	// 233
+
+	0424 * 16 + c_timming_a,	CPU_EN | (0424 * 16 + c_timming_b),	// 234
+	0425 * 16 + c_timming_a,	CPU_EN | (0425 * 16 + c_timming_b),	// 235
+	0426 * 16 + c_timming_a,	CPU_EN | (0426 * 16 + c_timming_b),	// 236
+	0427 * 16 + c_timming_a,	CPU_EN | (0427 * 16 + c_timming_b),	// 237
+	0430 * 16 + c_timming_a,	CPU_EN | (0430 * 16 + c_timming_b),	// 238
+	0431 * 16 + c_timming_a,	CPU_EN | (0431 * 16 + c_timming_b),	// 239
+
+	0432 * 16 + c_timming_a,	CPU_EN | (0432 * 16 + c_timming_b),	// 240
+	0433 * 16 + c_timming_a,	CPU_EN | (0433 * 16 + c_timming_b),	// 241
+	0434 * 16 + c_timming_a,	CPU_EN | (0434 * 16 + c_timming_b),	// 242
+	0435 * 16 + c_timming_a,	CPU_EN | (0435 * 16 + c_timming_b),	// 243
+	0436 * 16 + c_timming_a,	CPU_EN | (0436 * 16 + c_timming_b),	// 244
+	0437 * 16 + c_timming_a,	CPU_EN | (0437 * 16 + c_timming_b),	// 245
+
+	0440 * 16 + c_timming_a,	CPU_EN | (0440 * 16 + c_timming_b),	// 246
+	0441 * 16 + c_timming_a,	CPU_EN | (0441 * 16 + c_timming_b),	// 247
+	0442 * 16 + c_timming_a,	CPU_EN | (0442 * 16 + c_timming_b),	// 248
+	0443 * 16 + c_timming_a,	CPU_EN | (0443 * 16 + c_timming_b),	// 249
+	0444 * 16 + c_timming_a,	CPU_EN | (0444 * 16 + c_timming_b),	// 250
+	0445 * 16 + c_timming_a,	CPU_EN | (0445 * 16 + c_timming_b),	// 251
+
+	0446 * 16 + c_timming_a,	CPU_EN | (0446 * 16 + c_timming_b),	// 252
+	0447 * 16 + c_timming_a,	CPU_EN | (0447 * 16 + c_timming_b),	// 253
+	0450 * 16 + c_timming_a,	CPU_EN | (0450 * 16 + c_timming_b),	// 254
+	0451 * 16 + c_timming_a,	CPU_EN | (0451 * 16 + c_timming_b),	// 255
+	0452 * 16 + c_timming_a,	CPU_EN | (0452 * 16 + c_timming_b),	// 256
+	0453 * 16 + c_timming_a,	CPU_EN | (0453 * 16 + c_timming_b),	// 257
+
+	0454 * 16 + c_timming_a,	CPU_EN | (0454 * 16 + c_timming_b),	// 258
+	0455 * 16 + c_timming_a,	CPU_EN | (0455 * 16 + c_timming_b),	// 259
+	0456 * 16 + c_timming_a,	CPU_EN | (0456 * 16 + c_timming_b),	// 260
+	0457 * 16 + c_timming_a,	CPU_EN | (0457 * 16 + c_timming_b),	// 261
+	0460 * 16 + c_timming_a,	CPU_EN | (0460 * 16 + c_timming_b),	// 262
+	0461 * 16 + c_timming_a,	CPU_EN | (0461 * 16 + c_timming_b),	// 263
+
+	0462 * 16 + c_timming_a,	CPU_EN | (0462 * 16 + c_timming_b),	// 264
+	0463 * 16 + c_timming_a,	CPU_EN | (0463 * 16 + c_timming_b),	// 265
+	0464 * 16 + c_timming_a,	CPU_EN | (0464 * 16 + c_timming_b),	// 266
+	0465 * 16 + c_timming_a,	CPU_EN | (0465 * 16 + c_timming_b),	// 267
+	0466 * 16 + c_timming_a,	CPU_EN | (0466 * 16 + c_timming_b),	// 268
+	0467 * 16 + c_timming_a,	CPU_EN | (0467 * 16 + c_timming_b),	// 269
+
+	0470 * 16 + c_timming_a,	CPU_EN | (0470 * 16 + c_timming_b),	// 270
+	0471 * 16 + c_timming_a,	CPU_EN | (0471 * 16 + c_timming_b),	// 271
+	0472 * 16 + c_timming_a,	CPU_EN | (0472 * 16 + c_timming_b),	// 272
+	0473 * 16 + c_timming_a,	CPU_EN | (0473 * 16 + c_timming_b),	// 273
+	0474 * 16 + c_timming_a,	CPU_EN | (0474 * 16 + c_timming_b),	// 274
+	0475 * 16 + c_timming_a,	CPU_EN | (0475 * 16 + c_timming_b),	// 275
+
+	0476 * 16 + c_timming_a,	CPU_EN | (0476 * 16 + c_timming_b),	// 276
+	0477 * 16 + c_timming_a,	CPU_EN | (0477 * 16 + c_timming_b),	// 277
+	0500 * 16 + c_timming_a,	CPU_EN | (0500 * 16 + c_timming_b),	// 278
+	0501 * 16 + c_timming_a,	CPU_EN | (0501 * 16 + c_timming_b),	// 279
+	0502 * 16 + c_timming_a,	CPU_EN | (0502 * 16 + c_timming_b),	// 280
+	0503 * 16 + c_timming_a,	CPU_EN | (0503 * 16 + c_timming_b),	// 281
+
+	0504 * 16 + c_timming_a,	CPU_EN | (0504 * 16 + c_timming_b),	// 282
+	0505 * 16 + c_timming_a,	CPU_EN | (0505 * 16 + c_timming_b),	// 283
+	0506 * 16 + c_timming_a,	CPU_EN | (0506 * 16 + c_timming_b),	// 284
+	0507 * 16 + c_timming_a,	CPU_EN | (0507 * 16 + c_timming_b),	// 285
+	0510 * 16 + c_timming_a,	CPU_EN | (0510 * 16 + c_timming_b),	// 286
+	0511 * 16 + c_timming_a,	CPU_EN | (0511 * 16 + c_timming_b),	// 287
+
+	0512 * 16 + c_timming_a,	CPU_EN | (0512 * 16 + c_timming_b),	// 288
+	0513 * 16 + c_timming_a,	CPU_EN | (0513 * 16 + c_timming_b),	// 289
+	0514 * 16 + c_timming_a,	CPU_EN | (0514 * 16 + c_timming_b),	// 290
+	0515 * 16 + c_timming_a,	CPU_EN | (0515 * 16 + c_timming_b),	// 291
+	0516 * 16 + c_timming_a,	CPU_EN | (0516 * 16 + c_timming_b),	// 292
+	0517 * 16 + c_timming_a,	CPU_EN | (0517 * 16 + c_timming_b),	// 293
+
+	0520 * 16 + c_timming_a,	CPU_EN | (0520 * 16 + c_timming_b),	// 294
+	0521 * 16 + c_timming_a,	CPU_EN | (0521 * 16 + c_timming_b),	// 295
+	0522 * 16 + c_timming_a,	CPU_EN | (0522 * 16 + c_timming_b),	// 296
+	0523 * 16 + c_timming_a,	CPU_EN | (0523 * 16 + c_timming_b),	// 297
+	0524 * 16 + c_timming_a,	CPU_EN | (0524 * 16 + c_timming_b),	// 298
+	0525 * 16 + c_timming_a,	CPU_EN | (0525 * 16 + c_timming_b),	// 299
+
+	0526 * 16 + c_timming_a,	CPU_EN | (0526 * 16 + c_timming_b),	// -42
+	0527 * 16 + c_timming_a,	CPU_EN | (0527 * 16 + c_timming_b),	// -41
+	0530 * 16 + c_timming_a,	CPU_EN | (0530 * 16 + c_timming_b),	// -40
+	0531 * 16 + c_timming_a,	CPU_EN | (0531 * 16 + c_timming_b),	// -39
+	0532 * 16 + c_timming_a,	CPU_EN | (0532 * 16 + c_timming_b),	// -38
+	0533 * 16 + c_timming_a,	CPU_EN | (0533 * 16 + c_timming_b),	// -37
+
+	0534 * 16 + c_timming_a,	CPU_EN | (0534 * 16 + c_timming_b),	// -36
+	0535 * 16 + c_timming_a,	CPU_EN | (0535 * 16 + c_timming_b),	// -35
+	/* REFRESH */													// -34
+	0537 * 16 + c_timming_a,	CPU_EN | (0537 * 16 + c_timming_b)	// -33
 };
 
 // screen0:width80
-static constexpr std::array<int16_t, 192> slotsV9968TextHigh = {
-//	name  pat   pat   clr   cmd   cmd
-	   0,   16,   32,   48,   64,   80, // -42
-	  96,  112,        144,  160,  176,	// -36 128=REFRESH
-	 192,  208,  224,  240,  256,  272, // -30
-	 288,  304,  320,  336,  352,  368,	// -24
-	 384,  400,  416,  432,  448,  464,	// -18
-	 480,  496,  512,  528,  544,  560, // -12
-	                       	 640,  656, // -6
-	                         736,  752,	// 0
-	                         832,  848,	// 6
-	           	             928,  944,	// 12
-	                       	1024, 1040,	// 18
-	                        1120, 1136,
-	                        1216, 1232,
-	                        1312, 1328,
-	                        1408, 1424,
-	                        1504, 1520,
-	                        1600, 1616,
-	           	            1696, 1712,
-	                       	1792, 1808,
-	                        1888, 1904,
-	                        1984, 2000,
-	           	            2080, 2096,
-	                       	2176, 2192,
-	                        2272, 2288,
-	                        2368, 2384,
-	           	            2464, 2480,
-	                       	2560, 2576,
-	                        2656, 2672,
-	                        2752, 2768,
-	           	            2848, 2864,
-	                       	2944, 2960,
-	                        3040, 3056,
-	                        3136, 3152,
-	           	            3232, 3248,
-	                       	3328, 3344,
-	                        3424, 3440,
-	                        3520, 3536,
-	           	            3616, 3632,
-	                       	3712, 3728,
-	                        3808, 3824,
-	                        3904, 3920,
-	           	            4000, 4016,
-	                       	4096, 4112,
-	                        4192, 4208,
-	                        4288, 4304,
-	           	            4384, 4400,
-	4416, 4432, 4448, 4464,	4480, 4496,
-	4512, 4528, 4544, 4560, 4576, 4592,	// 240
-	4608, 4624, 4640, 4656, 4672, 4688,
-	4704, 4720,	4736, 4752, 4768, 4784,
-	4800, 4816, 4832, 4848,	4864, 4880,
-	4896, 4912, 4928, 4944, 4960, 4976,
-	4992, 5008, 5024, 5040, 5056, 5072,
-	5088, 5104,	5120, 5136, 5152, 5168,
-	5184, 5200, 5216, 5232,	5248, 5264,
-	5280, 5296, 5312, 5328, 5344, 5360,
-	5376, 5392, 5408, 5424, 5440, 5456,
-	5472, 5488, 5504, 5520, 5536, 5552,	// -42
-	5568, 5584,	      5616				// -36 5600=REFRESH
+static constexpr std::array<int16_t, 540> slotsV9968TextHigh = {
+	0000 * 16 + c_timming_a,	CPU_EN | (0000 * 16 + c_timming_b),	// -42
+	0001 * 16 + c_timming_a,	CPU_EN | (0001 * 16 + c_timming_b),	// -41
+	0002 * 16 + c_timming_a,	CPU_EN | (0002 * 16 + c_timming_b),	// -40
+	0003 * 16 + c_timming_a,	CPU_EN | (0003 * 16 + c_timming_b),	// -39
+	0004 * 16 + c_timming_a,	CPU_EN | (0004 * 16 + c_timming_b),	// -38
+	0005 * 16 + c_timming_a,	CPU_EN | (0005 * 16 + c_timming_b),	// -37
+
+	0006 * 16 + c_timming_a,	CPU_EN | (0006 * 16 + c_timming_b),	// -36
+	0007 * 16 + c_timming_a,	CPU_EN | (0007 * 16 + c_timming_b),	// -35
+	/* REFRESH */													// -34
+	0011 * 16 + c_timming_a,	CPU_EN | (0011 * 16 + c_timming_b),	// -33
+	0012 * 16 + c_timming_a,	CPU_EN | (0012 * 16 + c_timming_b),	// -32
+	0013 * 16 + c_timming_a,	CPU_EN | (0013 * 16 + c_timming_b),	// -31
+
+	0014 * 16 + c_timming_a,	CPU_EN | (0014 * 16 + c_timming_b),	// -30
+	0015 * 16 + c_timming_a,	CPU_EN | (0015 * 16 + c_timming_b),	// -29
+	0016 * 16 + c_timming_a,	CPU_EN | (0016 * 16 + c_timming_b),	// -28
+	0017 * 16 + c_timming_a,	CPU_EN | (0017 * 16 + c_timming_b),	// -27
+	0020 * 16 + c_timming_a,	CPU_EN | (0020 * 16 + c_timming_b),	// -26
+	0021 * 16 + c_timming_a,	CPU_EN | (0021 * 16 + c_timming_b),	// -25
+
+	0022 * 16 + c_timming_a,	CPU_EN | (0022 * 16 + c_timming_b),	// -24
+	0023 * 16 + c_timming_a,	CPU_EN | (0023 * 16 + c_timming_b),	// -23
+	0024 * 16 + c_timming_a,	CPU_EN | (0024 * 16 + c_timming_b),	// -22
+	0025 * 16 + c_timming_a,	CPU_EN | (0025 * 16 + c_timming_b),	// -21
+	0026 * 16 + c_timming_a,	CPU_EN | (0026 * 16 + c_timming_b),	// -20
+	0027 * 16 + c_timming_a,	CPU_EN | (0027 * 16 + c_timming_b),	// -19
+
+	0030 * 16 + c_timming_a,	CPU_EN | (0030 * 16 + c_timming_b),	// -18
+	0031 * 16 + c_timming_a,	CPU_EN | (0031 * 16 + c_timming_b),	// -17
+	0032 * 16 + c_timming_a,	CPU_EN | (0032 * 16 + c_timming_b),	// -16
+	0033 * 16 + c_timming_a,	CPU_EN | (0033 * 16 + c_timming_b),	// -15
+	0034 * 16 + c_timming_a,	CPU_EN | (0034 * 16 + c_timming_b),	// -14
+	0035 * 16 + c_timming_a,	CPU_EN | (0035 * 16 + c_timming_b),	// -13
+
+	0036 * 16 + c_timming_a,	CPU_EN | (0036 * 16 + c_timming_b),	// -12
+	0037 * 16 + c_timming_a,	CPU_EN | (0037 * 16 + c_timming_b),	// -11
+	0040 * 16 + c_timming_a,	CPU_EN | (0040 * 16 + c_timming_b),	// -10
+	0041 * 16 + c_timming_a,	CPU_EN | (0041 * 16 + c_timming_b),	// -9
+	0042 * 16 + c_timming_a,	CPU_EN | (0042 * 16 + c_timming_b),	// -8
+	0043 * 16 + c_timming_a,	CPU_EN | (0043 * 16 + c_timming_b),	// -7
+
+	/* NAME */					CPU_EN | (0044 * 16 + c_timming_b),	// -6
+	/* PATTERN */				CPU_EN | (0045 * 16 + c_timming_b),	// -5
+	/* PATTERN */				CPU_EN | (0046 * 16 + c_timming_b),	// -4
+	/* COLOR */					CPU_EN | (0047 * 16 + c_timming_b),	// -3
+	0050 * 16 + c_timming_a,	CPU_EN | (0050 * 16 + c_timming_b),	// -2
+	0051 * 16 + c_timming_a,	CPU_EN | (0051 * 16 + c_timming_b),	// -1
+
+	/* NAME */					CPU_EN | (0052 * 16 + c_timming_b),	// 0
+	/* PATTERN */				CPU_EN | (0053 * 16 + c_timming_b),	// 1
+	/* PATTERN */				CPU_EN | (0054 * 16 + c_timming_b),	// 2
+	/* COLOR */					CPU_EN | (0055 * 16 + c_timming_b),	// 3
+	0056 * 16 + c_timming_a,	CPU_EN | (0056 * 16 + c_timming_b),	// 4
+	0057 * 16 + c_timming_a,	CPU_EN | (0057 * 16 + c_timming_b),	// 5
+
+	/* NAME */					CPU_EN | (0060 * 16 + c_timming_b),	// 6
+	/* PATTERN */				CPU_EN | (0061 * 16 + c_timming_b),	// 7
+	/* PATTERN */				CPU_EN | (0062 * 16 + c_timming_b),	// 8
+	/* COLOR */					CPU_EN | (0063 * 16 + c_timming_b),	// 9
+	0064 * 16 + c_timming_a,	CPU_EN | (0064 * 16 + c_timming_b),	// 10
+	0065 * 16 + c_timming_a,	CPU_EN | (0065 * 16 + c_timming_b),	// 11
+
+	/* NAME */					CPU_EN | (0066 * 16 + c_timming_b),	// 12
+	/* PATTERN */				CPU_EN | (0067 * 16 + c_timming_b),	// 13
+	/* PATTERN */				CPU_EN | (0070 * 16 + c_timming_b),	// 14
+	/* COLOR */					CPU_EN | (0071 * 16 + c_timming_b),	// 15
+	0072 * 16 + c_timming_a,	CPU_EN | (0072 * 16 + c_timming_b),	// 16
+	0073 * 16 + c_timming_a,	CPU_EN | (0073 * 16 + c_timming_b),	// 17
+
+	/* NAME */					CPU_EN | (0074 * 16 + c_timming_b),	// 18
+	/* PATTERN */				CPU_EN | (0075 * 16 + c_timming_b),	// 19
+	/* PATTERN */				CPU_EN | (0076 * 16 + c_timming_b),	// 20
+	/* COLOR */					CPU_EN | (0077 * 16 + c_timming_b),	// 21
+	0100 * 16 + c_timming_a,	CPU_EN | (0100 * 16 + c_timming_b),	// 22
+	0101 * 16 + c_timming_a,	CPU_EN | (0101 * 16 + c_timming_b),	// 23
+
+	/* NAME */					CPU_EN | (0102 * 16 + c_timming_b),	// 24
+	/* PATTERN */				CPU_EN | (0103 * 16 + c_timming_b),	// 25
+	/* PATTERN */				CPU_EN | (0104 * 16 + c_timming_b),	// 26
+	/* COLOR */					CPU_EN | (0105 * 16 + c_timming_b),	// 27
+	0106 * 16 + c_timming_a,	CPU_EN | (0106 * 16 + c_timming_b),	// 28
+	0107 * 16 + c_timming_a,	CPU_EN | (0107 * 16 + c_timming_b),	// 29
+
+	/* NAME */					CPU_EN | (0110 * 16 + c_timming_b),	// 30
+	/* PATTERN */				CPU_EN | (0111 * 16 + c_timming_b),	// 31
+	/* PATTERN */				CPU_EN | (0112 * 16 + c_timming_b),	// 32
+	/* COLOR */					CPU_EN | (0113 * 16 + c_timming_b),	// 33
+	0114 * 16 + c_timming_a,	CPU_EN | (0114 * 16 + c_timming_b),	// 34
+	0115 * 16 + c_timming_a,	CPU_EN | (0115 * 16 + c_timming_b),	// 35
+
+	/* NAME */					CPU_EN | (0116 * 16 + c_timming_b),	// 36
+	/* PATTERN */				CPU_EN | (0117 * 16 + c_timming_b),	// 37
+	/* PATTERN */				CPU_EN | (0120 * 16 + c_timming_b),	// 38
+	/* COLOR */					CPU_EN | (0121 * 16 + c_timming_b),	// 39
+	0122 * 16 + c_timming_a,	CPU_EN | (0122 * 16 + c_timming_b),	// 40
+	0123 * 16 + c_timming_a,	CPU_EN | (0123 * 16 + c_timming_b),	// 41
+
+	/* NAME */					CPU_EN | (0124 * 16 + c_timming_b),	// 42
+	/* PATTERN */				CPU_EN | (0125 * 16 + c_timming_b),	// 43
+	/* PATTERN */				CPU_EN | (0126 * 16 + c_timming_b),	// 44
+	/* COLOR */					CPU_EN | (0127 * 16 + c_timming_b),	// 45
+	0130 * 16 + c_timming_a,	CPU_EN | (0130 * 16 + c_timming_b),	// 46
+	0131 * 16 + c_timming_a,	CPU_EN | (0131 * 16 + c_timming_b),	// 47
+
+	/* NAME */					CPU_EN | (0132 * 16 + c_timming_b),	// 48
+	/* PATTERN */				CPU_EN | (0133 * 16 + c_timming_b),	// 49
+	/* PATTERN */				CPU_EN | (0134 * 16 + c_timming_b),	// 50
+	/* COLOR */					CPU_EN | (0135 * 16 + c_timming_b),	// 51
+	0136 * 16 + c_timming_a,	CPU_EN | (0136 * 16 + c_timming_b),	// 52
+	0137 * 16 + c_timming_a,	CPU_EN | (0137 * 16 + c_timming_b),	// 53
+
+	/* NAME */					CPU_EN | (0140 * 16 + c_timming_b),	// 54
+	/* PATTERN */				CPU_EN | (0141 * 16 + c_timming_b),	// 55
+	/* PATTERN */				CPU_EN | (0142 * 16 + c_timming_b),	// 56
+	/* COLOR */					CPU_EN | (0143 * 16 + c_timming_b),	// 57
+	0144 * 16 + c_timming_a,	CPU_EN | (0144 * 16 + c_timming_b),	// 58
+	0145 * 16 + c_timming_a,	CPU_EN | (0145 * 16 + c_timming_b),	// 59
+
+	/* NAME */					CPU_EN | (0146 * 16 + c_timming_b),	// 60
+	/* PATTERN */				CPU_EN | (0147 * 16 + c_timming_b),	// 61
+	/* PATTERN */				CPU_EN | (0150 * 16 + c_timming_b),	// 62
+	/* COLOR */					CPU_EN | (0151 * 16 + c_timming_b),	// 63
+	0152 * 16 + c_timming_a,	CPU_EN | (0152 * 16 + c_timming_b),	// 64
+	0153 * 16 + c_timming_a,	CPU_EN | (0153 * 16 + c_timming_b),	// 65
+
+	/* NAME */					CPU_EN | (0154 * 16 + c_timming_b),	// 66
+	/* PATTERN */				CPU_EN | (0155 * 16 + c_timming_b),	// 67
+	/* PATTERN */				CPU_EN | (0156 * 16 + c_timming_b),	// 68
+	/* COLOR */					CPU_EN | (0157 * 16 + c_timming_b),	// 69
+	0160 * 16 + c_timming_a,	CPU_EN | (0160 * 16 + c_timming_b),	// 70
+	0161 * 16 + c_timming_a,	CPU_EN | (0161 * 16 + c_timming_b),	// 71
+
+	/* NAME */					CPU_EN | (0162 * 16 + c_timming_b),	// 72
+	/* PATTERN */				CPU_EN | (0163 * 16 + c_timming_b),	// 73
+	/* PATTERN */				CPU_EN | (0164 * 16 + c_timming_b),	// 74
+	/* COLOR */					CPU_EN | (0165 * 16 + c_timming_b),	// 75
+	0166 * 16 + c_timming_a,	CPU_EN | (0166 * 16 + c_timming_b),	// 76
+	0167 * 16 + c_timming_a,	CPU_EN | (0167 * 16 + c_timming_b),	// 77
+
+	/* NAME */					CPU_EN | (0170 * 16 + c_timming_b),	// 78
+	/* PATTERN */				CPU_EN | (0171 * 16 + c_timming_b),	// 79
+	/* PATTERN */				CPU_EN | (0172 * 16 + c_timming_b),	// 80
+	/* COLOR */					CPU_EN | (0173 * 16 + c_timming_b),	// 81
+	0174 * 16 + c_timming_a,	CPU_EN | (0174 * 16 + c_timming_b),	// 82
+	0175 * 16 + c_timming_a,	CPU_EN | (0175 * 16 + c_timming_b),	// 83
+
+	/* NAME */					CPU_EN | (0176 * 16 + c_timming_b),	// 84
+	/* PATTERN */				CPU_EN | (0177 * 16 + c_timming_b),	// 85
+	/* PATTERN */				CPU_EN | (0200 * 16 + c_timming_b),	// 86
+	/* COLOR */					CPU_EN | (0201 * 16 + c_timming_b),	// 87
+	0202 * 16 + c_timming_a,	CPU_EN | (0202 * 16 + c_timming_b),	// 88
+	0203 * 16 + c_timming_a,	CPU_EN | (0203 * 16 + c_timming_b),	// 89
+
+	/* NAME */					CPU_EN | (0204 * 16 + c_timming_b),	// 90
+	/* PATTERN */				CPU_EN | (0205 * 16 + c_timming_b),	// 91
+	/* PATTERN */				CPU_EN | (0206 * 16 + c_timming_b),	// 92
+	/* COLOR */					CPU_EN | (0207 * 16 + c_timming_b),	// 93
+	0210 * 16 + c_timming_a,	CPU_EN | (0210 * 16 + c_timming_b),	// 94
+	0211 * 16 + c_timming_a,	CPU_EN | (0211 * 16 + c_timming_b),	// 95
+
+	/* NAME */					CPU_EN | (0212 * 16 + c_timming_b),	// 96
+	/* PATTERN */				CPU_EN | (0213 * 16 + c_timming_b),	// 97
+	/* PATTERN */				CPU_EN | (0214 * 16 + c_timming_b),	// 98
+	/* COLOR */					CPU_EN | (0215 * 16 + c_timming_b),	// 99
+	0216 * 16 + c_timming_a,	CPU_EN | (0216 * 16 + c_timming_b),	// 100
+	0217 * 16 + c_timming_a,	CPU_EN | (0217 * 16 + c_timming_b),	// 101
+
+	/* NAME */					CPU_EN | (0220 * 16 + c_timming_b),	// 102
+	/* PATTERN */				CPU_EN | (0221 * 16 + c_timming_b),	// 103
+	/* PATTERN */				CPU_EN | (0222 * 16 + c_timming_b),	// 104
+	/* COLOR */					CPU_EN | (0223 * 16 + c_timming_b),	// 105
+	0224 * 16 + c_timming_a,	CPU_EN | (0224 * 16 + c_timming_b),	// 106
+	0225 * 16 + c_timming_a,	CPU_EN | (0225 * 16 + c_timming_b),	// 107
+
+	/* NAME */					CPU_EN | (0226 * 16 + c_timming_b),	// 108
+	/* PATTERN */				CPU_EN | (0227 * 16 + c_timming_b),	// 109
+	/* PATTERN */				CPU_EN | (0230 * 16 + c_timming_b),	// 110
+	/* COLOR */					CPU_EN | (0231 * 16 + c_timming_b),	// 111
+	0232 * 16 + c_timming_a,	CPU_EN | (0232 * 16 + c_timming_b),	// 112
+	0233 * 16 + c_timming_a,	CPU_EN | (0233 * 16 + c_timming_b),	// 113
+
+	/* NAME */					CPU_EN | (0234 * 16 + c_timming_b),	// 114
+	/* PATTERN */				CPU_EN | (0235 * 16 + c_timming_b),	// 115
+	/* PATTERN */				CPU_EN | (0236 * 16 + c_timming_b),	// 116
+	/* COLOR */					CPU_EN | (0237 * 16 + c_timming_b),	// 117
+	0240 * 16 + c_timming_a,	CPU_EN | (0240 * 16 + c_timming_b),	// 118
+	0241 * 16 + c_timming_a,	CPU_EN | (0241 * 16 + c_timming_b),	// 119
+
+	/* NAME */					CPU_EN | (0242 * 16 + c_timming_b),	// 120
+	/* PATTERN */				CPU_EN | (0243 * 16 + c_timming_b),	// 121
+	/* PATTERN */				CPU_EN | (0244 * 16 + c_timming_b),	// 122
+	/* COLOR */					CPU_EN | (0245 * 16 + c_timming_b),	// 123
+	0246 * 16 + c_timming_a,	CPU_EN | (0246 * 16 + c_timming_b),	// 124
+	0247 * 16 + c_timming_a,	CPU_EN | (0247 * 16 + c_timming_b),	// 125
+
+	/* NAME */					CPU_EN | (0250 * 16 + c_timming_b),	// 126
+	/* PATTERN */				CPU_EN | (0251 * 16 + c_timming_b),	// 127
+	/* PATTERN */				CPU_EN | (0252 * 16 + c_timming_b),	// 128
+	/* COLOR */					CPU_EN | (0253 * 16 + c_timming_b),	// 129
+	0254 * 16 + c_timming_a,	CPU_EN | (0254 * 16 + c_timming_b),	// 130
+	0255 * 16 + c_timming_a,	CPU_EN | (0255 * 16 + c_timming_b),	// 131
+
+	/* NAME */					CPU_EN | (0256 * 16 + c_timming_b),	// 132
+	/* PATTERN */				CPU_EN | (0257 * 16 + c_timming_b),	// 133
+	/* PATTERN */				CPU_EN | (0260 * 16 + c_timming_b),	// 134
+	/* COLOR */					CPU_EN | (0261 * 16 + c_timming_b),	// 135
+	0262 * 16 + c_timming_a,	CPU_EN | (0262 * 16 + c_timming_b),	// 136
+	0263 * 16 + c_timming_a,	CPU_EN | (0263 * 16 + c_timming_b),	// 137
+
+	/* NAME */					CPU_EN | (0264 * 16 + c_timming_b),	// 138
+	/* PATTERN */				CPU_EN | (0265 * 16 + c_timming_b),	// 139
+	/* PATTERN */				CPU_EN | (0266 * 16 + c_timming_b),	// 140
+	/* COLOR */					CPU_EN | (0267 * 16 + c_timming_b),	// 141
+	0270 * 16 + c_timming_a,	CPU_EN | (0270 * 16 + c_timming_b),	// 142
+	0271 * 16 + c_timming_a,	CPU_EN | (0271 * 16 + c_timming_b),	// 143
+
+	/* NAME */					CPU_EN | (0272 * 16 + c_timming_b),	// 144
+	/* PATTERN */				CPU_EN | (0273 * 16 + c_timming_b),	// 145
+	/* PATTERN */				CPU_EN | (0274 * 16 + c_timming_b),	// 146
+	/* COLOR */					CPU_EN | (0275 * 16 + c_timming_b),	// 147
+	0276 * 16 + c_timming_a,	CPU_EN | (0276 * 16 + c_timming_b),	// 148
+	0277 * 16 + c_timming_a,	CPU_EN | (0277 * 16 + c_timming_b),	// 149
+
+	/* NAME */					CPU_EN | (0300 * 16 + c_timming_b),	// 150
+	/* PATTERN */				CPU_EN | (0301 * 16 + c_timming_b),	// 151
+	/* PATTERN */				CPU_EN | (0302 * 16 + c_timming_b),	// 152
+	/* COLOR */					CPU_EN | (0303 * 16 + c_timming_b),	// 153
+	0304 * 16 + c_timming_a,	CPU_EN | (0304 * 16 + c_timming_b),	// 154
+	0305 * 16 + c_timming_a,	CPU_EN | (0305 * 16 + c_timming_b),	// 155
+
+	/* NAME */					CPU_EN | (0306 * 16 + c_timming_b),	// 156
+	/* PATTERN */				CPU_EN | (0307 * 16 + c_timming_b),	// 157
+	/* PATTERN */				CPU_EN | (0310 * 16 + c_timming_b),	// 158
+	/* COLOR */					CPU_EN | (0311 * 16 + c_timming_b),	// 159
+	0312 * 16 + c_timming_a,	CPU_EN | (0312 * 16 + c_timming_b),	// 160
+	0313 * 16 + c_timming_a,	CPU_EN | (0313 * 16 + c_timming_b),	// 161
+
+	/* NAME */					CPU_EN | (0314 * 16 + c_timming_b),	// 162
+	/* PATTERN */				CPU_EN | (0315 * 16 + c_timming_b),	// 163
+	/* PATTERN */				CPU_EN | (0316 * 16 + c_timming_b),	// 164
+	/* COLOR */					CPU_EN | (0317 * 16 + c_timming_b),	// 165
+	0320 * 16 + c_timming_a,	CPU_EN | (0320 * 16 + c_timming_b),	// 166
+	0321 * 16 + c_timming_a,	CPU_EN | (0321 * 16 + c_timming_b),	// 167
+
+	/* NAME */					CPU_EN | (0322 * 16 + c_timming_b),	// 168
+	/* PATTERN */				CPU_EN | (0323 * 16 + c_timming_b),	// 169
+	/* PATTERN */				CPU_EN | (0324 * 16 + c_timming_b),	// 170
+	/* COLOR */					CPU_EN | (0325 * 16 + c_timming_b),	// 171
+	0326 * 16 + c_timming_a,	CPU_EN | (0326 * 16 + c_timming_b),	// 172
+	0327 * 16 + c_timming_a,	CPU_EN | (0327 * 16 + c_timming_b),	// 173
+
+	/* NAME */					CPU_EN | (0330 * 16 + c_timming_b),	// 174
+	/* PATTERN */				CPU_EN | (0331 * 16 + c_timming_b),	// 175
+	/* PATTERN */				CPU_EN | (0332 * 16 + c_timming_b),	// 176
+	/* COLOR */					CPU_EN | (0333 * 16 + c_timming_b),	// 177
+	0334 * 16 + c_timming_a,	CPU_EN | (0334 * 16 + c_timming_b),	// 178
+	0335 * 16 + c_timming_a,	CPU_EN | (0335 * 16 + c_timming_b),	// 179
+
+	/* NAME */					CPU_EN | (0336 * 16 + c_timming_b),	// 180
+	/* PATTERN */				CPU_EN | (0337 * 16 + c_timming_b),	// 181
+	/* PATTERN */				CPU_EN | (0340 * 16 + c_timming_b),	// 182
+	/* COLOR */					CPU_EN | (0341 * 16 + c_timming_b),	// 183
+	0342 * 16 + c_timming_a,	CPU_EN | (0342 * 16 + c_timming_b),	// 184
+	0343 * 16 + c_timming_a,	CPU_EN | (0343 * 16 + c_timming_b),	// 185
+
+	/* NAME */					CPU_EN | (0344 * 16 + c_timming_b),	// 186
+	/* PATTERN */				CPU_EN | (0345 * 16 + c_timming_b),	// 187
+	/* PATTERN */				CPU_EN | (0346 * 16 + c_timming_b),	// 188
+	/* COLOR */					CPU_EN | (0347 * 16 + c_timming_b),	// 189
+	0350 * 16 + c_timming_a,	CPU_EN | (0350 * 16 + c_timming_b),	// 190
+	0351 * 16 + c_timming_a,	CPU_EN | (0351 * 16 + c_timming_b),	// 191
+
+	/* NAME */					CPU_EN | (0352 * 16 + c_timming_b),	// 192
+	/* PATTERN */				CPU_EN | (0353 * 16 + c_timming_b),	// 193
+	/* PATTERN */				CPU_EN | (0354 * 16 + c_timming_b),	// 194
+	/* COLOR */					CPU_EN | (0355 * 16 + c_timming_b),	// 195
+	0356 * 16 + c_timming_a,	CPU_EN | (0356 * 16 + c_timming_b),	// 196
+	0357 * 16 + c_timming_a,	CPU_EN | (0357 * 16 + c_timming_b),	// 197
+
+	/* NAME */					CPU_EN | (0360 * 16 + c_timming_b),	// 198
+	/* PATTERN */				CPU_EN | (0361 * 16 + c_timming_b),	// 199
+	/* PATTERN */				CPU_EN | (0362 * 16 + c_timming_b),	// 200
+	/* COLOR */					CPU_EN | (0363 * 16 + c_timming_b),	// 201
+	0364 * 16 + c_timming_a,	CPU_EN | (0364 * 16 + c_timming_b),	// 202
+	0365 * 16 + c_timming_a,	CPU_EN | (0365 * 16 + c_timming_b),	// 203
+
+	/* NAME */					CPU_EN | (0366 * 16 + c_timming_b),	// 204
+	/* PATTERN */				CPU_EN | (0367 * 16 + c_timming_b),	// 205
+	/* PATTERN */				CPU_EN | (0370 * 16 + c_timming_b),	// 206
+	/* COLOR */					CPU_EN | (0371 * 16 + c_timming_b),	// 205
+	0372 * 16 + c_timming_a,	CPU_EN | (0372 * 16 + c_timming_b),	// 208
+	0373 * 16 + c_timming_a,	CPU_EN | (0373 * 16 + c_timming_b),	// 209
+
+	/* NAME */					CPU_EN | (0374 * 16 + c_timming_b),	// 210
+	/* PATTERN */				CPU_EN | (0375 * 16 + c_timming_b),	// 211
+	/* PATTERN */				CPU_EN | (0376 * 16 + c_timming_b),	// 212
+	/* COLOR */					CPU_EN | (0377 * 16 + c_timming_b),	// 213
+	0400 * 16 + c_timming_a,	CPU_EN | (0400 * 16 + c_timming_b),	// 214
+	0401 * 16 + c_timming_a,	CPU_EN | (0401 * 16 + c_timming_b),	// 215
+
+	/* NAME */					CPU_EN | (0402 * 16 + c_timming_b),	// 216
+	/* PATTERN */				CPU_EN | (0403 * 16 + c_timming_b),	// 217
+	/* PATTERN */				CPU_EN | (0404 * 16 + c_timming_b),	// 218
+	/* COLOR */					CPU_EN | (0405 * 16 + c_timming_b),	// 219
+	0406 * 16 + c_timming_a,	CPU_EN | (0406 * 16 + c_timming_b),	// 220
+	0407 * 16 + c_timming_a,	CPU_EN | (0407 * 16 + c_timming_b),	// 221
+
+	/* NAME */					CPU_EN | (0410 * 16 + c_timming_b),	// 222
+	/* PATTERN */				CPU_EN | (0411 * 16 + c_timming_b),	// 223
+	/* PATTERN */				CPU_EN | (0412 * 16 + c_timming_b),	// 224
+	/* COLOR */					CPU_EN | (0413 * 16 + c_timming_b),	// 225
+	0414 * 16 + c_timming_a,	CPU_EN | (0414 * 16 + c_timming_b),	// 226
+	0415 * 16 + c_timming_a,	CPU_EN | (0415 * 16 + c_timming_b),	// 227
+
+	/* NAME */					CPU_EN | (0416 * 16 + c_timming_b),	// 228
+	/* PATTERN */				CPU_EN | (0417 * 16 + c_timming_b),	// 229
+	/* PATTERN */				CPU_EN | (0420 * 16 + c_timming_b),	// 230
+	/* COLOR */					CPU_EN | (0421 * 16 + c_timming_b),	// 231
+	0422 * 16 + c_timming_a,	CPU_EN | (0422 * 16 + c_timming_b),	// 232
+	0423 * 16 + c_timming_a,	CPU_EN | (0423 * 16 + c_timming_b),	// 233
+
+	0424 * 16 + c_timming_a,	CPU_EN | (0424 * 16 + c_timming_b),	// 234
+	0425 * 16 + c_timming_a,	CPU_EN | (0425 * 16 + c_timming_b),	// 235
+	0426 * 16 + c_timming_a,	CPU_EN | (0426 * 16 + c_timming_b),	// 236
+	0427 * 16 + c_timming_a,	CPU_EN | (0427 * 16 + c_timming_b),	// 237
+	0430 * 16 + c_timming_a,	CPU_EN | (0430 * 16 + c_timming_b),	// 238
+	0431 * 16 + c_timming_a,	CPU_EN | (0431 * 16 + c_timming_b),	// 239
+
+	0432 * 16 + c_timming_a,	CPU_EN | (0432 * 16 + c_timming_b),	// 240
+	0433 * 16 + c_timming_a,	CPU_EN | (0433 * 16 + c_timming_b),	// 241
+	0434 * 16 + c_timming_a,	CPU_EN | (0434 * 16 + c_timming_b),	// 242
+	0435 * 16 + c_timming_a,	CPU_EN | (0435 * 16 + c_timming_b),	// 243
+	0436 * 16 + c_timming_a,	CPU_EN | (0436 * 16 + c_timming_b),	// 244
+	0437 * 16 + c_timming_a,	CPU_EN | (0437 * 16 + c_timming_b),	// 245
+
+	0440 * 16 + c_timming_a,	CPU_EN | (0440 * 16 + c_timming_b),	// 246
+	0441 * 16 + c_timming_a,	CPU_EN | (0441 * 16 + c_timming_b),	// 247
+	0442 * 16 + c_timming_a,	CPU_EN | (0442 * 16 + c_timming_b),	// 248
+	0443 * 16 + c_timming_a,	CPU_EN | (0443 * 16 + c_timming_b),	// 249
+	0444 * 16 + c_timming_a,	CPU_EN | (0444 * 16 + c_timming_b),	// 250
+	0445 * 16 + c_timming_a,	CPU_EN | (0445 * 16 + c_timming_b),	// 251
+
+	0446 * 16 + c_timming_a,	CPU_EN | (0446 * 16 + c_timming_b),	// 252
+	0447 * 16 + c_timming_a,	CPU_EN | (0447 * 16 + c_timming_b),	// 253
+	0450 * 16 + c_timming_a,	CPU_EN | (0450 * 16 + c_timming_b),	// 254
+	0451 * 16 + c_timming_a,	CPU_EN | (0451 * 16 + c_timming_b),	// 255
+	0452 * 16 + c_timming_a,	CPU_EN | (0452 * 16 + c_timming_b),	// 256
+	0453 * 16 + c_timming_a,	CPU_EN | (0453 * 16 + c_timming_b),	// 257
+
+	0454 * 16 + c_timming_a,	CPU_EN | (0454 * 16 + c_timming_b),	// 258
+	0455 * 16 + c_timming_a,	CPU_EN | (0455 * 16 + c_timming_b),	// 259
+	0456 * 16 + c_timming_a,	CPU_EN | (0456 * 16 + c_timming_b),	// 260
+	0457 * 16 + c_timming_a,	CPU_EN | (0457 * 16 + c_timming_b),	// 261
+	0460 * 16 + c_timming_a,	CPU_EN | (0460 * 16 + c_timming_b),	// 262
+	0461 * 16 + c_timming_a,	CPU_EN | (0461 * 16 + c_timming_b),	// 263
+
+	0462 * 16 + c_timming_a,	CPU_EN | (0462 * 16 + c_timming_b),	// 264
+	0463 * 16 + c_timming_a,	CPU_EN | (0463 * 16 + c_timming_b),	// 265
+	0464 * 16 + c_timming_a,	CPU_EN | (0464 * 16 + c_timming_b),	// 266
+	0465 * 16 + c_timming_a,	CPU_EN | (0465 * 16 + c_timming_b),	// 267
+	0466 * 16 + c_timming_a,	CPU_EN | (0466 * 16 + c_timming_b),	// 268
+	0467 * 16 + c_timming_a,	CPU_EN | (0467 * 16 + c_timming_b),	// 269
+
+	0470 * 16 + c_timming_a,	CPU_EN | (0470 * 16 + c_timming_b),	// 270
+	0471 * 16 + c_timming_a,	CPU_EN | (0471 * 16 + c_timming_b),	// 271
+	0472 * 16 + c_timming_a,	CPU_EN | (0472 * 16 + c_timming_b),	// 272
+	0473 * 16 + c_timming_a,	CPU_EN | (0473 * 16 + c_timming_b),	// 273
+	0474 * 16 + c_timming_a,	CPU_EN | (0474 * 16 + c_timming_b),	// 274
+	0475 * 16 + c_timming_a,	CPU_EN | (0475 * 16 + c_timming_b),	// 275
+
+	0476 * 16 + c_timming_a,	CPU_EN | (0476 * 16 + c_timming_b),	// 276
+	0477 * 16 + c_timming_a,	CPU_EN | (0477 * 16 + c_timming_b),	// 277
+	0500 * 16 + c_timming_a,	CPU_EN | (0500 * 16 + c_timming_b),	// 278
+	0501 * 16 + c_timming_a,	CPU_EN | (0501 * 16 + c_timming_b),	// 279
+	0502 * 16 + c_timming_a,	CPU_EN | (0502 * 16 + c_timming_b),	// 280
+	0503 * 16 + c_timming_a,	CPU_EN | (0503 * 16 + c_timming_b),	// 281
+
+	0504 * 16 + c_timming_a,	CPU_EN | (0504 * 16 + c_timming_b),	// 282
+	0505 * 16 + c_timming_a,	CPU_EN | (0505 * 16 + c_timming_b),	// 283
+	0506 * 16 + c_timming_a,	CPU_EN | (0506 * 16 + c_timming_b),	// 284
+	0507 * 16 + c_timming_a,	CPU_EN | (0507 * 16 + c_timming_b),	// 285
+	0510 * 16 + c_timming_a,	CPU_EN | (0510 * 16 + c_timming_b),	// 286
+	0511 * 16 + c_timming_a,	CPU_EN | (0511 * 16 + c_timming_b),	// 287
+
+	0512 * 16 + c_timming_a,	CPU_EN | (0512 * 16 + c_timming_b),	// 288
+	0513 * 16 + c_timming_a,	CPU_EN | (0513 * 16 + c_timming_b),	// 289
+	0514 * 16 + c_timming_a,	CPU_EN | (0514 * 16 + c_timming_b),	// 290
+	0515 * 16 + c_timming_a,	CPU_EN | (0515 * 16 + c_timming_b),	// 291
+	0516 * 16 + c_timming_a,	CPU_EN | (0516 * 16 + c_timming_b),	// 292
+	0517 * 16 + c_timming_a,	CPU_EN | (0517 * 16 + c_timming_b),	// 293
+
+	0520 * 16 + c_timming_a,	CPU_EN | (0520 * 16 + c_timming_b),	// 294
+	0521 * 16 + c_timming_a,	CPU_EN | (0521 * 16 + c_timming_b),	// 295
+	0522 * 16 + c_timming_a,	CPU_EN | (0522 * 16 + c_timming_b),	// 296
+	0523 * 16 + c_timming_a,	CPU_EN | (0523 * 16 + c_timming_b),	// 297
+	0524 * 16 + c_timming_a,	CPU_EN | (0524 * 16 + c_timming_b),	// 298
+	0525 * 16 + c_timming_a,	CPU_EN | (0525 * 16 + c_timming_b),	// 299
+
+	0526 * 16 + c_timming_a,	CPU_EN | (0526 * 16 + c_timming_b),	// -42
+	0527 * 16 + c_timming_a,	CPU_EN | (0527 * 16 + c_timming_b),	// -41
+	0530 * 16 + c_timming_a,	CPU_EN | (0530 * 16 + c_timming_b),	// -40
+	0531 * 16 + c_timming_a,	CPU_EN | (0531 * 16 + c_timming_b),	// -39
+	0532 * 16 + c_timming_a,	CPU_EN | (0532 * 16 + c_timming_b),	// -38
+	0533 * 16 + c_timming_a,	CPU_EN | (0533 * 16 + c_timming_b),	// -37
+
+	0534 * 16 + c_timming_a,	CPU_EN | (0534 * 16 + c_timming_b),	// -36
+	0535 * 16 + c_timming_a,	CPU_EN | (0535 * 16 + c_timming_b),	// -35
+	/* REFRESH */													// -34
+	0537 * 16 + c_timming_a,	CPU_EN | (0537 * 16 + c_timming_b)	// -33
 };
 
 // screen 5,6
-static constexpr std::array<int16_t, 320> slotsV9968BitmapLowSpritesOff = {
-//	bmp   bmp   spr   cmd   cmd   cmd   cmd   cmd
-	   0,   16,   32,   48,   64,   80,   96,  112,	// -40
-	       144,  160,  176,  192,  208,  224,  240,	// -32 128=REFRESH
-	 256,  272,  288,  304,  320,  336,  352,  368,	// -24
-	 384,  400,  416,  432,  448,  464,  480,  496,	// -16
-	       528,  544,  560,  576,  592,  608,  624,	// -8
-	       656,  672,  688,  704,  720,  736,  752,	// 0
-	       784,  800,  816,  832,  848,  864,  880,
-	       912,  928,  944,  960,  976,  992, 1008,
-	      1040, 1056, 1072, 1088, 1104, 1120, 1136,
-	      1168, 1184, 1200, 1216, 1232, 1248, 1264,
-	      1296, 1312, 1328, 1344, 1360, 1376, 1392,
-	      1424, 1440, 1456, 1472, 1488, 1504, 1520,
-	      1552, 1568, 1584, 1600, 1616, 1632, 1648,
-	      1680, 1696, 1712, 1728, 1744, 1760, 1776,
-	      1808, 1824, 1840, 1856, 1872, 1888, 1904,
-	      1936, 1952, 1968, 1984, 2000, 2016, 2032,
-	      2064, 2080, 2096, 2112, 2128, 2144, 2160,
-	      2192, 2208, 2224, 2240, 2256, 2272, 2288,
-	      2320, 2336, 2352, 2368, 2384, 2400, 2416,
-	      2448, 2464, 2480, 2496, 2512, 2528, 2544,
-	      2576, 2592, 2608, 2624, 2640, 2656, 2672,
-	      2704, 2720, 2736, 2752, 2768, 2784, 2800,
-	      2832, 2848, 2864, 2880, 2896, 2912, 2928,
-	      2960, 2976, 2992, 3008, 3024, 3040, 3056,
-	      3088, 3104, 3120, 3136, 3152, 3168, 3184,
-	      3216, 3232, 3248, 3264, 3280, 3296, 3312,
-	      3344, 3360, 3376, 3392, 3408, 3424, 3440,
-	      3472, 3488, 3504, 3520, 3536, 3552, 3568,
-	      3600, 3616, 3632, 3648, 3664, 3680, 3696,
-	      3728, 3744, 3760, 3776, 3792, 3808, 3824,
-	      3856, 3872, 3888, 3904, 3920, 3936, 3952,
-	      3984, 4000, 4016, 4032, 4048, 4064, 4080,
-	      4112, 4128, 4144, 4160, 4176, 4192, 4208,
-	      4240, 4256, 4272, 4288, 4304, 4320, 4336,
-	      4368, 4384, 4400, 4416, 4432, 4448, 4464,
-	      4496, 4512, 4528, 4544, 4560, 4576, 4592,
-	4608, 4624, 4640, 4656, 4672, 4688, 4704, 4720,
-	4736, 4752, 4768, 4784, 4800, 4816, 4832, 4848,	// 256
-	4864, 4880, 4896, 4912, 4928, 4944, 4960, 4976,	// 264
-	4992, 5008, 5024, 5040, 5056, 5072, 5088, 5104,
-	5120, 5136, 5152, 5168, 5184, 5200, 5216, 5232,
-	5248, 5264, 5280, 5296, 5312, 5328, 5344, 5360,
-	5376, 5392, 5408, 5424, 5440, 5456,
-	5472, 5488, 5504, 5520, 5536, 5552, 5568, 5584,	// -40
-	      5616										// -32 5600=REFRESH
+static constexpr std::array<int16_t, 700-32> slotsV9968BitmapLowSpritesOff = {
+	0000 * 16 + c_timming_a,	CPU_EN | (0000 * 16 + c_timming_b),	// -40
+	0001 * 16 + c_timming_a,	CPU_EN | (0001 * 16 + c_timming_b),	// -39
+	0002 * 16 + c_timming_a,	CPU_EN | (0002 * 16 + c_timming_b),	// -38
+	0003 * 16 + c_timming_a,	CPU_EN | (0003 * 16 + c_timming_b),	// -37
+	0004 * 16 + c_timming_a,	CPU_EN | (0004 * 16 + c_timming_b),	// -36
+	0005 * 16 + c_timming_a,	CPU_EN | (0005 * 16 + c_timming_b),	// -35
+	0006 * 16 + c_timming_a,	CPU_EN | (0006 * 16 + c_timming_b),	// -34
+	0007 * 16 + c_timming_a,	CPU_EN | (0007 * 16 + c_timming_b),	// -33
+
+	/* REFRESH */													// -32
+	0011 * 16 + c_timming_a,	CPU_EN | (0011 * 16 + c_timming_b),	// -31
+	0012 * 16 + c_timming_a,	CPU_EN | (0012 * 16 + c_timming_b),	// -30
+	0013 * 16 + c_timming_a,	CPU_EN | (0013 * 16 + c_timming_b),	// -29
+	0014 * 16 + c_timming_a,	CPU_EN | (0014 * 16 + c_timming_b),	// -28
+	0015 * 16 + c_timming_a,	CPU_EN | (0015 * 16 + c_timming_b),	// -27
+	0016 * 16 + c_timming_a,	CPU_EN | (0016 * 16 + c_timming_b),	// -26
+	0017 * 16 + c_timming_a,	CPU_EN | (0017 * 16 + c_timming_b),	// -25
+
+	0020 * 16 + c_timming_a,	CPU_EN | (0020 * 16 + c_timming_b),	// -24
+	0021 * 16 + c_timming_a,	CPU_EN | (0021 * 16 + c_timming_b),	// -23
+	0022 * 16 + c_timming_a,	CPU_EN | (0022 * 16 + c_timming_b),	// -22
+	0023 * 16 + c_timming_a,	CPU_EN | (0023 * 16 + c_timming_b),	// -21
+	0024 * 16 + c_timming_a,	CPU_EN | (0024 * 16 + c_timming_b),	// -20
+	0025 * 16 + c_timming_a,	CPU_EN | (0025 * 16 + c_timming_b),	// -19
+	0026 * 16 + c_timming_a,	CPU_EN | (0026 * 16 + c_timming_b),	// -18
+	0027 * 16 + c_timming_a,	CPU_EN | (0027 * 16 + c_timming_b),	// -17
+
+	0030 * 16 + c_timming_a,	CPU_EN | (0030 * 16 + c_timming_b),	// -16
+	0031 * 16 + c_timming_a,	CPU_EN | (0031 * 16 + c_timming_b),	// -15
+	0032 * 16 + c_timming_a,	CPU_EN | (0032 * 16 + c_timming_b),	// -14
+	0033 * 16 + c_timming_a,	CPU_EN | (0033 * 16 + c_timming_b),	// -13
+	0034 * 16 + c_timming_a,	CPU_EN | (0034 * 16 + c_timming_b),	// -12
+	0035 * 16 + c_timming_a,	CPU_EN | (0035 * 16 + c_timming_b),	// -11
+	0036 * 16 + c_timming_a,	CPU_EN | (0036 * 16 + c_timming_b),	// -10
+	0037 * 16 + c_timming_a,	CPU_EN | (0037 * 16 + c_timming_b),	// -9
+
+	/* BITMAP */				CPU_EN | (0040 * 16 + c_timming_b),	// -8
+	0041 * 16 + c_timming_a,	CPU_EN | (0041 * 16 + c_timming_b),	// -7
+	0042 * 16 + c_timming_a,	CPU_EN | (0042 * 16 + c_timming_b),	// -6
+	0043 * 16 + c_timming_a,	CPU_EN | (0043 * 16 + c_timming_b),	// -5
+	0044 * 16 + c_timming_a,	CPU_EN | (0044 * 16 + c_timming_b),	// -4
+	0045 * 16 + c_timming_a,	CPU_EN | (0045 * 16 + c_timming_b),	// -3
+	0046 * 16 + c_timming_a,	CPU_EN | (0046 * 16 + c_timming_b),	// -2
+	0047 * 16 + c_timming_a,	CPU_EN | (0047 * 16 + c_timming_b),	// -1
+
+	/* BITMAP */				CPU_EN | (0050 * 16 + c_timming_b),	// 0
+	0051 * 16 + c_timming_a,	CPU_EN | (0051 * 16 + c_timming_b),	// 1
+	0052 * 16 + c_timming_a,	CPU_EN | (0052 * 16 + c_timming_b),	// 2
+	0053 * 16 + c_timming_a,	CPU_EN | (0053 * 16 + c_timming_b),	// 3
+	0054 * 16 + c_timming_a,	CPU_EN | (0054 * 16 + c_timming_b),	// 4
+	0055 * 16 + c_timming_a,	CPU_EN | (0055 * 16 + c_timming_b),	// 5
+	0056 * 16 + c_timming_a,	CPU_EN | (0056 * 16 + c_timming_b),	// 6
+	0057 * 16 + c_timming_a,	CPU_EN | (0057 * 16 + c_timming_b),	// 7
+
+	/* BITMAP */				CPU_EN | (0060 * 16 + c_timming_b),	// 8
+	0061 * 16 + c_timming_a,	CPU_EN | (0061 * 16 + c_timming_b),	// 9
+	0062 * 16 + c_timming_a,	CPU_EN | (0062 * 16 + c_timming_b),	// 10
+	0063 * 16 + c_timming_a,	CPU_EN | (0063 * 16 + c_timming_b),	// 11
+	0064 * 16 + c_timming_a,	CPU_EN | (0064 * 16 + c_timming_b),	// 12
+	0065 * 16 + c_timming_a,	CPU_EN | (0065 * 16 + c_timming_b),	// 13
+	0066 * 16 + c_timming_a,	CPU_EN | (0066 * 16 + c_timming_b),	// 14
+	0067 * 16 + c_timming_a,	CPU_EN | (0067 * 16 + c_timming_b),	// 15
+
+	/* BITMAP */				CPU_EN | (0070 * 16 + c_timming_b),	// 16
+	0071 * 16 + c_timming_a,	CPU_EN | (0071 * 16 + c_timming_b),	// 17
+	0072 * 16 + c_timming_a,	CPU_EN | (0072 * 16 + c_timming_b),	// 18
+	0073 * 16 + c_timming_a,	CPU_EN | (0073 * 16 + c_timming_b),	// 19
+	0074 * 16 + c_timming_a,	CPU_EN | (0074 * 16 + c_timming_b),	// 20
+	0075 * 16 + c_timming_a,	CPU_EN | (0075 * 16 + c_timming_b),	// 21
+	0076 * 16 + c_timming_a,	CPU_EN | (0076 * 16 + c_timming_b),	// 22
+	0077 * 16 + c_timming_a,	CPU_EN | (0077 * 16 + c_timming_b),	// 23
+
+	/* BITMAP */				CPU_EN | (0100 * 16 + c_timming_b),	// 24
+	0101 * 16 + c_timming_a,	CPU_EN | (0101 * 16 + c_timming_b),	// 25
+	0102 * 16 + c_timming_a,	CPU_EN | (0102 * 16 + c_timming_b),	// 26
+	0103 * 16 + c_timming_a,	CPU_EN | (0103 * 16 + c_timming_b),	// 27
+	0104 * 16 + c_timming_a,	CPU_EN | (0104 * 16 + c_timming_b),	// 28
+	0105 * 16 + c_timming_a,	CPU_EN | (0105 * 16 + c_timming_b),	// 29
+	0106 * 16 + c_timming_a,	CPU_EN | (0106 * 16 + c_timming_b),	// 30
+	0107 * 16 + c_timming_a,	CPU_EN | (0107 * 16 + c_timming_b),	// 31
+
+	/* BITMAP */				CPU_EN | (0110 * 16 + c_timming_b),	// 32
+	0111 * 16 + c_timming_a,	CPU_EN | (0111 * 16 + c_timming_b),	// 33
+	0112 * 16 + c_timming_a,	CPU_EN | (0112 * 16 + c_timming_b),	// 34
+	0113 * 16 + c_timming_a,	CPU_EN | (0113 * 16 + c_timming_b),	// 35
+	0114 * 16 + c_timming_a,	CPU_EN | (0114 * 16 + c_timming_b),	// 36
+	0115 * 16 + c_timming_a,	CPU_EN | (0115 * 16 + c_timming_b),	// 37
+	0116 * 16 + c_timming_a,	CPU_EN | (0116 * 16 + c_timming_b),	// 38
+	0117 * 16 + c_timming_a,	CPU_EN | (0117 * 16 + c_timming_b),	// 39
+
+	/* BITMAP */				CPU_EN | (0120 * 16 + c_timming_b),	// 40
+	0121 * 16 + c_timming_a,	CPU_EN | (0121 * 16 + c_timming_b),	// 41
+	0122 * 16 + c_timming_a,	CPU_EN | (0122 * 16 + c_timming_b),	// 42
+	0123 * 16 + c_timming_a,	CPU_EN | (0123 * 16 + c_timming_b),	// 43
+	0124 * 16 + c_timming_a,	CPU_EN | (0124 * 16 + c_timming_b),	// 44
+	0125 * 16 + c_timming_a,	CPU_EN | (0125 * 16 + c_timming_b),	// 45
+	0126 * 16 + c_timming_a,	CPU_EN | (0126 * 16 + c_timming_b),	// 46
+	0127 * 16 + c_timming_a,	CPU_EN | (0127 * 16 + c_timming_b),	// 47
+
+	/* BITMAP */				CPU_EN | (0130 * 16 + c_timming_b),	// 48
+	0131 * 16 + c_timming_a,	CPU_EN | (0131 * 16 + c_timming_b),	// 49
+	0132 * 16 + c_timming_a,	CPU_EN | (0132 * 16 + c_timming_b),	// 50
+	0133 * 16 + c_timming_a,	CPU_EN | (0133 * 16 + c_timming_b),	// 51
+	0134 * 16 + c_timming_a,	CPU_EN | (0134 * 16 + c_timming_b),	// 52
+	0135 * 16 + c_timming_a,	CPU_EN | (0135 * 16 + c_timming_b),	// 53
+	0136 * 16 + c_timming_a,	CPU_EN | (0136 * 16 + c_timming_b),	// 54
+	0137 * 16 + c_timming_a,	CPU_EN | (0137 * 16 + c_timming_b),	// 55
+
+	/* BITMAP */				CPU_EN | (0140 * 16 + c_timming_b),	// 56
+	0141 * 16 + c_timming_a,	CPU_EN | (0141 * 16 + c_timming_b),	// 57
+	0142 * 16 + c_timming_a,	CPU_EN | (0142 * 16 + c_timming_b),	// 58
+	0143 * 16 + c_timming_a,	CPU_EN | (0143 * 16 + c_timming_b),	// 59
+	0144 * 16 + c_timming_a,	CPU_EN | (0144 * 16 + c_timming_b),	// 60
+	0145 * 16 + c_timming_a,	CPU_EN | (0145 * 16 + c_timming_b),	// 61
+	0146 * 16 + c_timming_a,	CPU_EN | (0146 * 16 + c_timming_b),	// 62
+	0147 * 16 + c_timming_a,	CPU_EN | (0147 * 16 + c_timming_b),	// 63
+
+	/* BITMAP */				CPU_EN | (0150 * 16 + c_timming_b),	// 64
+	0151 * 16 + c_timming_a,	CPU_EN | (0151 * 16 + c_timming_b),	// 65
+	0152 * 16 + c_timming_a,	CPU_EN | (0152 * 16 + c_timming_b),	// 66
+	0153 * 16 + c_timming_a,	CPU_EN | (0153 * 16 + c_timming_b),	// 67
+	0154 * 16 + c_timming_a,	CPU_EN | (0154 * 16 + c_timming_b),	// 68
+	0155 * 16 + c_timming_a,	CPU_EN | (0155 * 16 + c_timming_b),	// 69
+	0156 * 16 + c_timming_a,	CPU_EN | (0156 * 16 + c_timming_b),	// 70
+	0157 * 16 + c_timming_a,	CPU_EN | (0157 * 16 + c_timming_b),	// 71
+
+	/* BITMAP */				CPU_EN | (0160 * 16 + c_timming_b),	// 72
+	0161 * 16 + c_timming_a,	CPU_EN | (0161 * 16 + c_timming_b),	// 73
+	0162 * 16 + c_timming_a,	CPU_EN | (0162 * 16 + c_timming_b),	// 74
+	0163 * 16 + c_timming_a,	CPU_EN | (0163 * 16 + c_timming_b),	// 75
+	0164 * 16 + c_timming_a,	CPU_EN | (0164 * 16 + c_timming_b),	// 76
+	0165 * 16 + c_timming_a,	CPU_EN | (0165 * 16 + c_timming_b),	// 77
+	0166 * 16 + c_timming_a,	CPU_EN | (0166 * 16 + c_timming_b),	// 78
+	0167 * 16 + c_timming_a,	CPU_EN | (0167 * 16 + c_timming_b),	// 79
+
+	/* BITMAP */				CPU_EN | (0170 * 16 + c_timming_b),	// 80
+	0171 * 16 + c_timming_a,	CPU_EN | (0171 * 16 + c_timming_b),	// 81
+	0172 * 16 + c_timming_a,	CPU_EN | (0172 * 16 + c_timming_b),	// 82
+	0173 * 16 + c_timming_a,	CPU_EN | (0173 * 16 + c_timming_b),	// 83
+	0174 * 16 + c_timming_a,	CPU_EN | (0174 * 16 + c_timming_b),	// 84
+	0175 * 16 + c_timming_a,	CPU_EN | (0175 * 16 + c_timming_b),	// 85
+	0176 * 16 + c_timming_a,	CPU_EN | (0176 * 16 + c_timming_b),	// 86
+	0177 * 16 + c_timming_a,	CPU_EN | (0177 * 16 + c_timming_b),	// 87
+
+	/* BITMAP */				CPU_EN | (0200 * 16 + c_timming_b),	// 88
+	0201 * 16 + c_timming_a,	CPU_EN | (0201 * 16 + c_timming_b),	// 89
+	0202 * 16 + c_timming_a,	CPU_EN | (0202 * 16 + c_timming_b),	// 90
+	0203 * 16 + c_timming_a,	CPU_EN | (0203 * 16 + c_timming_b),	// 91
+	0204 * 16 + c_timming_a,	CPU_EN | (0204 * 16 + c_timming_b),	// 92
+	0205 * 16 + c_timming_a,	CPU_EN | (0205 * 16 + c_timming_b),	// 93
+	0206 * 16 + c_timming_a,	CPU_EN | (0206 * 16 + c_timming_b),	// 94
+	0207 * 16 + c_timming_a,	CPU_EN | (0207 * 16 + c_timming_b),	// 95
+
+	/* BITMAP */				CPU_EN | (0210 * 16 + c_timming_b),	// 96
+	0211 * 16 + c_timming_a,	CPU_EN | (0211 * 16 + c_timming_b),	// 97
+	0212 * 16 + c_timming_a,	CPU_EN | (0212 * 16 + c_timming_b),	// 98
+	0213 * 16 + c_timming_a,	CPU_EN | (0213 * 16 + c_timming_b),	// 99
+	0214 * 16 + c_timming_a,	CPU_EN | (0214 * 16 + c_timming_b),	// 100
+	0215 * 16 + c_timming_a,	CPU_EN | (0215 * 16 + c_timming_b),	// 101
+	0216 * 16 + c_timming_a,	CPU_EN | (0216 * 16 + c_timming_b),	// 102
+	0217 * 16 + c_timming_a,	CPU_EN | (0217 * 16 + c_timming_b),	// 103
+
+	/* BITMAP */				CPU_EN | (0220 * 16 + c_timming_b),	// 104
+	0221 * 16 + c_timming_a,	CPU_EN | (0221 * 16 + c_timming_b),	// 105
+	0222 * 16 + c_timming_a,	CPU_EN | (0222 * 16 + c_timming_b),	// 106
+	0223 * 16 + c_timming_a,	CPU_EN | (0223 * 16 + c_timming_b),	// 107
+	0224 * 16 + c_timming_a,	CPU_EN | (0224 * 16 + c_timming_b),	// 108
+	0225 * 16 + c_timming_a,	CPU_EN | (0225 * 16 + c_timming_b),	// 109
+	0226 * 16 + c_timming_a,	CPU_EN | (0226 * 16 + c_timming_b),	// 110
+	0227 * 16 + c_timming_a,	CPU_EN | (0227 * 16 + c_timming_b),	// 111
+
+	/* BITMAP */				CPU_EN | (0230 * 16 + c_timming_b),	// 112
+	0231 * 16 + c_timming_a,	CPU_EN | (0231 * 16 + c_timming_b),	// 113
+	0232 * 16 + c_timming_a,	CPU_EN | (0232 * 16 + c_timming_b),	// 114
+	0233 * 16 + c_timming_a,	CPU_EN | (0233 * 16 + c_timming_b),	// 115
+	0234 * 16 + c_timming_a,	CPU_EN | (0234 * 16 + c_timming_b),	// 116
+	0235 * 16 + c_timming_a,	CPU_EN | (0235 * 16 + c_timming_b),	// 117
+	0236 * 16 + c_timming_a,	CPU_EN | (0236 * 16 + c_timming_b),	// 118
+	0237 * 16 + c_timming_a,	CPU_EN | (0237 * 16 + c_timming_b),	// 119
+
+	/* BITMAP */				CPU_EN | (0240 * 16 + c_timming_b),	// 120
+	0241 * 16 + c_timming_a,	CPU_EN | (0241 * 16 + c_timming_b),	// 121
+	0242 * 16 + c_timming_a,	CPU_EN | (0242 * 16 + c_timming_b),	// 122
+	0243 * 16 + c_timming_a,	CPU_EN | (0243 * 16 + c_timming_b),	// 123
+	0244 * 16 + c_timming_a,	CPU_EN | (0244 * 16 + c_timming_b),	// 124
+	0245 * 16 + c_timming_a,	CPU_EN | (0245 * 16 + c_timming_b),	// 125
+	0246 * 16 + c_timming_a,	CPU_EN | (0246 * 16 + c_timming_b),	// 126
+	0247 * 16 + c_timming_a,	CPU_EN | (0247 * 16 + c_timming_b),	// 127
+
+	/* BITMAP */				CPU_EN | (0250 * 16 + c_timming_b),	// 128
+	0251 * 16 + c_timming_a,	CPU_EN | (0251 * 16 + c_timming_b),	// 129
+	0252 * 16 + c_timming_a,	CPU_EN | (0252 * 16 + c_timming_b),	// 130
+	0253 * 16 + c_timming_a,	CPU_EN | (0253 * 16 + c_timming_b),	// 131
+	0254 * 16 + c_timming_a,	CPU_EN | (0254 * 16 + c_timming_b),	// 132
+	0255 * 16 + c_timming_a,	CPU_EN | (0255 * 16 + c_timming_b),	// 133
+	0256 * 16 + c_timming_a,	CPU_EN | (0256 * 16 + c_timming_b),	// 134
+	0257 * 16 + c_timming_a,	CPU_EN | (0257 * 16 + c_timming_b),	// 135
+
+	/* BITMAP */				CPU_EN | (0260 * 16 + c_timming_b),	// 136
+	0261 * 16 + c_timming_a,	CPU_EN | (0261 * 16 + c_timming_b),	// 137
+	0262 * 16 + c_timming_a,	CPU_EN | (0262 * 16 + c_timming_b),	// 138
+	0263 * 16 + c_timming_a,	CPU_EN | (0263 * 16 + c_timming_b),	// 139
+	0264 * 16 + c_timming_a,	CPU_EN | (0264 * 16 + c_timming_b),	// 140
+	0265 * 16 + c_timming_a,	CPU_EN | (0265 * 16 + c_timming_b),	// 141
+	0266 * 16 + c_timming_a,	CPU_EN | (0266 * 16 + c_timming_b),	// 142
+	0267 * 16 + c_timming_a,	CPU_EN | (0267 * 16 + c_timming_b),	// 143
+
+	/* BITMAP */				CPU_EN | (0270 * 16 + c_timming_b),	// 144
+	0271 * 16 + c_timming_a,	CPU_EN | (0271 * 16 + c_timming_b),	// 145
+	0272 * 16 + c_timming_a,	CPU_EN | (0272 * 16 + c_timming_b),	// 146
+	0273 * 16 + c_timming_a,	CPU_EN | (0273 * 16 + c_timming_b),	// 147
+	0274 * 16 + c_timming_a,	CPU_EN | (0274 * 16 + c_timming_b),	// 148
+	0275 * 16 + c_timming_a,	CPU_EN | (0275 * 16 + c_timming_b),	// 149
+	0276 * 16 + c_timming_a,	CPU_EN | (0276 * 16 + c_timming_b),	// 150
+	0277 * 16 + c_timming_a,	CPU_EN | (0277 * 16 + c_timming_b),	// 151
+
+	/* BITMAP */				CPU_EN | (0300 * 16 + c_timming_b),	// 152
+	0301 * 16 + c_timming_a,	CPU_EN | (0301 * 16 + c_timming_b),	// 153
+	0302 * 16 + c_timming_a,	CPU_EN | (0302 * 16 + c_timming_b),	// 154
+	0303 * 16 + c_timming_a,	CPU_EN | (0303 * 16 + c_timming_b),	// 155
+	0304 * 16 + c_timming_a,	CPU_EN | (0304 * 16 + c_timming_b),	// 156
+	0305 * 16 + c_timming_a,	CPU_EN | (0305 * 16 + c_timming_b),	// 157
+	0306 * 16 + c_timming_a,	CPU_EN | (0306 * 16 + c_timming_b),	// 158
+	0307 * 16 + c_timming_a,	CPU_EN | (0307 * 16 + c_timming_b),	// 159
+
+	/* BITMAP */				CPU_EN | (0310 * 16 + c_timming_b),	// 160
+	0311 * 16 + c_timming_a,	CPU_EN | (0311 * 16 + c_timming_b),	// 161
+	0312 * 16 + c_timming_a,	CPU_EN | (0312 * 16 + c_timming_b),	// 162
+	0313 * 16 + c_timming_a,	CPU_EN | (0313 * 16 + c_timming_b),	// 163
+	0314 * 16 + c_timming_a,	CPU_EN | (0314 * 16 + c_timming_b),	// 164
+	0315 * 16 + c_timming_a,	CPU_EN | (0315 * 16 + c_timming_b),	// 165
+	0316 * 16 + c_timming_a,	CPU_EN | (0316 * 16 + c_timming_b),	// 166
+	0317 * 16 + c_timming_a,	CPU_EN | (0317 * 16 + c_timming_b),	// 167
+
+	/* BITMAP */				CPU_EN | (0320 * 16 + c_timming_b),	// 168
+	0321 * 16 + c_timming_a,	CPU_EN | (0321 * 16 + c_timming_b),	// 169
+	0322 * 16 + c_timming_a,	CPU_EN | (0322 * 16 + c_timming_b),	// 170
+	0323 * 16 + c_timming_a,	CPU_EN | (0323 * 16 + c_timming_b),	// 171
+	0324 * 16 + c_timming_a,	CPU_EN | (0324 * 16 + c_timming_b),	// 172
+	0325 * 16 + c_timming_a,	CPU_EN | (0325 * 16 + c_timming_b),	// 173
+	0326 * 16 + c_timming_a,	CPU_EN | (0326 * 16 + c_timming_b),	// 174
+	0327 * 16 + c_timming_a,	CPU_EN | (0327 * 16 + c_timming_b),	// 175
+
+	/* BITMAP */				CPU_EN | (0330 * 16 + c_timming_b),	// 176
+	0331 * 16 + c_timming_a,	CPU_EN | (0331 * 16 + c_timming_b),	// 177
+	0332 * 16 + c_timming_a,	CPU_EN | (0332 * 16 + c_timming_b),	// 178
+	0333 * 16 + c_timming_a,	CPU_EN | (0333 * 16 + c_timming_b),	// 179
+	0334 * 16 + c_timming_a,	CPU_EN | (0334 * 16 + c_timming_b),	// 180
+	0335 * 16 + c_timming_a,	CPU_EN | (0335 * 16 + c_timming_b),	// 181
+	0336 * 16 + c_timming_a,	CPU_EN | (0336 * 16 + c_timming_b),	// 182
+	0337 * 16 + c_timming_a,	CPU_EN | (0337 * 16 + c_timming_b),	// 183
+
+	/* BITMAP */				CPU_EN | (0340 * 16 + c_timming_b),	// 184
+	0341 * 16 + c_timming_a,	CPU_EN | (0341 * 16 + c_timming_b),	// 185
+	0342 * 16 + c_timming_a,	CPU_EN | (0342 * 16 + c_timming_b),	// 186
+	0343 * 16 + c_timming_a,	CPU_EN | (0343 * 16 + c_timming_b),	// 187
+	0344 * 16 + c_timming_a,	CPU_EN | (0344 * 16 + c_timming_b),	// 188
+	0345 * 16 + c_timming_a,	CPU_EN | (0345 * 16 + c_timming_b),	// 189
+	0346 * 16 + c_timming_a,	CPU_EN | (0346 * 16 + c_timming_b),	// 190
+	0347 * 16 + c_timming_a,	CPU_EN | (0347 * 16 + c_timming_b),	// 191
+
+	/* BITMAP */				CPU_EN | (0350 * 16 + c_timming_b),	// 192
+	0351 * 16 + c_timming_a,	CPU_EN | (0351 * 16 + c_timming_b),	// 193
+	0352 * 16 + c_timming_a,	CPU_EN | (0352 * 16 + c_timming_b),	// 194
+	0353 * 16 + c_timming_a,	CPU_EN | (0353 * 16 + c_timming_b),	// 195
+	0354 * 16 + c_timming_a,	CPU_EN | (0354 * 16 + c_timming_b),	// 196
+	0355 * 16 + c_timming_a,	CPU_EN | (0355 * 16 + c_timming_b),	// 197
+	0356 * 16 + c_timming_a,	CPU_EN | (0356 * 16 + c_timming_b),	// 198
+	0357 * 16 + c_timming_a,	CPU_EN | (0357 * 16 + c_timming_b),	// 199
+
+	/* BITMAP */				CPU_EN | (0360 * 16 + c_timming_b),	// 200
+	0361 * 16 + c_timming_a,	CPU_EN | (0361 * 16 + c_timming_b),	// 201
+	0362 * 16 + c_timming_a,	CPU_EN | (0362 * 16 + c_timming_b),	// 202
+	0363 * 16 + c_timming_a,	CPU_EN | (0363 * 16 + c_timming_b),	// 203
+	0364 * 16 + c_timming_a,	CPU_EN | (0364 * 16 + c_timming_b),	// 204
+	0365 * 16 + c_timming_a,	CPU_EN | (0365 * 16 + c_timming_b),	// 205
+	0366 * 16 + c_timming_a,	CPU_EN | (0366 * 16 + c_timming_b),	// 206
+	0367 * 16 + c_timming_a,	CPU_EN | (0367 * 16 + c_timming_b),	// 207
+
+	/* BITMAP */				CPU_EN | (0370 * 16 + c_timming_b),	// 208
+	0371 * 16 + c_timming_a,	CPU_EN | (0371 * 16 + c_timming_b),	// 209
+	0372 * 16 + c_timming_a,	CPU_EN | (0372 * 16 + c_timming_b),	// 210
+	0373 * 16 + c_timming_a,	CPU_EN | (0373 * 16 + c_timming_b),	// 211
+	0374 * 16 + c_timming_a,	CPU_EN | (0374 * 16 + c_timming_b),	// 212
+	0375 * 16 + c_timming_a,	CPU_EN | (0375 * 16 + c_timming_b),	// 213
+	0376 * 16 + c_timming_a,	CPU_EN | (0376 * 16 + c_timming_b),	// 214
+	0377 * 16 + c_timming_a,	CPU_EN | (0377 * 16 + c_timming_b),	// 215
+
+	/* BITMAP */				CPU_EN | (0400 * 16 + c_timming_b),	// 216
+	0401 * 16 + c_timming_a,	CPU_EN | (0401 * 16 + c_timming_b),	// 217
+	0402 * 16 + c_timming_a,	CPU_EN | (0402 * 16 + c_timming_b),	// 218
+	0403 * 16 + c_timming_a,	CPU_EN | (0403 * 16 + c_timming_b),	// 219
+	0404 * 16 + c_timming_a,	CPU_EN | (0404 * 16 + c_timming_b),	// 220
+	0405 * 16 + c_timming_a,	CPU_EN | (0405 * 16 + c_timming_b),	// 221
+	0406 * 16 + c_timming_a,	CPU_EN | (0406 * 16 + c_timming_b),	// 222
+	0407 * 16 + c_timming_a,	CPU_EN | (0407 * 16 + c_timming_b),	// 223
+
+	/* BITMAP */				CPU_EN | (0410 * 16 + c_timming_b),	// 224
+	0411 * 16 + c_timming_a,	CPU_EN | (0411 * 16 + c_timming_b),	// 225
+	0412 * 16 + c_timming_a,	CPU_EN | (0412 * 16 + c_timming_b),	// 226
+	0413 * 16 + c_timming_a,	CPU_EN | (0413 * 16 + c_timming_b),	// 227
+	0414 * 16 + c_timming_a,	CPU_EN | (0414 * 16 + c_timming_b),	// 228
+	0415 * 16 + c_timming_a,	CPU_EN | (0415 * 16 + c_timming_b),	// 229
+	0416 * 16 + c_timming_a,	CPU_EN | (0416 * 16 + c_timming_b),	// 230
+	0417 * 16 + c_timming_a,	CPU_EN | (0417 * 16 + c_timming_b),	// 231
+
+	/* BITMAP */				CPU_EN | (0420 * 16 + c_timming_b),	// 232
+	0421 * 16 + c_timming_a,	CPU_EN | (0421 * 16 + c_timming_b),	// 233
+	0422 * 16 + c_timming_a,	CPU_EN | (0422 * 16 + c_timming_b),	// 234
+	0423 * 16 + c_timming_a,	CPU_EN | (0423 * 16 + c_timming_b),	// 235
+	0424 * 16 + c_timming_a,	CPU_EN | (0424 * 16 + c_timming_b),	// 236
+	0425 * 16 + c_timming_a,	CPU_EN | (0425 * 16 + c_timming_b),	// 237
+	0426 * 16 + c_timming_a,	CPU_EN | (0426 * 16 + c_timming_b),	// 238
+	0427 * 16 + c_timming_a,	CPU_EN | (0427 * 16 + c_timming_b),	// 239
+
+	/* BITMAP */				CPU_EN | (0430 * 16 + c_timming_b),	// 240
+	0431 * 16 + c_timming_a,	CPU_EN | (0431 * 16 + c_timming_b),	// 241
+	0432 * 16 + c_timming_a,	CPU_EN | (0432 * 16 + c_timming_b),	// 242
+	0433 * 16 + c_timming_a,	CPU_EN | (0433 * 16 + c_timming_b),	// 243
+	0434 * 16 + c_timming_a,	CPU_EN | (0434 * 16 + c_timming_b),	// 244
+	0435 * 16 + c_timming_a,	CPU_EN | (0435 * 16 + c_timming_b),	// 245
+	0436 * 16 + c_timming_a,	CPU_EN | (0436 * 16 + c_timming_b),	// 246
+	0437 * 16 + c_timming_a,	CPU_EN | (0437 * 16 + c_timming_b),	// 247
+
+	0440 * 16 + c_timming_a,	CPU_EN | (0440 * 16 + c_timming_b),	// 248
+	0441 * 16 + c_timming_a,	CPU_EN | (0441 * 16 + c_timming_b),	// 249
+	0442 * 16 + c_timming_a,	CPU_EN | (0442 * 16 + c_timming_b),	// 250
+	0443 * 16 + c_timming_a,	CPU_EN | (0443 * 16 + c_timming_b),	// 251
+	0444 * 16 + c_timming_a,	CPU_EN | (0444 * 16 + c_timming_b),	// 252
+	0445 * 16 + c_timming_a,	CPU_EN | (0445 * 16 + c_timming_b),	// 253
+	0446 * 16 + c_timming_a,	CPU_EN | (0446 * 16 + c_timming_b),	// 254
+	0447 * 16 + c_timming_a,	CPU_EN | (0447 * 16 + c_timming_b),	// 255
+
+	0450 * 16 + c_timming_a,	CPU_EN | (0450 * 16 + c_timming_b),	// 256
+	0451 * 16 + c_timming_a,	CPU_EN | (0451 * 16 + c_timming_b),	// 257
+	0452 * 16 + c_timming_a,	CPU_EN | (0452 * 16 + c_timming_b),	// 258
+	0453 * 16 + c_timming_a,	CPU_EN | (0453 * 16 + c_timming_b),	// 259
+	0454 * 16 + c_timming_a,	CPU_EN | (0454 * 16 + c_timming_b),	// 260
+	0455 * 16 + c_timming_a,	CPU_EN | (0455 * 16 + c_timming_b),	// 261
+	0456 * 16 + c_timming_a,	CPU_EN | (0456 * 16 + c_timming_b),	// 262
+	0457 * 16 + c_timming_a,	CPU_EN | (0457 * 16 + c_timming_b),	// 263
+
+	0460 * 16 + c_timming_a,	CPU_EN | (0460 * 16 + c_timming_b),	// 264
+	0461 * 16 + c_timming_a,	CPU_EN | (0461 * 16 + c_timming_b),	// 265
+	0462 * 16 + c_timming_a,	CPU_EN | (0462 * 16 + c_timming_b),	// 266
+	0463 * 16 + c_timming_a,	CPU_EN | (0463 * 16 + c_timming_b),	// 267
+	0464 * 16 + c_timming_a,	CPU_EN | (0464 * 16 + c_timming_b),	// 268
+	0465 * 16 + c_timming_a,	CPU_EN | (0465 * 16 + c_timming_b),	// 269
+	0466 * 16 + c_timming_a,	CPU_EN | (0466 * 16 + c_timming_b),	// 270
+	0467 * 16 + c_timming_a,	CPU_EN | (0467 * 16 + c_timming_b),	// 271
+
+	0470 * 16 + c_timming_a,	CPU_EN | (0470 * 16 + c_timming_b),	// 272
+	0471 * 16 + c_timming_a,	CPU_EN | (0471 * 16 + c_timming_b),	// 273
+	0472 * 16 + c_timming_a,	CPU_EN | (0472 * 16 + c_timming_b),	// 274
+	0473 * 16 + c_timming_a,	CPU_EN | (0473 * 16 + c_timming_b),	// 275
+	0474 * 16 + c_timming_a,	CPU_EN | (0474 * 16 + c_timming_b),	// 276
+	0475 * 16 + c_timming_a,	CPU_EN | (0475 * 16 + c_timming_b),	// 277
+	0476 * 16 + c_timming_a,	CPU_EN | (0476 * 16 + c_timming_b),	// 278
+	0477 * 16 + c_timming_a,	CPU_EN | (0477 * 16 + c_timming_b),	// 279
+
+	0500 * 16 + c_timming_a,	CPU_EN | (0500 * 16 + c_timming_b),	// 280
+	0501 * 16 + c_timming_a,	CPU_EN | (0501 * 16 + c_timming_b),	// 281
+	0502 * 16 + c_timming_a,	CPU_EN | (0502 * 16 + c_timming_b),	// 282
+	0503 * 16 + c_timming_a,	CPU_EN | (0503 * 16 + c_timming_b),	// 283
+	0504 * 16 + c_timming_a,	CPU_EN | (0504 * 16 + c_timming_b),	// 284
+	0505 * 16 + c_timming_a,	CPU_EN | (0505 * 16 + c_timming_b),	// 285
+	0506 * 16 + c_timming_a,	CPU_EN | (0506 * 16 + c_timming_b),	// 286
+	0507 * 16 + c_timming_a,	CPU_EN | (0507 * 16 + c_timming_b),	// 287
+
+	0510 * 16 + c_timming_a,	CPU_EN | (0510 * 16 + c_timming_b),	// 288
+	0511 * 16 + c_timming_a,	CPU_EN | (0511 * 16 + c_timming_b),	// 289
+	0512 * 16 + c_timming_a,	CPU_EN | (0512 * 16 + c_timming_b),	// 290
+	0513 * 16 + c_timming_a,	CPU_EN | (0513 * 16 + c_timming_b),	// 291
+	0514 * 16 + c_timming_a,	CPU_EN | (0514 * 16 + c_timming_b),	// 292
+	0515 * 16 + c_timming_a,	CPU_EN | (0515 * 16 + c_timming_b),	// 293
+	0516 * 16 + c_timming_a,	CPU_EN | (0516 * 16 + c_timming_b),	// 294
+	0517 * 16 + c_timming_a,	CPU_EN | (0517 * 16 + c_timming_b),	// 295
+
+	0520 * 16 + c_timming_a,	CPU_EN | (0520 * 16 + c_timming_b),	// 296
+	0521 * 16 + c_timming_a,	CPU_EN | (0521 * 16 + c_timming_b),	// 297
+	0522 * 16 + c_timming_a,	CPU_EN | (0522 * 16 + c_timming_b),	// 298
+	0523 * 16 + c_timming_a,	CPU_EN | (0523 * 16 + c_timming_b),	// 299
+	0524 * 16 + c_timming_a,	CPU_EN | (0524 * 16 + c_timming_b),	// 300
+	0525 * 16 + c_timming_a,	CPU_EN | (0525 * 16 + c_timming_b),	// 301
+
+	0526 * 16 + c_timming_a,	CPU_EN | (0526 * 16 + c_timming_b),	// -40
+	0527 * 16 + c_timming_a,	CPU_EN | (0527 * 16 + c_timming_b),	// -39
+	0530 * 16 + c_timming_a,	CPU_EN | (0530 * 16 + c_timming_b),	// -38
+	0531 * 16 + c_timming_a,	CPU_EN | (0531 * 16 + c_timming_b),	// -37
+	0532 * 16 + c_timming_a,	CPU_EN | (0532 * 16 + c_timming_b),	// -36
+	0533 * 16 + c_timming_a,	CPU_EN | (0533 * 16 + c_timming_b),	// -35
+	0534 * 16 + c_timming_a,	CPU_EN | (0534 * 16 + c_timming_b),	// -34
+	0535 * 16 + c_timming_a,	CPU_EN | (0535 * 16 + c_timming_b),	// -33
+
+	/* REFRESH */													// -32
+	0537 * 16 + c_timming_a,	CPU_EN | (0537 * 16 + c_timming_b)	// -31
 };
 
 // screen 5,6
-static constexpr std::array<int16_t, 276> slotsV9968BitmapLowSpritesOn = {
-//	bmp   bmp   spr   cmd   cmd   cmd   cmd   cmd
-	   0,   16,         48,   64,   80,   96,  112,	// -40
-	       144,        176,  192,  208,  224,  240,	// -32 128=REFRESH
-	 256,  272,        304,  320,  336,  352,  368,	// -24
-	 384,  400,        432,  448,  464,  480,  496,	// -16
-	       528,        560,  576,  592,  608,  624,	// -8
-	       656,        688,  704,  720,  736,  752,	// 0
-	       784,        816,  832,  848,  864,  880,
-	       912,        944,  960,  976,  992, 1008,
-	      1040,       1072, 1088, 1104, 1120, 1136,
-	      1168,       1200, 1216, 1232, 1248, 1264,
-	      1296,       1328, 1344, 1360, 1376, 1392,
-	      1424,       1456, 1472, 1488, 1504, 1520,
-	      1552,       1584, 1600, 1616, 1632, 1648,
-	      1680,       1712, 1728, 1744, 1760, 1776,
-	      1808,       1840, 1856, 1872, 1888, 1904,
-	      1936,       1968, 1984, 2000, 2016, 2032,
-	      2064,       2096, 2112, 2128, 2144, 2160,
-	      2192,       2224, 2240, 2256, 2272, 2288,
-	      2320,       2352, 2368, 2384, 2400, 2416,
-	      2448,       2480, 2496, 2512, 2528, 2544,
-	      2576,       2608, 2624, 2640, 2656, 2672,
-	      2704,       2736, 2752, 2768, 2784, 2800,
-	      2832,       2864, 2880, 2896, 2912, 2928,
-	      2960,       2992, 3008, 3024, 3040, 3056,
-	      3088,       3120, 3136, 3152, 3168, 3184,
-	      3216,       3248, 3264, 3280, 3296, 3312,
-	      3344,       3376, 3392, 3408, 3424, 3440,
-	      3472,       3504, 3520, 3536, 3552, 3568,
-	      3600,       3632, 3648, 3664, 3680, 3696,
-	      3728,       3760, 3776, 3792, 3808, 3824,
-	      3856,       3888, 3904, 3920, 3936, 3952,
-	      3984,       4016, 4032, 4048, 4064, 4080,
-	      4112,       4144, 4160, 4176, 4192, 4208,
-	      4240,       4272, 4288, 4304, 4320, 4336,
-	      4368,       4400, 4416, 4432, 4448, 4464,
-	      4496,       4528, 4544, 4560, 4576, 4592,
-	4608, 4624,       4656, 4672, 4688, 4704, 4720,
-	4736, 4752,       4784, 4800, 4816, 4832, 4848,	// 256
-	4864, 4880,       4912, 4928, 4944, 4960, 4976,	// 264
-	4992, 5008,       5040, 5056, 5072, 5088, 5104,
-	5120, 5136,       5168, 5184, 5200, 5216, 5232,
-	5248, 5264,       5296, 5312, 5328, 5344, 5360,
-	5376, 5392,       5424, 5440, 5456,
-	5472, 5488,       5520, 5536, 5552, 5568, 5584,	// -40
-	      5616										// -32 5600=REFRESH
+static constexpr std::array<int16_t, 700-32-44> slotsV9968BitmapLowSpritesOn = {
+	0000 * 16 + c_timming_a,	CPU_EN | (0000 * 16 + c_timming_b),	// -40
+	0001 * 16 + c_timming_a,	CPU_EN | (0001 * 16 + c_timming_b),	// -39
+	/* SPRITE */				CPU_EN | (0002 * 16 + c_timming_b),	// -38
+	0003 * 16 + c_timming_a,	CPU_EN | (0003 * 16 + c_timming_b),	// -37
+	0004 * 16 + c_timming_a,	CPU_EN | (0004 * 16 + c_timming_b),	// -36
+	0005 * 16 + c_timming_a,	CPU_EN | (0005 * 16 + c_timming_b),	// -35
+	0006 * 16 + c_timming_a,	CPU_EN | (0006 * 16 + c_timming_b),	// -34
+	0007 * 16 + c_timming_a,	CPU_EN | (0007 * 16 + c_timming_b),	// -33
+
+	/* REFRESH */											// -32
+	0011 * 16 + c_timming_a,	CPU_EN | (0011 * 16 + c_timming_b),	// -31
+	/* SPRITE */				CPU_EN | (0012 * 16 + c_timming_b),	// -30
+	0013 * 16 + c_timming_a,	CPU_EN | (0013 * 16 + c_timming_b),	// -29
+	0014 * 16 + c_timming_a,	CPU_EN | (0014 * 16 + c_timming_b),	// -28
+	0015 * 16 + c_timming_a,	CPU_EN | (0015 * 16 + c_timming_b),	// -27
+	0016 * 16 + c_timming_a,	CPU_EN | (0016 * 16 + c_timming_b),	// -26
+	0017 * 16 + c_timming_a,	CPU_EN | (0017 * 16 + c_timming_b),	// -25
+
+	0020 * 16 + c_timming_a,	CPU_EN | (0020 * 16 + c_timming_b),	// -24
+	0021 * 16 + c_timming_a,	CPU_EN | (0021 * 16 + c_timming_b),	// -23
+	/* SPRITE */				CPU_EN | (0022 * 16 + c_timming_b),	// -22
+	0023 * 16 + c_timming_a,	CPU_EN | (0023 * 16 + c_timming_b),	// -21
+	0024 * 16 + c_timming_a,	CPU_EN | (0024 * 16 + c_timming_b),	// -20
+	0025 * 16 + c_timming_a,	CPU_EN | (0025 * 16 + c_timming_b),	// -19
+	0026 * 16 + c_timming_a,	CPU_EN | (0026 * 16 + c_timming_b),	// -18
+	0027 * 16 + c_timming_a,	CPU_EN | (0027 * 16 + c_timming_b),	// -17
+
+	0030 * 16 + c_timming_a,	CPU_EN | (0030 * 16 + c_timming_b),	// -16
+	0031 * 16 + c_timming_a,	CPU_EN | (0031 * 16 + c_timming_b),	// -15
+	/* SPRITE */				CPU_EN | (0032 * 16 + c_timming_b),	// -14
+	0033 * 16 + c_timming_a,	CPU_EN | (0033 * 16 + c_timming_b),	// -13
+	0034 * 16 + c_timming_a,	CPU_EN | (0034 * 16 + c_timming_b),	// -12
+	0035 * 16 + c_timming_a,	CPU_EN | (0035 * 16 + c_timming_b),	// -11
+	0036 * 16 + c_timming_a,	CPU_EN | (0036 * 16 + c_timming_b),	// -10
+	0037 * 16 + c_timming_a,	CPU_EN | (0037 * 16 + c_timming_b),	// -9
+
+	/* BITMAP */				CPU_EN | (0040 * 16 + c_timming_b),	// -8
+	0041 * 16 + c_timming_a,	CPU_EN | (0041 * 16 + c_timming_b),	// -7
+	/* SPRITE */				CPU_EN | (0042 * 16 + c_timming_b),	// -6
+	0043 * 16 + c_timming_a,	CPU_EN | (0043 * 16 + c_timming_b),	// -5
+	0044 * 16 + c_timming_a,	CPU_EN | (0044 * 16 + c_timming_b),	// -4
+	0045 * 16 + c_timming_a,	CPU_EN | (0045 * 16 + c_timming_b),	// -3
+	0046 * 16 + c_timming_a,	CPU_EN | (0046 * 16 + c_timming_b),	// -2
+	0047 * 16 + c_timming_a,	CPU_EN | (0047 * 16 + c_timming_b),	// -1
+
+	/* BITMAP */				CPU_EN | (0050 * 16 + c_timming_b),	// 0
+	0051 * 16 + c_timming_a,	CPU_EN | (0051 * 16 + c_timming_b),	// 1
+	/* SPRITE */				CPU_EN | (0052 * 16 + c_timming_b),	// 2
+	0053 * 16 + c_timming_a,	CPU_EN | (0053 * 16 + c_timming_b),	// 3
+	0054 * 16 + c_timming_a,	CPU_EN | (0054 * 16 + c_timming_b),	// 4
+	0055 * 16 + c_timming_a,	CPU_EN | (0055 * 16 + c_timming_b),	// 5
+	0056 * 16 + c_timming_a,	CPU_EN | (0056 * 16 + c_timming_b),	// 6
+	0057 * 16 + c_timming_a,	CPU_EN | (0057 * 16 + c_timming_b),	// 7
+
+	/* BITMAP */				CPU_EN | (0060 * 16 + c_timming_b),	// 8
+	0061 * 16 + c_timming_a,	CPU_EN | (0061 * 16 + c_timming_b),	// 9
+	/* SPRITE */				CPU_EN | (0062 * 16 + c_timming_b),	// 10
+	0063 * 16 + c_timming_a,	CPU_EN | (0063 * 16 + c_timming_b),	// 11
+	0064 * 16 + c_timming_a,	CPU_EN | (0064 * 16 + c_timming_b),	// 12
+	0065 * 16 + c_timming_a,	CPU_EN | (0065 * 16 + c_timming_b),	// 13
+	0066 * 16 + c_timming_a,	CPU_EN | (0066 * 16 + c_timming_b),	// 14
+	0067 * 16 + c_timming_a,	CPU_EN | (0067 * 16 + c_timming_b),	// 15
+
+	/* BITMAP */				CPU_EN | (0070 * 16 + c_timming_b),	// 16
+	0071 * 16 + c_timming_a,	CPU_EN | (0071 * 16 + c_timming_b),	// 17
+	/* SPRITE */				CPU_EN | (0072 * 16 + c_timming_b),	// 18
+	0073 * 16 + c_timming_a,	CPU_EN | (0073 * 16 + c_timming_b),	// 19
+	0074 * 16 + c_timming_a,	CPU_EN | (0074 * 16 + c_timming_b),	// 20
+	0075 * 16 + c_timming_a,	CPU_EN | (0075 * 16 + c_timming_b),	// 21
+	0076 * 16 + c_timming_a,	CPU_EN | (0076 * 16 + c_timming_b),	// 22
+	0077 * 16 + c_timming_a,	CPU_EN | (0077 * 16 + c_timming_b),	// 23
+
+	/* BITMAP */				CPU_EN | (0100 * 16 + c_timming_b),	// 24
+	0101 * 16 + c_timming_a,	CPU_EN | (0101 * 16 + c_timming_b),	// 25
+	/* SPRITE */				CPU_EN | (0102 * 16 + c_timming_b),	// 26
+	0103 * 16 + c_timming_a,	CPU_EN | (0103 * 16 + c_timming_b),	// 27
+	0104 * 16 + c_timming_a,	CPU_EN | (0104 * 16 + c_timming_b),	// 28
+	0105 * 16 + c_timming_a,	CPU_EN | (0105 * 16 + c_timming_b),	// 29
+	0106 * 16 + c_timming_a,	CPU_EN | (0106 * 16 + c_timming_b),	// 30
+	0107 * 16 + c_timming_a,	CPU_EN | (0107 * 16 + c_timming_b),	// 31
+
+	/* BITMAP */				CPU_EN | (0110 * 16 + c_timming_b),	// 32
+	0111 * 16 + c_timming_a,	CPU_EN | (0111 * 16 + c_timming_b),	// 33
+	/* SPRITE */				CPU_EN | (0112 * 16 + c_timming_b),	// 34
+	0113 * 16 + c_timming_a,	CPU_EN | (0113 * 16 + c_timming_b),	// 35
+	0114 * 16 + c_timming_a,	CPU_EN | (0114 * 16 + c_timming_b),	// 36
+	0115 * 16 + c_timming_a,	CPU_EN | (0115 * 16 + c_timming_b),	// 37
+	0116 * 16 + c_timming_a,	CPU_EN | (0116 * 16 + c_timming_b),	// 38
+	0117 * 16 + c_timming_a,	CPU_EN | (0117 * 16 + c_timming_b),	// 39
+
+	/* BITMAP */				CPU_EN | (0120 * 16 + c_timming_b),	// 40
+	0121 * 16 + c_timming_a,	CPU_EN | (0121 * 16 + c_timming_b),	// 41
+	/* SPRITE */				CPU_EN | (0122 * 16 + c_timming_b),	// 42
+	0123 * 16 + c_timming_a,	CPU_EN | (0123 * 16 + c_timming_b),	// 43
+	0124 * 16 + c_timming_a,	CPU_EN | (0124 * 16 + c_timming_b),	// 44
+	0125 * 16 + c_timming_a,	CPU_EN | (0125 * 16 + c_timming_b),	// 45
+	0126 * 16 + c_timming_a,	CPU_EN | (0126 * 16 + c_timming_b),	// 46
+	0127 * 16 + c_timming_a,	CPU_EN | (0127 * 16 + c_timming_b),	// 47
+
+	/* BITMAP */				CPU_EN | (0130 * 16 + c_timming_b),	// 48
+	0131 * 16 + c_timming_a,	CPU_EN | (0131 * 16 + c_timming_b),	// 49
+	/* SPRITE */				CPU_EN | (0132 * 16 + c_timming_b),	// 50
+	0133 * 16 + c_timming_a,	CPU_EN | (0133 * 16 + c_timming_b),	// 51
+	0134 * 16 + c_timming_a,	CPU_EN | (0134 * 16 + c_timming_b),	// 52
+	0135 * 16 + c_timming_a,	CPU_EN | (0135 * 16 + c_timming_b),	// 53
+	0136 * 16 + c_timming_a,	CPU_EN | (0136 * 16 + c_timming_b),	// 54
+	0137 * 16 + c_timming_a,	CPU_EN | (0137 * 16 + c_timming_b),	// 55
+
+	/* BITMAP */				CPU_EN | (0140 * 16 + c_timming_b),	// 56
+	0141 * 16 + c_timming_a,	CPU_EN | (0141 * 16 + c_timming_b),	// 57
+	/* SPRITE */				CPU_EN | (0142 * 16 + c_timming_b),	// 58
+	0143 * 16 + c_timming_a,	CPU_EN | (0143 * 16 + c_timming_b),	// 59
+	0144 * 16 + c_timming_a,	CPU_EN | (0144 * 16 + c_timming_b),	// 60
+	0145 * 16 + c_timming_a,	CPU_EN | (0145 * 16 + c_timming_b),	// 61
+	0146 * 16 + c_timming_a,	CPU_EN | (0146 * 16 + c_timming_b),	// 62
+	0147 * 16 + c_timming_a,	CPU_EN | (0147 * 16 + c_timming_b),	// 63
+
+	/* BITMAP */				CPU_EN | (0150 * 16 + c_timming_b),	// 64
+	0151 * 16 + c_timming_a,	CPU_EN | (0151 * 16 + c_timming_b),	// 65
+	/* SPRITE */				CPU_EN | (0152 * 16 + c_timming_b),	// 66
+	0153 * 16 + c_timming_a,	CPU_EN | (0153 * 16 + c_timming_b),	// 67
+	0154 * 16 + c_timming_a,	CPU_EN | (0154 * 16 + c_timming_b),	// 68
+	0155 * 16 + c_timming_a,	CPU_EN | (0155 * 16 + c_timming_b),	// 69
+	0156 * 16 + c_timming_a,	CPU_EN | (0156 * 16 + c_timming_b),	// 70
+	0157 * 16 + c_timming_a,	CPU_EN | (0157 * 16 + c_timming_b),	// 71
+
+	/* BITMAP */				CPU_EN | (0160 * 16 + c_timming_b),	// 72
+	0161 * 16 + c_timming_a,	CPU_EN | (0161 * 16 + c_timming_b),	// 73
+	/* SPRITE */				CPU_EN | (0162 * 16 + c_timming_b),	// 74
+	0163 * 16 + c_timming_a,	CPU_EN | (0163 * 16 + c_timming_b),	// 75
+	0164 * 16 + c_timming_a,	CPU_EN | (0164 * 16 + c_timming_b),	// 76
+	0165 * 16 + c_timming_a,	CPU_EN | (0165 * 16 + c_timming_b),	// 77
+	0166 * 16 + c_timming_a,	CPU_EN | (0166 * 16 + c_timming_b),	// 78
+	0167 * 16 + c_timming_a,	CPU_EN | (0167 * 16 + c_timming_b),	// 79
+
+	/* BITMAP */				CPU_EN | (0170 * 16 + c_timming_b),	// 80
+	0171 * 16 + c_timming_a,	CPU_EN | (0171 * 16 + c_timming_b),	// 81
+	/* SPRITE */				CPU_EN | (0172 * 16 + c_timming_b),	// 82
+	0173 * 16 + c_timming_a,	CPU_EN | (0173 * 16 + c_timming_b),	// 83
+	0174 * 16 + c_timming_a,	CPU_EN | (0174 * 16 + c_timming_b),	// 84
+	0175 * 16 + c_timming_a,	CPU_EN | (0175 * 16 + c_timming_b),	// 85
+	0176 * 16 + c_timming_a,	CPU_EN | (0176 * 16 + c_timming_b),	// 86
+	0177 * 16 + c_timming_a,	CPU_EN | (0177 * 16 + c_timming_b),	// 87
+
+	/* BITMAP */				CPU_EN | (0200 * 16 + c_timming_b),	// 88
+	0201 * 16 + c_timming_a,	CPU_EN | (0201 * 16 + c_timming_b),	// 89
+	/* SPRITE */				CPU_EN | (0202 * 16 + c_timming_b),	// 90
+	0203 * 16 + c_timming_a,	CPU_EN | (0203 * 16 + c_timming_b),	// 91
+	0204 * 16 + c_timming_a,	CPU_EN | (0204 * 16 + c_timming_b),	// 92
+	0205 * 16 + c_timming_a,	CPU_EN | (0205 * 16 + c_timming_b),	// 93
+	0206 * 16 + c_timming_a,	CPU_EN | (0206 * 16 + c_timming_b),	// 94
+	0207 * 16 + c_timming_a,	CPU_EN | (0207 * 16 + c_timming_b),	// 95
+
+	/* BITMAP */				CPU_EN | (0210 * 16 + c_timming_b),	// 96
+	0211 * 16 + c_timming_a,	CPU_EN | (0211 * 16 + c_timming_b),	// 97
+	/* SPRITE */				CPU_EN | (0212 * 16 + c_timming_b),	// 98
+	0213 * 16 + c_timming_a,	CPU_EN | (0213 * 16 + c_timming_b),	// 99
+	0214 * 16 + c_timming_a,	CPU_EN | (0214 * 16 + c_timming_b),	// 100
+	0215 * 16 + c_timming_a,	CPU_EN | (0215 * 16 + c_timming_b),	// 101
+	0216 * 16 + c_timming_a,	CPU_EN | (0216 * 16 + c_timming_b),	// 102
+	0217 * 16 + c_timming_a,	CPU_EN | (0217 * 16 + c_timming_b),	// 103
+
+	/* BITMAP */				CPU_EN | (0220 * 16 + c_timming_b),	// 104
+	0221 * 16 + c_timming_a,	CPU_EN | (0221 * 16 + c_timming_b),	// 105
+	/* SPRITE */				CPU_EN | (0222 * 16 + c_timming_b),	// 106
+	0223 * 16 + c_timming_a,	CPU_EN | (0223 * 16 + c_timming_b),	// 107
+	0224 * 16 + c_timming_a,	CPU_EN | (0224 * 16 + c_timming_b),	// 108
+	0225 * 16 + c_timming_a,	CPU_EN | (0225 * 16 + c_timming_b),	// 109
+	0226 * 16 + c_timming_a,	CPU_EN | (0226 * 16 + c_timming_b),	// 110
+	0227 * 16 + c_timming_a,	CPU_EN | (0227 * 16 + c_timming_b),	// 111
+
+	/* BITMAP */				CPU_EN | (0230 * 16 + c_timming_b),	// 112
+	0231 * 16 + c_timming_a,	CPU_EN | (0231 * 16 + c_timming_b),	// 113
+	/* SPRITE */				CPU_EN | (0232 * 16 + c_timming_b),	// 114
+	0233 * 16 + c_timming_a,	CPU_EN | (0233 * 16 + c_timming_b),	// 115
+	0234 * 16 + c_timming_a,	CPU_EN | (0234 * 16 + c_timming_b),	// 116
+	0235 * 16 + c_timming_a,	CPU_EN | (0235 * 16 + c_timming_b),	// 117
+	0236 * 16 + c_timming_a,	CPU_EN | (0236 * 16 + c_timming_b),	// 118
+	0237 * 16 + c_timming_a,	CPU_EN | (0237 * 16 + c_timming_b),	// 119
+
+	/* BITMAP */				CPU_EN | (0240 * 16 + c_timming_b),	// 120
+	0241 * 16 + c_timming_a,	CPU_EN | (0241 * 16 + c_timming_b),	// 121
+	/* SPRITE */				CPU_EN | (0242 * 16 + c_timming_b),	// 122
+	0243 * 16 + c_timming_a,	CPU_EN | (0243 * 16 + c_timming_b),	// 123
+	0244 * 16 + c_timming_a,	CPU_EN | (0244 * 16 + c_timming_b),	// 124
+	0245 * 16 + c_timming_a,	CPU_EN | (0245 * 16 + c_timming_b),	// 125
+	0246 * 16 + c_timming_a,	CPU_EN | (0246 * 16 + c_timming_b),	// 126
+	0247 * 16 + c_timming_a,	CPU_EN | (0247 * 16 + c_timming_b),	// 127
+
+	/* BITMAP */				CPU_EN | (0250 * 16 + c_timming_b),	// 128
+	0251 * 16 + c_timming_a,	CPU_EN | (0251 * 16 + c_timming_b),	// 129
+	/* SPRITE */				CPU_EN | (0252 * 16 + c_timming_b),	// 130
+	0253 * 16 + c_timming_a,	CPU_EN | (0253 * 16 + c_timming_b),	// 131
+	0254 * 16 + c_timming_a,	CPU_EN | (0254 * 16 + c_timming_b),	// 132
+	0255 * 16 + c_timming_a,	CPU_EN | (0255 * 16 + c_timming_b),	// 133
+	0256 * 16 + c_timming_a,	CPU_EN | (0256 * 16 + c_timming_b),	// 134
+	0257 * 16 + c_timming_a,	CPU_EN | (0257 * 16 + c_timming_b),	// 135
+
+	/* BITMAP */				CPU_EN | (0260 * 16 + c_timming_b),	// 136
+	0261 * 16 + c_timming_a,	CPU_EN | (0261 * 16 + c_timming_b),	// 137
+	/* SPRITE */				CPU_EN | (0262 * 16 + c_timming_b),	// 138
+	0263 * 16 + c_timming_a,	CPU_EN | (0263 * 16 + c_timming_b),	// 139
+	0264 * 16 + c_timming_a,	CPU_EN | (0264 * 16 + c_timming_b),	// 140
+	0265 * 16 + c_timming_a,	CPU_EN | (0265 * 16 + c_timming_b),	// 141
+	0266 * 16 + c_timming_a,	CPU_EN | (0266 * 16 + c_timming_b),	// 142
+	0267 * 16 + c_timming_a,	CPU_EN | (0267 * 16 + c_timming_b),	// 143
+
+	/* BITMAP */				CPU_EN | (0270 * 16 + c_timming_b),	// 144
+	0271 * 16 + c_timming_a,	CPU_EN | (0271 * 16 + c_timming_b),	// 145
+	/* SPRITE */				CPU_EN | (0272 * 16 + c_timming_b),	// 146
+	0273 * 16 + c_timming_a,	CPU_EN | (0273 * 16 + c_timming_b),	// 147
+	0274 * 16 + c_timming_a,	CPU_EN | (0274 * 16 + c_timming_b),	// 148
+	0275 * 16 + c_timming_a,	CPU_EN | (0275 * 16 + c_timming_b),	// 149
+	0276 * 16 + c_timming_a,	CPU_EN | (0276 * 16 + c_timming_b),	// 150
+	0277 * 16 + c_timming_a,	CPU_EN | (0277 * 16 + c_timming_b),	// 151
+
+	/* BITMAP */				CPU_EN | (0300 * 16 + c_timming_b),	// 152
+	0301 * 16 + c_timming_a,	CPU_EN | (0301 * 16 + c_timming_b),	// 153
+	/* SPRITE */				CPU_EN | (0302 * 16 + c_timming_b),	// 154
+	0303 * 16 + c_timming_a,	CPU_EN | (0303 * 16 + c_timming_b),	// 155
+	0304 * 16 + c_timming_a,	CPU_EN | (0304 * 16 + c_timming_b),	// 156
+	0305 * 16 + c_timming_a,	CPU_EN | (0305 * 16 + c_timming_b),	// 157
+	0306 * 16 + c_timming_a,	CPU_EN | (0306 * 16 + c_timming_b),	// 158
+	0307 * 16 + c_timming_a,	CPU_EN | (0307 * 16 + c_timming_b),	// 159
+
+	/* BITMAP */				CPU_EN | (0310 * 16 + c_timming_b),	// 160
+	0311 * 16 + c_timming_a,	CPU_EN | (0311 * 16 + c_timming_b),	// 161
+	/* SPRITE */				CPU_EN | (0312 * 16 + c_timming_b),	// 162
+	0313 * 16 + c_timming_a,	CPU_EN | (0313 * 16 + c_timming_b),	// 163
+	0314 * 16 + c_timming_a,	CPU_EN | (0314 * 16 + c_timming_b),	// 164
+	0315 * 16 + c_timming_a,	CPU_EN | (0315 * 16 + c_timming_b),	// 165
+	0316 * 16 + c_timming_a,	CPU_EN | (0316 * 16 + c_timming_b),	// 166
+	0317 * 16 + c_timming_a,	CPU_EN | (0317 * 16 + c_timming_b),	// 167
+
+	/* BITMAP */				CPU_EN | (0320 * 16 + c_timming_b),	// 168
+	0321 * 16 + c_timming_a,	CPU_EN | (0321 * 16 + c_timming_b),	// 169
+	/* SPRITE */				CPU_EN | (0322 * 16 + c_timming_b),	// 170
+	0323 * 16 + c_timming_a,	CPU_EN | (0323 * 16 + c_timming_b),	// 171
+	0324 * 16 + c_timming_a,	CPU_EN | (0324 * 16 + c_timming_b),	// 172
+	0325 * 16 + c_timming_a,	CPU_EN | (0325 * 16 + c_timming_b),	// 173
+	0326 * 16 + c_timming_a,	CPU_EN | (0326 * 16 + c_timming_b),	// 174
+	0327 * 16 + c_timming_a,	CPU_EN | (0327 * 16 + c_timming_b),	// 175
+
+	/* BITMAP */				CPU_EN | (0330 * 16 + c_timming_b),	// 176
+	0331 * 16 + c_timming_a,	CPU_EN | (0331 * 16 + c_timming_b),	// 177
+	/* SPRITE */				CPU_EN | (0332 * 16 + c_timming_b),	// 178
+	0333 * 16 + c_timming_a,	CPU_EN | (0333 * 16 + c_timming_b),	// 179
+	0334 * 16 + c_timming_a,	CPU_EN | (0334 * 16 + c_timming_b),	// 180
+	0335 * 16 + c_timming_a,	CPU_EN | (0335 * 16 + c_timming_b),	// 181
+	0336 * 16 + c_timming_a,	CPU_EN | (0336 * 16 + c_timming_b),	// 182
+	0337 * 16 + c_timming_a,	CPU_EN | (0337 * 16 + c_timming_b),	// 183
+
+	/* BITMAP */				CPU_EN | (0340 * 16 + c_timming_b),	// 184
+	0341 * 16 + c_timming_a,	CPU_EN | (0341 * 16 + c_timming_b),	// 185
+	/* SPRITE */				CPU_EN | (0342 * 16 + c_timming_b),	// 186
+	0343 * 16 + c_timming_a,	CPU_EN | (0343 * 16 + c_timming_b),	// 187
+	0344 * 16 + c_timming_a,	CPU_EN | (0344 * 16 + c_timming_b),	// 188
+	0345 * 16 + c_timming_a,	CPU_EN | (0345 * 16 + c_timming_b),	// 189
+	0346 * 16 + c_timming_a,	CPU_EN | (0346 * 16 + c_timming_b),	// 190
+	0347 * 16 + c_timming_a,	CPU_EN | (0347 * 16 + c_timming_b),	// 191
+
+	/* BITMAP */				CPU_EN | (0350 * 16 + c_timming_b),	// 192
+	0351 * 16 + c_timming_a,	CPU_EN | (0351 * 16 + c_timming_b),	// 193
+	/* SPRITE */				CPU_EN | (0352 * 16 + c_timming_b),	// 194
+	0353 * 16 + c_timming_a,	CPU_EN | (0353 * 16 + c_timming_b),	// 195
+	0354 * 16 + c_timming_a,	CPU_EN | (0354 * 16 + c_timming_b),	// 196
+	0355 * 16 + c_timming_a,	CPU_EN | (0355 * 16 + c_timming_b),	// 197
+	0356 * 16 + c_timming_a,	CPU_EN | (0356 * 16 + c_timming_b),	// 198
+	0357 * 16 + c_timming_a,	CPU_EN | (0357 * 16 + c_timming_b),	// 199
+
+	/* BITMAP */				CPU_EN | (0360 * 16 + c_timming_b),	// 200
+	0361 * 16 + c_timming_a,	CPU_EN | (0361 * 16 + c_timming_b),	// 201
+	/* SPRITE */				CPU_EN | (0362 * 16 + c_timming_b),	// 202
+	0363 * 16 + c_timming_a,	CPU_EN | (0363 * 16 + c_timming_b),	// 203
+	0364 * 16 + c_timming_a,	CPU_EN | (0364 * 16 + c_timming_b),	// 204
+	0365 * 16 + c_timming_a,	CPU_EN | (0365 * 16 + c_timming_b),	// 205
+	0366 * 16 + c_timming_a,	CPU_EN | (0366 * 16 + c_timming_b),	// 206
+	0367 * 16 + c_timming_a,	CPU_EN | (0367 * 16 + c_timming_b),	// 207
+
+	/* BITMAP */				CPU_EN | (0370 * 16 + c_timming_b),	// 208
+	0371 * 16 + c_timming_a,	CPU_EN | (0371 * 16 + c_timming_b),	// 209
+	/* SPRITE */				CPU_EN | (0372 * 16 + c_timming_b),	// 210
+	0373 * 16 + c_timming_a,	CPU_EN | (0373 * 16 + c_timming_b),	// 211
+	0374 * 16 + c_timming_a,	CPU_EN | (0374 * 16 + c_timming_b),	// 212
+	0375 * 16 + c_timming_a,	CPU_EN | (0375 * 16 + c_timming_b),	// 213
+	0376 * 16 + c_timming_a,	CPU_EN | (0376 * 16 + c_timming_b),	// 214
+	0377 * 16 + c_timming_a,	CPU_EN | (0377 * 16 + c_timming_b),	// 215
+
+	/* BITMAP */				CPU_EN | (0400 * 16 + c_timming_b),	// 216
+	0401 * 16 + c_timming_a,	CPU_EN | (0401 * 16 + c_timming_b),	// 217
+	/* SPRITE */				CPU_EN | (0402 * 16 + c_timming_b),	// 218
+	0403 * 16 + c_timming_a,	CPU_EN | (0403 * 16 + c_timming_b),	// 219
+	0404 * 16 + c_timming_a,	CPU_EN | (0404 * 16 + c_timming_b),	// 220
+	0405 * 16 + c_timming_a,	CPU_EN | (0405 * 16 + c_timming_b),	// 221
+	0406 * 16 + c_timming_a,	CPU_EN | (0406 * 16 + c_timming_b),	// 222
+	0407 * 16 + c_timming_a,	CPU_EN | (0407 * 16 + c_timming_b),	// 223
+
+	/* BITMAP */				CPU_EN | (0410 * 16 + c_timming_b),	// 224
+	0411 * 16 + c_timming_a,	CPU_EN | (0411 * 16 + c_timming_b),	// 225
+	/* SPRITE */				CPU_EN | (0412 * 16 + c_timming_b),	// 226
+	0413 * 16 + c_timming_a,	CPU_EN | (0413 * 16 + c_timming_b),	// 227
+	0414 * 16 + c_timming_a,	CPU_EN | (0414 * 16 + c_timming_b),	// 228
+	0415 * 16 + c_timming_a,	CPU_EN | (0415 * 16 + c_timming_b),	// 229
+	0416 * 16 + c_timming_a,	CPU_EN | (0416 * 16 + c_timming_b),	// 230
+	0417 * 16 + c_timming_a,	CPU_EN | (0417 * 16 + c_timming_b),	// 231
+
+	/* BITMAP */				CPU_EN | (0420 * 16 + c_timming_b),	// 232
+	0421 * 16 + c_timming_a,	CPU_EN | (0421 * 16 + c_timming_b),	// 233
+	/* SPRITE */				CPU_EN | (0422 * 16 + c_timming_b),	// 234
+	0423 * 16 + c_timming_a,	CPU_EN | (0423 * 16 + c_timming_b),	// 235
+	0424 * 16 + c_timming_a,	CPU_EN | (0424 * 16 + c_timming_b),	// 236
+	0425 * 16 + c_timming_a,	CPU_EN | (0425 * 16 + c_timming_b),	// 237
+	0426 * 16 + c_timming_a,	CPU_EN | (0426 * 16 + c_timming_b),	// 238
+	0427 * 16 + c_timming_a,	CPU_EN | (0427 * 16 + c_timming_b),	// 239
+
+	/* BITMAP */				CPU_EN | (0430 * 16 + c_timming_b),	// 240
+	0431 * 16 + c_timming_a,	CPU_EN | (0431 * 16 + c_timming_b),	// 241
+	/* SPRITE */				CPU_EN | (0432 * 16 + c_timming_b),	// 218
+	0433 * 16 + c_timming_a,	CPU_EN | (0433 * 16 + c_timming_b),	// 243
+	0434 * 16 + c_timming_a,	CPU_EN | (0434 * 16 + c_timming_b),	// 244
+	0435 * 16 + c_timming_a,	CPU_EN | (0435 * 16 + c_timming_b),	// 245
+	0436 * 16 + c_timming_a,	CPU_EN | (0436 * 16 + c_timming_b),	// 246
+	0437 * 16 + c_timming_a,	CPU_EN | (0437 * 16 + c_timming_b),	// 247
+
+	0440 * 16 + c_timming_a,	CPU_EN | (0440 * 16 + c_timming_b),	// 248
+	0441 * 16 + c_timming_a,	CPU_EN | (0441 * 16 + c_timming_b),	// 249
+	/* SPRITE */				CPU_EN | (0442 * 16 + c_timming_b),	// 250
+	0443 * 16 + c_timming_a,	CPU_EN | (0443 * 16 + c_timming_b),	// 251
+	0444 * 16 + c_timming_a,	CPU_EN | (0444 * 16 + c_timming_b),	// 252
+	0445 * 16 + c_timming_a,	CPU_EN | (0445 * 16 + c_timming_b),	// 253
+	0446 * 16 + c_timming_a,	CPU_EN | (0446 * 16 + c_timming_b),	// 254
+	0447 * 16 + c_timming_a,	CPU_EN | (0447 * 16 + c_timming_b),	// 255
+
+	0450 * 16 + c_timming_a,	CPU_EN | (0450 * 16 + c_timming_b),	// 256
+	0451 * 16 + c_timming_a,	CPU_EN | (0451 * 16 + c_timming_b),	// 257
+	/* SPRITE */				CPU_EN | (0452 * 16 + c_timming_b),	// 258
+	0453 * 16 + c_timming_a,	CPU_EN | (0453 * 16 + c_timming_b),	// 259
+	0454 * 16 + c_timming_a,	CPU_EN | (0454 * 16 + c_timming_b),	// 260
+	0455 * 16 + c_timming_a,	CPU_EN | (0455 * 16 + c_timming_b),	// 261
+	0456 * 16 + c_timming_a,	CPU_EN | (0456 * 16 + c_timming_b),	// 262
+	0457 * 16 + c_timming_a,	CPU_EN | (0457 * 16 + c_timming_b),	// 263
+
+	0460 * 16 + c_timming_a,	CPU_EN | (0460 * 16 + c_timming_b),	// 264
+	0461 * 16 + c_timming_a,	CPU_EN | (0461 * 16 + c_timming_b),	// 265
+	/* SPRITE */				CPU_EN | (0462 * 16 + c_timming_b),	// 266
+	0463 * 16 + c_timming_a,	CPU_EN | (0463 * 16 + c_timming_b),	// 267
+	0464 * 16 + c_timming_a,	CPU_EN | (0464 * 16 + c_timming_b),	// 268
+	0465 * 16 + c_timming_a,	CPU_EN | (0465 * 16 + c_timming_b),	// 269
+	0466 * 16 + c_timming_a,	CPU_EN | (0466 * 16 + c_timming_b),	// 270
+	0467 * 16 + c_timming_a,	CPU_EN | (0467 * 16 + c_timming_b),	// 271
+
+	0470 * 16 + c_timming_a,	CPU_EN | (0470 * 16 + c_timming_b),	// 272
+	0471 * 16 + c_timming_a,	CPU_EN | (0471 * 16 + c_timming_b),	// 273
+	/* SPRITE */				CPU_EN | (0472 * 16 + c_timming_b),	// 274
+	0473 * 16 + c_timming_a,	CPU_EN | (0473 * 16 + c_timming_b),	// 275
+	0474 * 16 + c_timming_a,	CPU_EN | (0474 * 16 + c_timming_b),	// 276
+	0475 * 16 + c_timming_a,	CPU_EN | (0475 * 16 + c_timming_b),	// 277
+	0476 * 16 + c_timming_a,	CPU_EN | (0476 * 16 + c_timming_b),	// 278
+	0477 * 16 + c_timming_a,	CPU_EN | (0477 * 16 + c_timming_b),	// 279
+
+	0500 * 16 + c_timming_a,	CPU_EN | (0500 * 16 + c_timming_b),	// 280
+	0501 * 16 + c_timming_a,	CPU_EN | (0501 * 16 + c_timming_b),	// 281
+	/* SPRITE */				CPU_EN | (0502 * 16 + c_timming_b),	// 282
+	0503 * 16 + c_timming_a,	CPU_EN | (0503 * 16 + c_timming_b),	// 283
+	0504 * 16 + c_timming_a,	CPU_EN | (0504 * 16 + c_timming_b),	// 284
+	0505 * 16 + c_timming_a,	CPU_EN | (0505 * 16 + c_timming_b),	// 285
+	0506 * 16 + c_timming_a,	CPU_EN | (0506 * 16 + c_timming_b),	// 286
+	0507 * 16 + c_timming_a,	CPU_EN | (0507 * 16 + c_timming_b),	// 287
+
+	0510 * 16 + c_timming_a,	CPU_EN | (0510 * 16 + c_timming_b),	// 288
+	0511 * 16 + c_timming_a,	CPU_EN | (0511 * 16 + c_timming_b),	// 289
+	/* SPRITE */				CPU_EN | (0512 * 16 + c_timming_b),	// 290
+	0513 * 16 + c_timming_a,	CPU_EN | (0513 * 16 + c_timming_b),	// 291
+	0514 * 16 + c_timming_a,	CPU_EN | (0514 * 16 + c_timming_b),	// 292
+	0515 * 16 + c_timming_a,	CPU_EN | (0515 * 16 + c_timming_b),	// 293
+	0516 * 16 + c_timming_a,	CPU_EN | (0516 * 16 + c_timming_b),	// 294
+	0517 * 16 + c_timming_a,	CPU_EN | (0517 * 16 + c_timming_b),	// 295
+
+	0520 * 16 + c_timming_a,	CPU_EN | (0520 * 16 + c_timming_b),	// 296
+	0521 * 16 + c_timming_a,	CPU_EN | (0521 * 16 + c_timming_b),	// 297
+	/* SPRITE */				CPU_EN | (0522 * 16 + c_timming_b),	// 298
+	0523 * 16 + c_timming_a,	CPU_EN | (0523 * 16 + c_timming_b),	// 299
+	0524 * 16 + c_timming_a,	CPU_EN | (0524 * 16 + c_timming_b),	// 300
+	0525 * 16 + c_timming_a,	CPU_EN | (0525 * 16 + c_timming_b),	// 301
+
+	0526 * 16 + c_timming_a,	CPU_EN | (0526 * 16 + c_timming_b),	// -40
+	0527 * 16 + c_timming_a,	CPU_EN | (0527 * 16 + c_timming_b),	// -39
+	/* SPRITE */				CPU_EN | (0530 * 16 + c_timming_b),	// -38
+	0531 * 16 + c_timming_a,	CPU_EN | (0531 * 16 + c_timming_b),	// -37
+	0532 * 16 + c_timming_a,	CPU_EN | (0532 * 16 + c_timming_b),	// -36
+	0533 * 16 + c_timming_a,	CPU_EN | (0533 * 16 + c_timming_b),	// -35
+	0534 * 16 + c_timming_a,	CPU_EN | (0534 * 16 + c_timming_b),	// -34
+	0535 * 16 + c_timming_a,	CPU_EN | (0535 * 16 + c_timming_b),	// -33
+
+	/* REFRESH */													// -32
+	0537 * 16 + c_timming_a,	CPU_EN | (0537 * 16 + c_timming_b)	// -31
 };
 
 // screen 7,8,10,11,12
-static constexpr std::array<int16_t, 288> slotsV9968BitmapHighSpritesOff = {
-//	bmp   bmp   spr   cmd   cmd   cmd   cmd   cmd
-	   0,   16,   32,   48,   64,   80,   96,  112,	// -40
-	       144,  160,  176,  192,  208,  224,  240,	// -32 128=REFRESH
-	 256,  272,  288,  304,  320,  336,  352,  368,	// -24
-	 384,  400,  416,  432,  448,  464,  480,  496,	// -16
-	             544,  560,  576,  592,  608,  624,	// -8
-	             672,  688,  704,  720,  736,  752,	// 0
-	             800,  816,  832,  848,  864,  880,
-	             928,  944,  960,  976,  992, 1008,
-	            1056, 1072, 1088, 1104, 1120, 1136,
-	            1184, 1200, 1216, 1232, 1248, 1264,
-	            1312, 1328, 1344, 1360, 1376, 1392,
-	            1440, 1456, 1472, 1488, 1504, 1520,
-	            1568, 1584, 1600, 1616, 1632, 1648,
-	            1696, 1712, 1728, 1744, 1760, 1776,
-	            1824, 1840, 1856, 1872, 1888, 1904,
-	            1952, 1968, 1984, 2000, 2016, 2032,
-	            2080, 2096, 2112, 2128, 2144, 2160,
-	            2208, 2224, 2240, 2256, 2272, 2288,
-	            2336, 2352, 2368, 2384, 2400, 2416,
-	            2464, 2480, 2496, 2512, 2528, 2544,
-	            2592, 2608, 2624, 2640, 2656, 2672,
-	            2720, 2736, 2752, 2768, 2784, 2800,
-	            2848, 2864, 2880, 2896, 2912, 2928,
-	            2976, 2992, 3008, 3024, 3040, 3056,
-	            3104, 3120, 3136, 3152, 3168, 3184,
-	            3232, 3248, 3264, 3280, 3296, 3312,
-	            3360, 3376, 3392, 3408, 3424, 3440,
-	            3488, 3504, 3520, 3536, 3552, 3568,
-	            3616, 3632, 3648, 3664, 3680, 3696,
-	            3744, 3760, 3776, 3792, 3808, 3824,
-	            3872, 3888, 3904, 3920, 3936, 3952,
-	            4000, 4016, 4032, 4048, 4064, 4080,
-	            4128, 4144, 4160, 4176, 4192, 4208,
-	            4256, 4272, 4288, 4304, 4320, 4336,
-	            4384, 4400, 4416, 4432, 4448, 4464,
-	            4512, 4528, 4544, 4560, 4576, 4592,
-	4608, 4624, 4640, 4656, 4672, 4688, 4704, 4720,
-	4736, 4752, 4768, 4784, 4800, 4816, 4832, 4848,	// 256
-	4864, 4880, 4896, 4912, 4928, 4944, 4960, 4976,	// 264
-	4992, 5008, 5024, 5040, 5056, 5072, 5088, 5104,
-	5120, 5136, 5152, 5168, 5184, 5200, 5216, 5232,
-	5248, 5264, 5280, 5296, 5312, 5328, 5344, 5360,
-	5376, 5392, 5408, 5424, 5440, 5456,
-	5472, 5488, 5504, 5520, 5536, 5552, 5568, 5584,	// -40
-	      5616										// -32 5600=REFRESH
+static constexpr std::array<int16_t, 700-64> slotsV9968BitmapHighSpritesOff = {
+	0000 * 16 + c_timming_a,	CPU_EN | (0000 * 16 + c_timming_b),	// -40
+	0001 * 16 + c_timming_a,	CPU_EN | (0001 * 16 + c_timming_b),	// -39
+	0002 * 16 + c_timming_a,	CPU_EN | (0002 * 16 + c_timming_b),	// -38
+	0003 * 16 + c_timming_a,	CPU_EN | (0003 * 16 + c_timming_b),	// -37
+	0004 * 16 + c_timming_a,	CPU_EN | (0004 * 16 + c_timming_b),	// -36
+	0005 * 16 + c_timming_a,	CPU_EN | (0005 * 16 + c_timming_b),	// -35
+	0006 * 16 + c_timming_a,	CPU_EN | (0006 * 16 + c_timming_b),	// -34
+	0007 * 16 + c_timming_a,	CPU_EN | (0007 * 16 + c_timming_b),	// -33
+
+	/* REFRESH */													// -32
+	0011 * 16 + c_timming_a,	CPU_EN | (0011 * 16 + c_timming_b),	// -31
+	0012 * 16 + c_timming_a,	CPU_EN | (0012 * 16 + c_timming_b),	// -30
+	0013 * 16 + c_timming_a,	CPU_EN | (0013 * 16 + c_timming_b),	// -29
+	0014 * 16 + c_timming_a,	CPU_EN | (0014 * 16 + c_timming_b),	// -28
+	0015 * 16 + c_timming_a,	CPU_EN | (0015 * 16 + c_timming_b),	// -27
+	0016 * 16 + c_timming_a,	CPU_EN | (0016 * 16 + c_timming_b),	// -26
+	0017 * 16 + c_timming_a,	CPU_EN | (0017 * 16 + c_timming_b),	// -25
+
+	0020 * 16 + c_timming_a,	CPU_EN | (0020 * 16 + c_timming_b),	// -24
+	0021 * 16 + c_timming_a,	CPU_EN | (0021 * 16 + c_timming_b),	// -23
+	0022 * 16 + c_timming_a,	CPU_EN | (0022 * 16 + c_timming_b),	// -22
+	0023 * 16 + c_timming_a,	CPU_EN | (0023 * 16 + c_timming_b),	// -21
+	0024 * 16 + c_timming_a,	CPU_EN | (0024 * 16 + c_timming_b),	// -20
+	0025 * 16 + c_timming_a,	CPU_EN | (0025 * 16 + c_timming_b),	// -19
+	0026 * 16 + c_timming_a,	CPU_EN | (0026 * 16 + c_timming_b),	// -18
+	0027 * 16 + c_timming_a,	CPU_EN | (0027 * 16 + c_timming_b),	// -17
+
+	0030 * 16 + c_timming_a,	CPU_EN | (0030 * 16 + c_timming_b),	// -16
+	0031 * 16 + c_timming_a,	CPU_EN | (0031 * 16 + c_timming_b),	// -15
+	0032 * 16 + c_timming_a,	CPU_EN | (0032 * 16 + c_timming_b),	// -14
+	0033 * 16 + c_timming_a,	CPU_EN | (0033 * 16 + c_timming_b),	// -13
+	0034 * 16 + c_timming_a,	CPU_EN | (0034 * 16 + c_timming_b),	// -12
+	0035 * 16 + c_timming_a,	CPU_EN | (0035 * 16 + c_timming_b),	// -11
+	0036 * 16 + c_timming_a,	CPU_EN | (0036 * 16 + c_timming_b),	// -10
+	0037 * 16 + c_timming_a,	CPU_EN | (0037 * 16 + c_timming_b),	// -9
+
+	/* BITMAP */				CPU_EN | (0040 * 16 + c_timming_b),	// -8
+	/* BITMAP */				CPU_EN | (0041 * 16 + c_timming_b),	// -7
+	0042 * 16 + c_timming_a,	CPU_EN | (0042 * 16 + c_timming_b),	// -6
+	0043 * 16 + c_timming_a,	CPU_EN | (0043 * 16 + c_timming_b),	// -5
+	0044 * 16 + c_timming_a,	CPU_EN | (0044 * 16 + c_timming_b),	// -4
+	0045 * 16 + c_timming_a,	CPU_EN | (0045 * 16 + c_timming_b),	// -3
+	0046 * 16 + c_timming_a,	CPU_EN | (0046 * 16 + c_timming_b),	// -2
+	0047 * 16 + c_timming_a,	CPU_EN | (0047 * 16 + c_timming_b),	// -1
+
+	/* BITMAP */				CPU_EN | (0050 * 16 + c_timming_b),	// 0
+	/* BITMAP */				CPU_EN | (0051 * 16 + c_timming_b),	// 1
+	0052 * 16 + c_timming_a,	CPU_EN | (0052 * 16 + c_timming_b),	// 2
+	0053 * 16 + c_timming_a,	CPU_EN | (0053 * 16 + c_timming_b),	// 3
+	0054 * 16 + c_timming_a,	CPU_EN | (0054 * 16 + c_timming_b),	// 4
+	0055 * 16 + c_timming_a,	CPU_EN | (0055 * 16 + c_timming_b),	// 5
+	0056 * 16 + c_timming_a,	CPU_EN | (0056 * 16 + c_timming_b),	// 6
+	0057 * 16 + c_timming_a,	CPU_EN | (0057 * 16 + c_timming_b),	// 7
+
+	/* BITMAP */				CPU_EN | (0060 * 16 + c_timming_b),	// 8
+	/* BITMAP */				CPU_EN | (0061 * 16 + c_timming_b),	// 9
+	0062 * 16 + c_timming_a,	CPU_EN | (0062 * 16 + c_timming_b),	// 10
+	0063 * 16 + c_timming_a,	CPU_EN | (0063 * 16 + c_timming_b),	// 11
+	0064 * 16 + c_timming_a,	CPU_EN | (0064 * 16 + c_timming_b),	// 12
+	0065 * 16 + c_timming_a,	CPU_EN | (0065 * 16 + c_timming_b),	// 13
+	0066 * 16 + c_timming_a,	CPU_EN | (0066 * 16 + c_timming_b),	// 14
+	0067 * 16 + c_timming_a,	CPU_EN | (0067 * 16 + c_timming_b),	// 15
+
+	/* BITMAP */				CPU_EN | (0070 * 16 + c_timming_b),	// 16
+	/* BITMAP */				CPU_EN | (0071 * 16 + c_timming_b),	// 17
+	0072 * 16 + c_timming_a,	CPU_EN | (0072 * 16 + c_timming_b),	// 18
+	0073 * 16 + c_timming_a,	CPU_EN | (0073 * 16 + c_timming_b),	// 19
+	0074 * 16 + c_timming_a,	CPU_EN | (0074 * 16 + c_timming_b),	// 20
+	0075 * 16 + c_timming_a,	CPU_EN | (0075 * 16 + c_timming_b),	// 21
+	0076 * 16 + c_timming_a,	CPU_EN | (0076 * 16 + c_timming_b),	// 22
+	0077 * 16 + c_timming_a,	CPU_EN | (0077 * 16 + c_timming_b),	// 23
+
+	/* BITMAP */				CPU_EN | (0100 * 16 + c_timming_b),	// 24
+	/* BITMAP */				CPU_EN | (0101 * 16 + c_timming_b),	// 25
+	0102 * 16 + c_timming_a,	CPU_EN | (0102 * 16 + c_timming_b),	// 26
+	0103 * 16 + c_timming_a,	CPU_EN | (0103 * 16 + c_timming_b),	// 27
+	0104 * 16 + c_timming_a,	CPU_EN | (0104 * 16 + c_timming_b),	// 28
+	0105 * 16 + c_timming_a,	CPU_EN | (0105 * 16 + c_timming_b),	// 29
+	0106 * 16 + c_timming_a,	CPU_EN | (0106 * 16 + c_timming_b),	// 30
+	0107 * 16 + c_timming_a,	CPU_EN | (0107 * 16 + c_timming_b),	// 31
+
+	/* BITMAP */				CPU_EN | (0110 * 16 + c_timming_b),	// 32
+	/* BITMAP */				CPU_EN | (0111 * 16 + c_timming_b),	// 33
+	0112 * 16 + c_timming_a,	CPU_EN | (0112 * 16 + c_timming_b),	// 34
+	0113 * 16 + c_timming_a,	CPU_EN | (0113 * 16 + c_timming_b),	// 35
+	0114 * 16 + c_timming_a,	CPU_EN | (0114 * 16 + c_timming_b),	// 36
+	0115 * 16 + c_timming_a,	CPU_EN | (0115 * 16 + c_timming_b),	// 37
+	0116 * 16 + c_timming_a,	CPU_EN | (0116 * 16 + c_timming_b),	// 38
+	0117 * 16 + c_timming_a,	CPU_EN | (0117 * 16 + c_timming_b),	// 39
+
+	/* BITMAP */				CPU_EN | (0120 * 16 + c_timming_b),	// 40
+	/* BITMAP */				CPU_EN | (0121 * 16 + c_timming_b),	// 41
+	0122 * 16 + c_timming_a,	CPU_EN | (0122 * 16 + c_timming_b),	// 42
+	0123 * 16 + c_timming_a,	CPU_EN | (0123 * 16 + c_timming_b),	// 43
+	0124 * 16 + c_timming_a,	CPU_EN | (0124 * 16 + c_timming_b),	// 44
+	0125 * 16 + c_timming_a,	CPU_EN | (0125 * 16 + c_timming_b),	// 45
+	0126 * 16 + c_timming_a,	CPU_EN | (0126 * 16 + c_timming_b),	// 46
+	0127 * 16 + c_timming_a,	CPU_EN | (0127 * 16 + c_timming_b),	// 47
+
+	/* BITMAP */				CPU_EN | (0130 * 16 + c_timming_b),	// 48
+	/* BITMAP */				CPU_EN | (0131 * 16 + c_timming_b),	// 49
+	0132 * 16 + c_timming_a,	CPU_EN | (0132 * 16 + c_timming_b),	// 50
+	0133 * 16 + c_timming_a,	CPU_EN | (0133 * 16 + c_timming_b),	// 51
+	0134 * 16 + c_timming_a,	CPU_EN | (0134 * 16 + c_timming_b),	// 52
+	0135 * 16 + c_timming_a,	CPU_EN | (0135 * 16 + c_timming_b),	// 53
+	0136 * 16 + c_timming_a,	CPU_EN | (0136 * 16 + c_timming_b),	// 54
+	0137 * 16 + c_timming_a,	CPU_EN | (0137 * 16 + c_timming_b),	// 55
+
+	/* BITMAP */				CPU_EN | (0140 * 16 + c_timming_b),	// 56
+	/* BITMAP */				CPU_EN | (0141 * 16 + c_timming_b),	// 57
+	0142 * 16 + c_timming_a,	CPU_EN | (0142 * 16 + c_timming_b),	// 58
+	0143 * 16 + c_timming_a,	CPU_EN | (0143 * 16 + c_timming_b),	// 59
+	0144 * 16 + c_timming_a,	CPU_EN | (0144 * 16 + c_timming_b),	// 60
+	0145 * 16 + c_timming_a,	CPU_EN | (0145 * 16 + c_timming_b),	// 61
+	0146 * 16 + c_timming_a,	CPU_EN | (0146 * 16 + c_timming_b),	// 62
+	0147 * 16 + c_timming_a,	CPU_EN | (0147 * 16 + c_timming_b),	// 63
+
+	/* BITMAP */				CPU_EN | (0150 * 16 + c_timming_b),	// 64
+	/* BITMAP */				CPU_EN | (0151 * 16 + c_timming_b),	// 65
+	0152 * 16 + c_timming_a,	CPU_EN | (0152 * 16 + c_timming_b),	// 66
+	0153 * 16 + c_timming_a,	CPU_EN | (0153 * 16 + c_timming_b),	// 67
+	0154 * 16 + c_timming_a,	CPU_EN | (0154 * 16 + c_timming_b),	// 68
+	0155 * 16 + c_timming_a,	CPU_EN | (0155 * 16 + c_timming_b),	// 69
+	0156 * 16 + c_timming_a,	CPU_EN | (0156 * 16 + c_timming_b),	// 70
+	0157 * 16 + c_timming_a,	CPU_EN | (0157 * 16 + c_timming_b),	// 71
+
+	/* BITMAP */				CPU_EN | (0160 * 16 + c_timming_b),	// 72
+	/* BITMAP */				CPU_EN | (0161 * 16 + c_timming_b),	// 73
+	0162 * 16 + c_timming_a,	CPU_EN | (0162 * 16 + c_timming_b),	// 74
+	0163 * 16 + c_timming_a,	CPU_EN | (0163 * 16 + c_timming_b),	// 75
+	0164 * 16 + c_timming_a,	CPU_EN | (0164 * 16 + c_timming_b),	// 76
+	0165 * 16 + c_timming_a,	CPU_EN | (0165 * 16 + c_timming_b),	// 77
+	0166 * 16 + c_timming_a,	CPU_EN | (0166 * 16 + c_timming_b),	// 78
+	0167 * 16 + c_timming_a,	CPU_EN | (0167 * 16 + c_timming_b),	// 79
+
+	/* BITMAP */				CPU_EN | (0170 * 16 + c_timming_b),	// 80
+	/* BITMAP */				CPU_EN | (0171 * 16 + c_timming_b),	// 81
+	0172 * 16 + c_timming_a,	CPU_EN | (0172 * 16 + c_timming_b),	// 82
+	0173 * 16 + c_timming_a,	CPU_EN | (0173 * 16 + c_timming_b),	// 83
+	0174 * 16 + c_timming_a,	CPU_EN | (0174 * 16 + c_timming_b),	// 84
+	0175 * 16 + c_timming_a,	CPU_EN | (0175 * 16 + c_timming_b),	// 85
+	0176 * 16 + c_timming_a,	CPU_EN | (0176 * 16 + c_timming_b),	// 86
+	0177 * 16 + c_timming_a,	CPU_EN | (0177 * 16 + c_timming_b),	// 87
+
+	/* BITMAP */				CPU_EN | (0200 * 16 + c_timming_b),	// 88
+	/* BITMAP */				CPU_EN | (0201 * 16 + c_timming_b),	// 89
+	0202 * 16 + c_timming_a,	CPU_EN | (0202 * 16 + c_timming_b),	// 90
+	0203 * 16 + c_timming_a,	CPU_EN | (0203 * 16 + c_timming_b),	// 91
+	0204 * 16 + c_timming_a,	CPU_EN | (0204 * 16 + c_timming_b),	// 92
+	0205 * 16 + c_timming_a,	CPU_EN | (0205 * 16 + c_timming_b),	// 93
+	0206 * 16 + c_timming_a,	CPU_EN | (0206 * 16 + c_timming_b),	// 94
+	0207 * 16 + c_timming_a,	CPU_EN | (0207 * 16 + c_timming_b),	// 95
+
+	/* BITMAP */				CPU_EN | (0210 * 16 + c_timming_b),	// 96
+	/* BITMAP */				CPU_EN | (0211 * 16 + c_timming_b),	// 97
+	0212 * 16 + c_timming_a,	CPU_EN | (0212 * 16 + c_timming_b),	// 98
+	0213 * 16 + c_timming_a,	CPU_EN | (0213 * 16 + c_timming_b),	// 99
+	0214 * 16 + c_timming_a,	CPU_EN | (0214 * 16 + c_timming_b),	// 100
+	0215 * 16 + c_timming_a,	CPU_EN | (0215 * 16 + c_timming_b),	// 101
+	0216 * 16 + c_timming_a,	CPU_EN | (0216 * 16 + c_timming_b),	// 102
+	0217 * 16 + c_timming_a,	CPU_EN | (0217 * 16 + c_timming_b),	// 103
+
+	/* BITMAP */				CPU_EN | (0220 * 16 + c_timming_b),	// 104
+	/* BITMAP */				CPU_EN | (0221 * 16 + c_timming_b),	// 105
+	0222 * 16 + c_timming_a,	CPU_EN | (0222 * 16 + c_timming_b),	// 106
+	0223 * 16 + c_timming_a,	CPU_EN | (0223 * 16 + c_timming_b),	// 107
+	0224 * 16 + c_timming_a,	CPU_EN | (0224 * 16 + c_timming_b),	// 108
+	0225 * 16 + c_timming_a,	CPU_EN | (0225 * 16 + c_timming_b),	// 109
+	0226 * 16 + c_timming_a,	CPU_EN | (0226 * 16 + c_timming_b),	// 110
+	0227 * 16 + c_timming_a,	CPU_EN | (0227 * 16 + c_timming_b),	// 111
+
+	/* BITMAP */				CPU_EN | (0230 * 16 + c_timming_b),	// 112
+	/* BITMAP */				CPU_EN | (0231 * 16 + c_timming_b),	// 113
+	0232 * 16 + c_timming_a,	CPU_EN | (0232 * 16 + c_timming_b),	// 114
+	0233 * 16 + c_timming_a,	CPU_EN | (0233 * 16 + c_timming_b),	// 115
+	0234 * 16 + c_timming_a,	CPU_EN | (0234 * 16 + c_timming_b),	// 116
+	0235 * 16 + c_timming_a,	CPU_EN | (0235 * 16 + c_timming_b),	// 117
+	0236 * 16 + c_timming_a,	CPU_EN | (0236 * 16 + c_timming_b),	// 118
+	0237 * 16 + c_timming_a,	CPU_EN | (0237 * 16 + c_timming_b),	// 119
+
+	/* BITMAP */				CPU_EN | (0240 * 16 + c_timming_b),	// 120
+	/* BITMAP */				CPU_EN | (0241 * 16 + c_timming_b),	// 121
+	0242 * 16 + c_timming_a,	CPU_EN | (0242 * 16 + c_timming_b),	// 122
+	0243 * 16 + c_timming_a,	CPU_EN | (0243 * 16 + c_timming_b),	// 123
+	0244 * 16 + c_timming_a,	CPU_EN | (0244 * 16 + c_timming_b),	// 124
+	0245 * 16 + c_timming_a,	CPU_EN | (0245 * 16 + c_timming_b),	// 125
+	0246 * 16 + c_timming_a,	CPU_EN | (0246 * 16 + c_timming_b),	// 126
+	0247 * 16 + c_timming_a,	CPU_EN | (0247 * 16 + c_timming_b),	// 127
+
+	/* BITMAP */				CPU_EN | (0250 * 16 + c_timming_b),	// 128
+	/* BITMAP */				CPU_EN | (0251 * 16 + c_timming_b),	// 129
+	0252 * 16 + c_timming_a,	CPU_EN | (0252 * 16 + c_timming_b),	// 130
+	0253 * 16 + c_timming_a,	CPU_EN | (0253 * 16 + c_timming_b),	// 131
+	0254 * 16 + c_timming_a,	CPU_EN | (0254 * 16 + c_timming_b),	// 132
+	0255 * 16 + c_timming_a,	CPU_EN | (0255 * 16 + c_timming_b),	// 133
+	0256 * 16 + c_timming_a,	CPU_EN | (0256 * 16 + c_timming_b),	// 134
+	0257 * 16 + c_timming_a,	CPU_EN | (0257 * 16 + c_timming_b),	// 135
+
+	/* BITMAP */				CPU_EN | (0260 * 16 + c_timming_b),	// 136
+	/* BITMAP */				CPU_EN | (0261 * 16 + c_timming_b),	// 137
+	0262 * 16 + c_timming_a,	CPU_EN | (0262 * 16 + c_timming_b),	// 138
+	0263 * 16 + c_timming_a,	CPU_EN | (0263 * 16 + c_timming_b),	// 139
+	0264 * 16 + c_timming_a,	CPU_EN | (0264 * 16 + c_timming_b),	// 140
+	0265 * 16 + c_timming_a,	CPU_EN | (0265 * 16 + c_timming_b),	// 141
+	0266 * 16 + c_timming_a,	CPU_EN | (0266 * 16 + c_timming_b),	// 142
+	0267 * 16 + c_timming_a,	CPU_EN | (0267 * 16 + c_timming_b),	// 143
+
+	/* BITMAP */				CPU_EN | (0270 * 16 + c_timming_b),	// 144
+	/* BITMAP */				CPU_EN | (0271 * 16 + c_timming_b),	// 145
+	0272 * 16 + c_timming_a,	CPU_EN | (0272 * 16 + c_timming_b),	// 146
+	0273 * 16 + c_timming_a,	CPU_EN | (0273 * 16 + c_timming_b),	// 147
+	0274 * 16 + c_timming_a,	CPU_EN | (0274 * 16 + c_timming_b),	// 148
+	0275 * 16 + c_timming_a,	CPU_EN | (0275 * 16 + c_timming_b),	// 149
+	0276 * 16 + c_timming_a,	CPU_EN | (0276 * 16 + c_timming_b),	// 150
+	0277 * 16 + c_timming_a,	CPU_EN | (0277 * 16 + c_timming_b),	// 151
+
+	/* BITMAP */				CPU_EN | (0300 * 16 + c_timming_b),	// 152
+	/* BITMAP */				CPU_EN | (0301 * 16 + c_timming_b),	// 153
+	0302 * 16 + c_timming_a,	CPU_EN | (0302 * 16 + c_timming_b),	// 154
+	0303 * 16 + c_timming_a,	CPU_EN | (0303 * 16 + c_timming_b),	// 155
+	0304 * 16 + c_timming_a,	CPU_EN | (0304 * 16 + c_timming_b),	// 156
+	0305 * 16 + c_timming_a,	CPU_EN | (0305 * 16 + c_timming_b),	// 157
+	0306 * 16 + c_timming_a,	CPU_EN | (0306 * 16 + c_timming_b),	// 158
+	0307 * 16 + c_timming_a,	CPU_EN | (0307 * 16 + c_timming_b),	// 159
+
+	/* BITMAP */				CPU_EN | (0310 * 16 + c_timming_b),	// 160
+	/* BITMAP */				CPU_EN | (0311 * 16 + c_timming_b),	// 161
+	0312 * 16 + c_timming_a,	CPU_EN | (0312 * 16 + c_timming_b),	// 162
+	0313 * 16 + c_timming_a,	CPU_EN | (0313 * 16 + c_timming_b),	// 163
+	0314 * 16 + c_timming_a,	CPU_EN | (0314 * 16 + c_timming_b),	// 164
+	0315 * 16 + c_timming_a,	CPU_EN | (0315 * 16 + c_timming_b),	// 165
+	0316 * 16 + c_timming_a,	CPU_EN | (0316 * 16 + c_timming_b),	// 166
+	0317 * 16 + c_timming_a,	CPU_EN | (0317 * 16 + c_timming_b),	// 167
+
+	/* BITMAP */				CPU_EN | (0320 * 16 + c_timming_b),	// 168
+	/* BITMAP */				CPU_EN | (0321 * 16 + c_timming_b),	// 169
+	0322 * 16 + c_timming_a,	CPU_EN | (0322 * 16 + c_timming_b),	// 170
+	0323 * 16 + c_timming_a,	CPU_EN | (0323 * 16 + c_timming_b),	// 171
+	0324 * 16 + c_timming_a,	CPU_EN | (0324 * 16 + c_timming_b),	// 172
+	0325 * 16 + c_timming_a,	CPU_EN | (0325 * 16 + c_timming_b),	// 173
+	0326 * 16 + c_timming_a,	CPU_EN | (0326 * 16 + c_timming_b),	// 174
+	0327 * 16 + c_timming_a,	CPU_EN | (0327 * 16 + c_timming_b),	// 175
+
+	/* BITMAP */				CPU_EN | (0330 * 16 + c_timming_b),	// 176
+	/* BITMAP */				CPU_EN | (0331 * 16 + c_timming_b),	// 177
+	0332 * 16 + c_timming_a,	CPU_EN | (0332 * 16 + c_timming_b),	// 178
+	0333 * 16 + c_timming_a,	CPU_EN | (0333 * 16 + c_timming_b),	// 179
+	0334 * 16 + c_timming_a,	CPU_EN | (0334 * 16 + c_timming_b),	// 180
+	0335 * 16 + c_timming_a,	CPU_EN | (0335 * 16 + c_timming_b),	// 181
+	0336 * 16 + c_timming_a,	CPU_EN | (0336 * 16 + c_timming_b),	// 182
+	0337 * 16 + c_timming_a,	CPU_EN | (0337 * 16 + c_timming_b),	// 183
+
+	/* BITMAP */				CPU_EN | (0340 * 16 + c_timming_b),	// 184
+	/* BITMAP */				CPU_EN | (0341 * 16 + c_timming_b),	// 185
+	0342 * 16 + c_timming_a,	CPU_EN | (0342 * 16 + c_timming_b),	// 186
+	0343 * 16 + c_timming_a,	CPU_EN | (0343 * 16 + c_timming_b),	// 187
+	0344 * 16 + c_timming_a,	CPU_EN | (0344 * 16 + c_timming_b),	// 188
+	0345 * 16 + c_timming_a,	CPU_EN | (0345 * 16 + c_timming_b),	// 189
+	0346 * 16 + c_timming_a,	CPU_EN | (0346 * 16 + c_timming_b),	// 190
+	0347 * 16 + c_timming_a,	CPU_EN | (0347 * 16 + c_timming_b),	// 191
+
+	/* BITMAP */				CPU_EN | (0350 * 16 + c_timming_b),	// 192
+	/* BITMAP */				CPU_EN | (0351 * 16 + c_timming_b),	// 193
+	0352 * 16 + c_timming_a,	CPU_EN | (0352 * 16 + c_timming_b),	// 194
+	0353 * 16 + c_timming_a,	CPU_EN | (0353 * 16 + c_timming_b),	// 195
+	0354 * 16 + c_timming_a,	CPU_EN | (0354 * 16 + c_timming_b),	// 196
+	0355 * 16 + c_timming_a,	CPU_EN | (0355 * 16 + c_timming_b),	// 197
+	0356 * 16 + c_timming_a,	CPU_EN | (0356 * 16 + c_timming_b),	// 198
+	0357 * 16 + c_timming_a,	CPU_EN | (0357 * 16 + c_timming_b),	// 199
+
+	/* BITMAP */				CPU_EN | (0360 * 16 + c_timming_b),	// 200
+	/* BITMAP */				CPU_EN | (0361 * 16 + c_timming_b),	// 201
+	0362 * 16 + c_timming_a,	CPU_EN | (0362 * 16 + c_timming_b),	// 202
+	0363 * 16 + c_timming_a,	CPU_EN | (0363 * 16 + c_timming_b),	// 203
+	0364 * 16 + c_timming_a,	CPU_EN | (0364 * 16 + c_timming_b),	// 204
+	0365 * 16 + c_timming_a,	CPU_EN | (0365 * 16 + c_timming_b),	// 205
+	0366 * 16 + c_timming_a,	CPU_EN | (0366 * 16 + c_timming_b),	// 206
+	0367 * 16 + c_timming_a,	CPU_EN | (0367 * 16 + c_timming_b),	// 207
+
+	/* BITMAP */				CPU_EN | (0370 * 16 + c_timming_b),	// 208
+	/* BITMAP */				CPU_EN | (0371 * 16 + c_timming_b),	// 209
+	0372 * 16 + c_timming_a,	CPU_EN | (0372 * 16 + c_timming_b),	// 210
+	0373 * 16 + c_timming_a,	CPU_EN | (0373 * 16 + c_timming_b),	// 211
+	0374 * 16 + c_timming_a,	CPU_EN | (0374 * 16 + c_timming_b),	// 212
+	0375 * 16 + c_timming_a,	CPU_EN | (0375 * 16 + c_timming_b),	// 213
+	0376 * 16 + c_timming_a,	CPU_EN | (0376 * 16 + c_timming_b),	// 214
+	0377 * 16 + c_timming_a,	CPU_EN | (0377 * 16 + c_timming_b),	// 215
+
+	/* BITMAP */				CPU_EN | (0400 * 16 + c_timming_b),	// 216
+	/* BITMAP */				CPU_EN | (0401 * 16 + c_timming_b),	// 217
+	0402 * 16 + c_timming_a,	CPU_EN | (0402 * 16 + c_timming_b),	// 218
+	0403 * 16 + c_timming_a,	CPU_EN | (0403 * 16 + c_timming_b),	// 219
+	0404 * 16 + c_timming_a,	CPU_EN | (0404 * 16 + c_timming_b),	// 220
+	0405 * 16 + c_timming_a,	CPU_EN | (0405 * 16 + c_timming_b),	// 221
+	0406 * 16 + c_timming_a,	CPU_EN | (0406 * 16 + c_timming_b),	// 222
+	0407 * 16 + c_timming_a,	CPU_EN | (0407 * 16 + c_timming_b),	// 223
+
+	/* BITMAP */				CPU_EN | (0410 * 16 + c_timming_b),	// 224
+	/* BITMAP */				CPU_EN | (0411 * 16 + c_timming_b),	// 225
+	0412 * 16 + c_timming_a,	CPU_EN | (0412 * 16 + c_timming_b),	// 226
+	0413 * 16 + c_timming_a,	CPU_EN | (0413 * 16 + c_timming_b),	// 227
+	0414 * 16 + c_timming_a,	CPU_EN | (0414 * 16 + c_timming_b),	// 228
+	0415 * 16 + c_timming_a,	CPU_EN | (0415 * 16 + c_timming_b),	// 229
+	0416 * 16 + c_timming_a,	CPU_EN | (0416 * 16 + c_timming_b),	// 230
+	0417 * 16 + c_timming_a,	CPU_EN | (0417 * 16 + c_timming_b),	// 231
+
+	/* BITMAP */				CPU_EN | (0420 * 16 + c_timming_b),	// 232
+	/* BITMAP */				CPU_EN | (0421 * 16 + c_timming_b),	// 233
+	0422 * 16 + c_timming_a,	CPU_EN | (0422 * 16 + c_timming_b),	// 234
+	0423 * 16 + c_timming_a,	CPU_EN | (0423 * 16 + c_timming_b),	// 235
+	0424 * 16 + c_timming_a,	CPU_EN | (0424 * 16 + c_timming_b),	// 236
+	0425 * 16 + c_timming_a,	CPU_EN | (0425 * 16 + c_timming_b),	// 237
+	0426 * 16 + c_timming_a,	CPU_EN | (0426 * 16 + c_timming_b),	// 238
+	0427 * 16 + c_timming_a,	CPU_EN | (0427 * 16 + c_timming_b),	// 239
+
+	/* BITMAP */				CPU_EN | (0430 * 16 + c_timming_b),	// 240
+	/* BITMAP */				CPU_EN | (0431 * 16 + c_timming_b),	// 241
+	0432 * 16 + c_timming_a,	CPU_EN | (0432 * 16 + c_timming_b),	// 242
+	0433 * 16 + c_timming_a,	CPU_EN | (0433 * 16 + c_timming_b),	// 243
+	0434 * 16 + c_timming_a,	CPU_EN | (0434 * 16 + c_timming_b),	// 244
+	0435 * 16 + c_timming_a,	CPU_EN | (0435 * 16 + c_timming_b),	// 245
+	0436 * 16 + c_timming_a,	CPU_EN | (0436 * 16 + c_timming_b),	// 246
+	0437 * 16 + c_timming_a,	CPU_EN | (0437 * 16 + c_timming_b),	// 247
+
+	0440 * 16 + c_timming_a,	CPU_EN | (0440 * 16 + c_timming_b),	// 248
+	0441 * 16 + c_timming_a,	CPU_EN | (0441 * 16 + c_timming_b),	// 249
+	0442 * 16 + c_timming_a,	CPU_EN | (0442 * 16 + c_timming_b),	// 250
+	0443 * 16 + c_timming_a,	CPU_EN | (0443 * 16 + c_timming_b),	// 251
+	0444 * 16 + c_timming_a,	CPU_EN | (0444 * 16 + c_timming_b),	// 252
+	0445 * 16 + c_timming_a,	CPU_EN | (0445 * 16 + c_timming_b),	// 253
+	0446 * 16 + c_timming_a,	CPU_EN | (0446 * 16 + c_timming_b),	// 254
+	0447 * 16 + c_timming_a,	CPU_EN | (0447 * 16 + c_timming_b),	// 255
+
+	0450 * 16 + c_timming_a,	CPU_EN | (0450 * 16 + c_timming_b),	// 256
+	0451 * 16 + c_timming_a,	CPU_EN | (0451 * 16 + c_timming_b),	// 257
+	0452 * 16 + c_timming_a,	CPU_EN | (0452 * 16 + c_timming_b),	// 258
+	0453 * 16 + c_timming_a,	CPU_EN | (0453 * 16 + c_timming_b),	// 259
+	0454 * 16 + c_timming_a,	CPU_EN | (0454 * 16 + c_timming_b),	// 260
+	0455 * 16 + c_timming_a,	CPU_EN | (0455 * 16 + c_timming_b),	// 261
+	0456 * 16 + c_timming_a,	CPU_EN | (0456 * 16 + c_timming_b),	// 262
+	0457 * 16 + c_timming_a,	CPU_EN | (0457 * 16 + c_timming_b),	// 263
+
+	0460 * 16 + c_timming_a,	CPU_EN | (0460 * 16 + c_timming_b),	// 264
+	0461 * 16 + c_timming_a,	CPU_EN | (0461 * 16 + c_timming_b),	// 265
+	0462 * 16 + c_timming_a,	CPU_EN | (0462 * 16 + c_timming_b),	// 266
+	0463 * 16 + c_timming_a,	CPU_EN | (0463 * 16 + c_timming_b),	// 267
+	0464 * 16 + c_timming_a,	CPU_EN | (0464 * 16 + c_timming_b),	// 268
+	0465 * 16 + c_timming_a,	CPU_EN | (0465 * 16 + c_timming_b),	// 269
+	0466 * 16 + c_timming_a,	CPU_EN | (0466 * 16 + c_timming_b),	// 270
+	0467 * 16 + c_timming_a,	CPU_EN | (0467 * 16 + c_timming_b),	// 271
+
+	0470 * 16 + c_timming_a,	CPU_EN | (0470 * 16 + c_timming_b),	// 272
+	0471 * 16 + c_timming_a,	CPU_EN | (0471 * 16 + c_timming_b),	// 273
+	0472 * 16 + c_timming_a,	CPU_EN | (0472 * 16 + c_timming_b),	// 274
+	0473 * 16 + c_timming_a,	CPU_EN | (0473 * 16 + c_timming_b),	// 275
+	0474 * 16 + c_timming_a,	CPU_EN | (0474 * 16 + c_timming_b),	// 276
+	0475 * 16 + c_timming_a,	CPU_EN | (0475 * 16 + c_timming_b),	// 277
+	0476 * 16 + c_timming_a,	CPU_EN | (0476 * 16 + c_timming_b),	// 278
+	0477 * 16 + c_timming_a,	CPU_EN | (0477 * 16 + c_timming_b),	// 279
+
+	0500 * 16 + c_timming_a,	CPU_EN | (0500 * 16 + c_timming_b),	// 280
+	0501 * 16 + c_timming_a,	CPU_EN | (0501 * 16 + c_timming_b),	// 281
+	0502 * 16 + c_timming_a,	CPU_EN | (0502 * 16 + c_timming_b),	// 282
+	0503 * 16 + c_timming_a,	CPU_EN | (0503 * 16 + c_timming_b),	// 283
+	0504 * 16 + c_timming_a,	CPU_EN | (0504 * 16 + c_timming_b),	// 284
+	0505 * 16 + c_timming_a,	CPU_EN | (0505 * 16 + c_timming_b),	// 285
+	0506 * 16 + c_timming_a,	CPU_EN | (0506 * 16 + c_timming_b),	// 286
+	0507 * 16 + c_timming_a,	CPU_EN | (0507 * 16 + c_timming_b),	// 287
+
+	0510 * 16 + c_timming_a,	CPU_EN | (0510 * 16 + c_timming_b),	// 288
+	0511 * 16 + c_timming_a,	CPU_EN | (0511 * 16 + c_timming_b),	// 289
+	0512 * 16 + c_timming_a,	CPU_EN | (0512 * 16 + c_timming_b),	// 290
+	0513 * 16 + c_timming_a,	CPU_EN | (0513 * 16 + c_timming_b),	// 291
+	0514 * 16 + c_timming_a,	CPU_EN | (0514 * 16 + c_timming_b),	// 292
+	0515 * 16 + c_timming_a,	CPU_EN | (0515 * 16 + c_timming_b),	// 293
+	0516 * 16 + c_timming_a,	CPU_EN | (0516 * 16 + c_timming_b),	// 294
+	0517 * 16 + c_timming_a,	CPU_EN | (0517 * 16 + c_timming_b),	// 295
+
+	0520 * 16 + c_timming_a,	CPU_EN | (0520 * 16 + c_timming_b),	// 296
+	0521 * 16 + c_timming_a,	CPU_EN | (0521 * 16 + c_timming_b),	// 297
+	0522 * 16 + c_timming_a,	CPU_EN | (0522 * 16 + c_timming_b),	// 298
+	0523 * 16 + c_timming_a,	CPU_EN | (0523 * 16 + c_timming_b),	// 299
+	0524 * 16 + c_timming_a,	CPU_EN | (0524 * 16 + c_timming_b),	// 300
+	0525 * 16 + c_timming_a,	CPU_EN | (0525 * 16 + c_timming_b),	// 301
+
+	0526 * 16 + c_timming_a,	CPU_EN | (0526 * 16 + c_timming_b),	// -40
+	0527 * 16 + c_timming_a,	CPU_EN | (0527 * 16 + c_timming_b),	// -39
+	0530 * 16 + c_timming_a,	CPU_EN | (0530 * 16 + c_timming_b),	// -38
+	0531 * 16 + c_timming_a,	CPU_EN | (0531 * 16 + c_timming_b),	// -37
+	0532 * 16 + c_timming_a,	CPU_EN | (0532 * 16 + c_timming_b),	// -36
+	0533 * 16 + c_timming_a,	CPU_EN | (0533 * 16 + c_timming_b),	// -35
+	0534 * 16 + c_timming_a,	CPU_EN | (0534 * 16 + c_timming_b),	// -34
+	0535 * 16 + c_timming_a,	CPU_EN | (0535 * 16 + c_timming_b),	// -33
+
+	/* REFRESH */													// -32
+	0537 * 16 + c_timming_a,	CPU_EN | (0537 * 16 + c_timming_b)	// -31
 };
 
 // screen 7,8,10,11,12
-static constexpr std::array<int16_t, 244> slotsV9968BitmapHighSpritesOn = {
-//	bmp   bmp   spr   cmd   cmd   cmd   cmd   cmd
-	   0,   16,         48,   64,   80,   96,  112,	// -40
-	       144,        176,  192,  208,  224,  240,	// -32 128=REFRESH
-	 256,  272,        304,  320,  336,  352,  368,	// -24
-	 384,  400,        432,  448,  464,  480,  496,	// -16
-	                   560,  576,  592,  608,  624,	// -8
-	                   688,  704,  720,  736,  752,	// 0
-	                   816,  832,  848,  864,  880,
-	                   944,  960,  976,  992, 1008,
-	                  1072, 1088, 1104, 1120, 1136,
-	                  1200, 1216, 1232, 1248, 1264,
-	                  1328, 1344, 1360, 1376, 1392,
-	                  1456, 1472, 1488, 1504, 1520,
-	                  1584, 1600, 1616, 1632, 1648,
-	                  1712, 1728, 1744, 1760, 1776,
-	                  1840, 1856, 1872, 1888, 1904,
-	                  1968, 1984, 2000, 2016, 2032,
-	                  2096, 2112, 2128, 2144, 2160,
-	                  2224, 2240, 2256, 2272, 2288,
-	                  2352, 2368, 2384, 2400, 2416,
-	                  2480, 2496, 2512, 2528, 2544,
-	                  2608, 2624, 2640, 2656, 2672,
-	                  2736, 2752, 2768, 2784, 2800,
-	                  2864, 2880, 2896, 2912, 2928,
-	                  2992, 3008, 3024, 3040, 3056,
-	                  3120, 3136, 3152, 3168, 3184,
-	                  3248, 3264, 3280, 3296, 3312,
-	                  3376, 3392, 3408, 3424, 3440,
-	                  3504, 3520, 3536, 3552, 3568,
-	                  3632, 3648, 3664, 3680, 3696,
-	                  3760, 3776, 3792, 3808, 3824,
-	                  3888, 3904, 3920, 3936, 3952,
-	                  4016, 4032, 4048, 4064, 4080,
-	                  4144, 4160, 4176, 4192, 4208,
-	                  4272, 4288, 4304, 4320, 4336,
-	                  4400, 4416, 4432, 4448, 4464,
-	                  4528, 4544, 4560, 4576, 4592,
-	4608, 4624,       4656, 4672, 4688, 4704, 4720,
-	4736, 4752,       4784, 4800, 4816, 4832, 4848,	// 256
-	4864, 4880,       4912, 4928, 4944, 4960, 4976,	// 264
-	4992, 5008,       5040, 5056, 5072, 5088, 5104,
-	5120, 5136,       5168, 5184, 5200, 5216, 5232,
-	5248, 5264,       5296, 5312, 5328, 5344, 5360,
-	5376, 5392,       5424, 5440, 5456,
-	5472, 5488,       5520, 5536, 5552, 5568, 5584,	// -40
-	      5616										// -32 5600=REFRESH
+static constexpr std::array<int16_t, 700-64-44> slotsV9968BitmapHighSpritesOn = {
+	0000 * 16 + c_timming_a,	CPU_EN | (0000 * 16 + c_timming_b),	// -40
+	0001 * 16 + c_timming_a,	CPU_EN | (0001 * 16 + c_timming_b),	// -39
+	/* SPRITE */				CPU_EN | (0002 * 16 + c_timming_b),	// -38
+	0003 * 16 + c_timming_a,	CPU_EN | (0003 * 16 + c_timming_b),	// -37
+	0004 * 16 + c_timming_a,	CPU_EN | (0004 * 16 + c_timming_b),	// -36
+	0005 * 16 + c_timming_a,	CPU_EN | (0005 * 16 + c_timming_b),	// -35
+	0006 * 16 + c_timming_a,	CPU_EN | (0006 * 16 + c_timming_b),	// -34
+	0007 * 16 + c_timming_a,	CPU_EN | (0007 * 16 + c_timming_b),	// -33
+
+	/* REFRESH */													// -32
+	0011 * 16 + c_timming_a,	CPU_EN | (0011 * 16 + c_timming_b),	// -31
+	/* SPRITE */				CPU_EN | (0012 * 16 + c_timming_b),	// -30
+	0013 * 16 + c_timming_a,	CPU_EN | (0013 * 16 + c_timming_b),	// -29
+	0014 * 16 + c_timming_a,	CPU_EN | (0014 * 16 + c_timming_b),	// -28
+	0015 * 16 + c_timming_a,	CPU_EN | (0015 * 16 + c_timming_b),	// -27
+	0016 * 16 + c_timming_a,	CPU_EN | (0016 * 16 + c_timming_b),	// -26
+	0017 * 16 + c_timming_a,	CPU_EN | (0017 * 16 + c_timming_b),	// -25
+
+	0020 * 16 + c_timming_a,	CPU_EN | (0020 * 16 + c_timming_b),	// -24
+	0021 * 16 + c_timming_a,	CPU_EN | (0021 * 16 + c_timming_b),	// -23
+	/* SPRITE */				CPU_EN | (0022 * 16 + c_timming_b),	// -22
+	0023 * 16 + c_timming_a,	CPU_EN | (0023 * 16 + c_timming_b),	// -21
+	0024 * 16 + c_timming_a,	CPU_EN | (0024 * 16 + c_timming_b),	// -20
+	0025 * 16 + c_timming_a,	CPU_EN | (0025 * 16 + c_timming_b),	// -19
+	0026 * 16 + c_timming_a,	CPU_EN | (0026 * 16 + c_timming_b),	// -18
+	0027 * 16 + c_timming_a,	CPU_EN | (0027 * 16 + c_timming_b),	// -17
+
+	0030 * 16 + c_timming_a,	CPU_EN | (0030 * 16 + c_timming_b),	// -16
+	0031 * 16 + c_timming_a,	CPU_EN | (0031 * 16 + c_timming_b),	// -15
+	/* SPRITE */				CPU_EN | (0032 * 16 + c_timming_b),	// -14
+	0033 * 16 + c_timming_a,	CPU_EN | (0033 * 16 + c_timming_b),	// -13
+	0034 * 16 + c_timming_a,	CPU_EN | (0034 * 16 + c_timming_b),	// -12
+	0035 * 16 + c_timming_a,	CPU_EN | (0035 * 16 + c_timming_b),	// -11
+	0036 * 16 + c_timming_a,	CPU_EN | (0036 * 16 + c_timming_b),	// -10
+	0037 * 16 + c_timming_a,	CPU_EN | (0037 * 16 + c_timming_b),	// -9
+
+	/* BITMAP */				CPU_EN | (0040 * 16 + c_timming_b),	// -8
+	/* BITMAP */				CPU_EN | (0041 * 16 + c_timming_b),	// -7
+	/* SPRITE */				CPU_EN | (0042 * 16 + c_timming_b),	// -6
+	0043 * 16 + c_timming_a,	CPU_EN | (0043 * 16 + c_timming_b),	// -5
+	0044 * 16 + c_timming_a,	CPU_EN | (0044 * 16 + c_timming_b),	// -4
+	0045 * 16 + c_timming_a,	CPU_EN | (0045 * 16 + c_timming_b),	// -3
+	0046 * 16 + c_timming_a,	CPU_EN | (0046 * 16 + c_timming_b),	// -2
+	0047 * 16 + c_timming_a,	CPU_EN | (0047 * 16 + c_timming_b),	// -1
+
+	/* BITMAP */				CPU_EN | (0050 * 16 + c_timming_b),	// 0
+	/* BITMAP */				CPU_EN | (0051 * 16 + c_timming_b),	// 1
+	/* SPRITE */				CPU_EN | (0052 * 16 + c_timming_b),	// 2
+	0053 * 16 + c_timming_a,	CPU_EN | (0053 * 16 + c_timming_b),	// 3
+	0054 * 16 + c_timming_a,	CPU_EN | (0054 * 16 + c_timming_b),	// 4
+	0055 * 16 + c_timming_a,	CPU_EN | (0055 * 16 + c_timming_b),	// 5
+	0056 * 16 + c_timming_a,	CPU_EN | (0056 * 16 + c_timming_b),	// 6
+	0057 * 16 + c_timming_a,	CPU_EN | (0057 * 16 + c_timming_b),	// 7
+
+	/* BITMAP */				CPU_EN | (0060 * 16 + c_timming_b),	// 8
+	/* BITMAP */				CPU_EN | (0061 * 16 + c_timming_b),	// 9
+	/* SPRITE */				CPU_EN | (0062 * 16 + c_timming_b),	// 10
+	0063 * 16 + c_timming_a,	CPU_EN | (0063 * 16 + c_timming_b),	// 11
+	0064 * 16 + c_timming_a,	CPU_EN | (0064 * 16 + c_timming_b),	// 12
+	0065 * 16 + c_timming_a,	CPU_EN | (0065 * 16 + c_timming_b),	// 13
+	0066 * 16 + c_timming_a,	CPU_EN | (0066 * 16 + c_timming_b),	// 14
+	0067 * 16 + c_timming_a,	CPU_EN | (0067 * 16 + c_timming_b),	// 15
+
+	/* BITMAP */				CPU_EN | (0070 * 16 + c_timming_b),	// 16
+	/* BITMAP */				CPU_EN | (0071 * 16 + c_timming_b),	// 17
+	/* SPRITE */				CPU_EN | (0072 * 16 + c_timming_b),	// 18
+	0073 * 16 + c_timming_a,	CPU_EN | (0073 * 16 + c_timming_b),	// 19
+	0074 * 16 + c_timming_a,	CPU_EN | (0074 * 16 + c_timming_b),	// 20
+	0075 * 16 + c_timming_a,	CPU_EN | (0075 * 16 + c_timming_b),	// 21
+	0076 * 16 + c_timming_a,	CPU_EN | (0076 * 16 + c_timming_b),	// 22
+	0077 * 16 + c_timming_a,	CPU_EN | (0077 * 16 + c_timming_b),	// 23
+
+	/* BITMAP */				CPU_EN | (0100 * 16 + c_timming_b),	// 24
+	/* BITMAP */				CPU_EN | (0101 * 16 + c_timming_b),	// 25
+	/* SPRITE */				CPU_EN | (0102 * 16 + c_timming_b),	// 26
+	0103 * 16 + c_timming_a,	CPU_EN | (0103 * 16 + c_timming_b),	// 27
+	0104 * 16 + c_timming_a,	CPU_EN | (0104 * 16 + c_timming_b),	// 28
+	0105 * 16 + c_timming_a,	CPU_EN | (0105 * 16 + c_timming_b),	// 29
+	0106 * 16 + c_timming_a,	CPU_EN | (0106 * 16 + c_timming_b),	// 30
+	0107 * 16 + c_timming_a,	CPU_EN | (0107 * 16 + c_timming_b),	// 31
+
+	/* BITMAP */				CPU_EN | (0110 * 16 + c_timming_b),	// 32
+	/* BITMAP */				CPU_EN | (0111 * 16 + c_timming_b),	// 33
+	/* SPRITE */				CPU_EN | (0112 * 16 + c_timming_b),	// 34
+	0113 * 16 + c_timming_a,	CPU_EN | (0113 * 16 + c_timming_b),	// 35
+	0114 * 16 + c_timming_a,	CPU_EN | (0114 * 16 + c_timming_b),	// 36
+	0115 * 16 + c_timming_a,	CPU_EN | (0115 * 16 + c_timming_b),	// 37
+	0116 * 16 + c_timming_a,	CPU_EN | (0116 * 16 + c_timming_b),	// 38
+	0117 * 16 + c_timming_a,	CPU_EN | (0117 * 16 + c_timming_b),	// 39
+
+	/* BITMAP */				CPU_EN | (0120 * 16 + c_timming_b),	// 40
+	/* BITMAP */				CPU_EN | (0121 * 16 + c_timming_b),	// 41
+	/* SPRITE */				CPU_EN | (0122 * 16 + c_timming_b),	// 42
+	0123 * 16 + c_timming_a,	CPU_EN | (0123 * 16 + c_timming_b),	// 43
+	0124 * 16 + c_timming_a,	CPU_EN | (0124 * 16 + c_timming_b),	// 44
+	0125 * 16 + c_timming_a,	CPU_EN | (0125 * 16 + c_timming_b),	// 45
+	0126 * 16 + c_timming_a,	CPU_EN | (0126 * 16 + c_timming_b),	// 46
+	0127 * 16 + c_timming_a,	CPU_EN | (0127 * 16 + c_timming_b),	// 47
+
+	/* BITMAP */				CPU_EN | (0130 * 16 + c_timming_b),	// 48
+	/* BITMAP */				CPU_EN | (0131 * 16 + c_timming_b),	// 49
+	/* SPRITE */				CPU_EN | (0132 * 16 + c_timming_b),	// 50
+	0133 * 16 + c_timming_a,	CPU_EN | (0133 * 16 + c_timming_b),	// 51
+	0134 * 16 + c_timming_a,	CPU_EN | (0134 * 16 + c_timming_b),	// 52
+	0135 * 16 + c_timming_a,	CPU_EN | (0135 * 16 + c_timming_b),	// 53
+	0136 * 16 + c_timming_a,	CPU_EN | (0136 * 16 + c_timming_b),	// 54
+	0137 * 16 + c_timming_a,	CPU_EN | (0137 * 16 + c_timming_b),	// 55
+
+	/* BITMAP */				CPU_EN | (0140 * 16 + c_timming_b),	// 56
+	/* BITMAP */				CPU_EN | (0141 * 16 + c_timming_b),	// 57
+	/* SPRITE */				CPU_EN | (0142 * 16 + c_timming_b),	// 58
+	0143 * 16 + c_timming_a,	CPU_EN | (0143 * 16 + c_timming_b),	// 59
+	0144 * 16 + c_timming_a,	CPU_EN | (0144 * 16 + c_timming_b),	// 60
+	0145 * 16 + c_timming_a,	CPU_EN | (0145 * 16 + c_timming_b),	// 61
+	0146 * 16 + c_timming_a,	CPU_EN | (0146 * 16 + c_timming_b),	// 62
+	0147 * 16 + c_timming_a,	CPU_EN | (0147 * 16 + c_timming_b),	// 63
+
+	/* BITMAP */				CPU_EN | (0150 * 16 + c_timming_b),	// 64
+	/* BITMAP */				CPU_EN | (0151 * 16 + c_timming_b),	// 65
+	/* SPRITE */				CPU_EN | (0152 * 16 + c_timming_b),	// 66
+	0153 * 16 + c_timming_a,	CPU_EN | (0153 * 16 + c_timming_b),	// 67
+	0154 * 16 + c_timming_a,	CPU_EN | (0154 * 16 + c_timming_b),	// 68
+	0155 * 16 + c_timming_a,	CPU_EN | (0155 * 16 + c_timming_b),	// 69
+	0156 * 16 + c_timming_a,	CPU_EN | (0156 * 16 + c_timming_b),	// 70
+	0157 * 16 + c_timming_a,	CPU_EN | (0157 * 16 + c_timming_b),	// 71
+
+	/* BITMAP */				CPU_EN | (0160 * 16 + c_timming_b),	// 72
+	/* BITMAP */				CPU_EN | (0161 * 16 + c_timming_b),	// 73
+	/* SPRITE */				CPU_EN | (0162 * 16 + c_timming_b),	// 74
+	0163 * 16 + c_timming_a,	CPU_EN | (0163 * 16 + c_timming_b),	// 75
+	0164 * 16 + c_timming_a,	CPU_EN | (0164 * 16 + c_timming_b),	// 76
+	0165 * 16 + c_timming_a,	CPU_EN | (0165 * 16 + c_timming_b),	// 77
+	0166 * 16 + c_timming_a,	CPU_EN | (0166 * 16 + c_timming_b),	// 78
+	0167 * 16 + c_timming_a,	CPU_EN | (0167 * 16 + c_timming_b),	// 79
+
+	/* BITMAP */				CPU_EN | (0170 * 16 + c_timming_b),	// 80
+	/* BITMAP */				CPU_EN | (0171 * 16 + c_timming_b),	// 81
+	/* SPRITE */				CPU_EN | (0172 * 16 + c_timming_b),	// 82
+	0173 * 16 + c_timming_a,	CPU_EN | (0173 * 16 + c_timming_b),	// 83
+	0174 * 16 + c_timming_a,	CPU_EN | (0174 * 16 + c_timming_b),	// 84
+	0175 * 16 + c_timming_a,	CPU_EN | (0175 * 16 + c_timming_b),	// 85
+	0176 * 16 + c_timming_a,	CPU_EN | (0176 * 16 + c_timming_b),	// 86
+	0177 * 16 + c_timming_a,	CPU_EN | (0177 * 16 + c_timming_b),	// 87
+
+	/* BITMAP */				CPU_EN | (0200 * 16 + c_timming_b),	// 88
+	/* BITMAP */				CPU_EN | (0201 * 16 + c_timming_b),	// 89
+	/* SPRITE */				CPU_EN | (0202 * 16 + c_timming_b),	// 90
+	0203 * 16 + c_timming_a,	CPU_EN | (0203 * 16 + c_timming_b),	// 91
+	0204 * 16 + c_timming_a,	CPU_EN | (0204 * 16 + c_timming_b),	// 92
+	0205 * 16 + c_timming_a,	CPU_EN | (0205 * 16 + c_timming_b),	// 93
+	0206 * 16 + c_timming_a,	CPU_EN | (0206 * 16 + c_timming_b),	// 94
+	0207 * 16 + c_timming_a,	CPU_EN | (0207 * 16 + c_timming_b),	// 95
+
+	/* BITMAP */				CPU_EN | (0210 * 16 + c_timming_b),	// 96
+	/* BITMAP */				CPU_EN | (0211 * 16 + c_timming_b),	// 97
+	/* SPRITE */				CPU_EN | (0212 * 16 + c_timming_b),	// 98
+	0213 * 16 + c_timming_a,	CPU_EN | (0213 * 16 + c_timming_b),	// 99
+	0214 * 16 + c_timming_a,	CPU_EN | (0214 * 16 + c_timming_b),	// 100
+	0215 * 16 + c_timming_a,	CPU_EN | (0215 * 16 + c_timming_b),	// 101
+	0216 * 16 + c_timming_a,	CPU_EN | (0216 * 16 + c_timming_b),	// 102
+	0217 * 16 + c_timming_a,	CPU_EN | (0217 * 16 + c_timming_b),	// 103
+
+	/* BITMAP */				CPU_EN | (0220 * 16 + c_timming_b),	// 104
+	/* BITMAP */				CPU_EN | (0221 * 16 + c_timming_b),	// 105
+	/* SPRITE */				CPU_EN | (0222 * 16 + c_timming_b),	// 106
+	0223 * 16 + c_timming_a,	CPU_EN | (0223 * 16 + c_timming_b),	// 107
+	0224 * 16 + c_timming_a,	CPU_EN | (0224 * 16 + c_timming_b),	// 108
+	0225 * 16 + c_timming_a,	CPU_EN | (0225 * 16 + c_timming_b),	// 109
+	0226 * 16 + c_timming_a,	CPU_EN | (0226 * 16 + c_timming_b),	// 110
+	0227 * 16 + c_timming_a,	CPU_EN | (0227 * 16 + c_timming_b),	// 111
+
+	/* BITMAP */				CPU_EN | (0230 * 16 + c_timming_b),	// 112
+	/* BITMAP */				CPU_EN | (0231 * 16 + c_timming_b),	// 113
+	/* SPRITE */				CPU_EN | (0232 * 16 + c_timming_b),	// 114
+	0233 * 16 + c_timming_a,	CPU_EN | (0233 * 16 + c_timming_b),	// 115
+	0234 * 16 + c_timming_a,	CPU_EN | (0234 * 16 + c_timming_b),	// 116
+	0235 * 16 + c_timming_a,	CPU_EN | (0235 * 16 + c_timming_b),	// 117
+	0236 * 16 + c_timming_a,	CPU_EN | (0236 * 16 + c_timming_b),	// 118
+	0237 * 16 + c_timming_a,	CPU_EN | (0237 * 16 + c_timming_b),	// 119
+
+	/* BITMAP */				CPU_EN | (0240 * 16 + c_timming_b),	// 120
+	/* BITMAP */				CPU_EN | (0241 * 16 + c_timming_b),	// 121
+	/* SPRITE */				CPU_EN | (0242 * 16 + c_timming_b),	// 122
+	0243 * 16 + c_timming_a,	CPU_EN | (0243 * 16 + c_timming_b),	// 123
+	0244 * 16 + c_timming_a,	CPU_EN | (0244 * 16 + c_timming_b),	// 124
+	0245 * 16 + c_timming_a,	CPU_EN | (0245 * 16 + c_timming_b),	// 125
+	0246 * 16 + c_timming_a,	CPU_EN | (0246 * 16 + c_timming_b),	// 126
+	0247 * 16 + c_timming_a,	CPU_EN | (0247 * 16 + c_timming_b),	// 127
+
+	/* BITMAP */				CPU_EN | (0250 * 16 + c_timming_b),	// 128
+	/* BITMAP */				CPU_EN | (0251 * 16 + c_timming_b),	// 129
+	/* SPRITE */				CPU_EN | (0252 * 16 + c_timming_b),	// 130
+	0253 * 16 + c_timming_a,	CPU_EN | (0253 * 16 + c_timming_b),	// 131
+	0254 * 16 + c_timming_a,	CPU_EN | (0254 * 16 + c_timming_b),	// 132
+	0255 * 16 + c_timming_a,	CPU_EN | (0255 * 16 + c_timming_b),	// 133
+	0256 * 16 + c_timming_a,	CPU_EN | (0256 * 16 + c_timming_b),	// 134
+	0257 * 16 + c_timming_a,	CPU_EN | (0257 * 16 + c_timming_b),	// 135
+
+	/* BITMAP */				CPU_EN | (0260 * 16 + c_timming_b),	// 136
+	/* BITMAP */				CPU_EN | (0261 * 16 + c_timming_b),	// 137
+	/* SPRITE */				CPU_EN | (0262 * 16 + c_timming_b),	// 138
+	0263 * 16 + c_timming_a,	CPU_EN | (0263 * 16 + c_timming_b),	// 139
+	0264 * 16 + c_timming_a,	CPU_EN | (0264 * 16 + c_timming_b),	// 140
+	0265 * 16 + c_timming_a,	CPU_EN | (0265 * 16 + c_timming_b),	// 141
+	0266 * 16 + c_timming_a,	CPU_EN | (0266 * 16 + c_timming_b),	// 142
+	0267 * 16 + c_timming_a,	CPU_EN | (0267 * 16 + c_timming_b),	// 143
+
+	/* BITMAP */				CPU_EN | (0270 * 16 + c_timming_b),	// 144
+	/* BITMAP */				CPU_EN | (0271 * 16 + c_timming_b),	// 145
+	/* SPRITE */				CPU_EN | (0272 * 16 + c_timming_b),	// 146
+	0273 * 16 + c_timming_a,	CPU_EN | (0273 * 16 + c_timming_b),	// 147
+	0274 * 16 + c_timming_a,	CPU_EN | (0274 * 16 + c_timming_b),	// 148
+	0275 * 16 + c_timming_a,	CPU_EN | (0275 * 16 + c_timming_b),	// 149
+	0276 * 16 + c_timming_a,	CPU_EN | (0276 * 16 + c_timming_b),	// 150
+	0277 * 16 + c_timming_a,	CPU_EN | (0277 * 16 + c_timming_b),	// 151
+
+	/* BITMAP */				CPU_EN | (0300 * 16 + c_timming_b),	// 152
+	/* BITMAP */				CPU_EN | (0301 * 16 + c_timming_b),	// 153
+	/* SPRITE */				CPU_EN | (0302 * 16 + c_timming_b),	// 154
+	0303 * 16 + c_timming_a,	CPU_EN | (0303 * 16 + c_timming_b),	// 155
+	0304 * 16 + c_timming_a,	CPU_EN | (0304 * 16 + c_timming_b),	// 156
+	0305 * 16 + c_timming_a,	CPU_EN | (0305 * 16 + c_timming_b),	// 157
+	0306 * 16 + c_timming_a,	CPU_EN | (0306 * 16 + c_timming_b),	// 158
+	0307 * 16 + c_timming_a,	CPU_EN | (0307 * 16 + c_timming_b),	// 159
+
+	/* BITMAP */				CPU_EN | (0310 * 16 + c_timming_b),	// 160
+	/* BITMAP */				CPU_EN | (0311 * 16 + c_timming_b),	// 161
+	/* SPRITE */				CPU_EN | (0312 * 16 + c_timming_b),	// 162
+	0313 * 16 + c_timming_a,	CPU_EN | (0313 * 16 + c_timming_b),	// 163
+	0314 * 16 + c_timming_a,	CPU_EN | (0314 * 16 + c_timming_b),	// 164
+	0315 * 16 + c_timming_a,	CPU_EN | (0315 * 16 + c_timming_b),	// 165
+	0316 * 16 + c_timming_a,	CPU_EN | (0316 * 16 + c_timming_b),	// 166
+	0317 * 16 + c_timming_a,	CPU_EN | (0317 * 16 + c_timming_b),	// 167
+
+	/* BITMAP */				CPU_EN | (0320 * 16 + c_timming_b),	// 168
+	/* BITMAP */				CPU_EN | (0321 * 16 + c_timming_b),	// 169
+	/* SPRITE */				CPU_EN | (0322 * 16 + c_timming_b),	// 170
+	0323 * 16 + c_timming_a,	CPU_EN | (0323 * 16 + c_timming_b),	// 171
+	0324 * 16 + c_timming_a,	CPU_EN | (0324 * 16 + c_timming_b),	// 172
+	0325 * 16 + c_timming_a,	CPU_EN | (0325 * 16 + c_timming_b),	// 173
+	0326 * 16 + c_timming_a,	CPU_EN | (0326 * 16 + c_timming_b),	// 174
+	0327 * 16 + c_timming_a,	CPU_EN | (0327 * 16 + c_timming_b),	// 175
+
+	/* BITMAP */				CPU_EN | (0330 * 16 + c_timming_b),	// 176
+	/* BITMAP */				CPU_EN | (0331 * 16 + c_timming_b),	// 177
+	/* SPRITE */				CPU_EN | (0332 * 16 + c_timming_b),	// 178
+	0333 * 16 + c_timming_a,	CPU_EN | (0333 * 16 + c_timming_b),	// 179
+	0334 * 16 + c_timming_a,	CPU_EN | (0334 * 16 + c_timming_b),	// 180
+	0335 * 16 + c_timming_a,	CPU_EN | (0335 * 16 + c_timming_b),	// 181
+	0336 * 16 + c_timming_a,	CPU_EN | (0336 * 16 + c_timming_b),	// 182
+	0337 * 16 + c_timming_a,	CPU_EN | (0337 * 16 + c_timming_b),	// 183
+
+	/* BITMAP */				CPU_EN | (0340 * 16 + c_timming_b),	// 184
+	/* BITMAP */				CPU_EN | (0341 * 16 + c_timming_b),	// 185
+	/* SPRITE */				CPU_EN | (0342 * 16 + c_timming_b),	// 186
+	0343 * 16 + c_timming_a,	CPU_EN | (0343 * 16 + c_timming_b),	// 187
+	0344 * 16 + c_timming_a,	CPU_EN | (0344 * 16 + c_timming_b),	// 188
+	0345 * 16 + c_timming_a,	CPU_EN | (0345 * 16 + c_timming_b),	// 189
+	0346 * 16 + c_timming_a,	CPU_EN | (0346 * 16 + c_timming_b),	// 190
+	0347 * 16 + c_timming_a,	CPU_EN | (0347 * 16 + c_timming_b),	// 191
+
+	/* BITMAP */				CPU_EN | (0350 * 16 + c_timming_b),	// 192
+	/* BITMAP */				CPU_EN | (0351 * 16 + c_timming_b),	// 193
+	/* SPRITE */				CPU_EN | (0352 * 16 + c_timming_b),	// 194
+	0353 * 16 + c_timming_a,	CPU_EN | (0353 * 16 + c_timming_b),	// 195
+	0354 * 16 + c_timming_a,	CPU_EN | (0354 * 16 + c_timming_b),	// 196
+	0355 * 16 + c_timming_a,	CPU_EN | (0355 * 16 + c_timming_b),	// 197
+	0356 * 16 + c_timming_a,	CPU_EN | (0356 * 16 + c_timming_b),	// 198
+	0357 * 16 + c_timming_a,	CPU_EN | (0357 * 16 + c_timming_b),	// 199
+
+	/* BITMAP */				CPU_EN | (0360 * 16 + c_timming_b),	// 200
+	/* BITMAP */				CPU_EN | (0361 * 16 + c_timming_b),	// 201
+	/* SPRITE */				CPU_EN | (0362 * 16 + c_timming_b),	// 202
+	0363 * 16 + c_timming_a,	CPU_EN | (0363 * 16 + c_timming_b),	// 203
+	0364 * 16 + c_timming_a,	CPU_EN | (0364 * 16 + c_timming_b),	// 204
+	0365 * 16 + c_timming_a,	CPU_EN | (0365 * 16 + c_timming_b),	// 205
+	0366 * 16 + c_timming_a,	CPU_EN | (0366 * 16 + c_timming_b),	// 206
+	0367 * 16 + c_timming_a,	CPU_EN | (0367 * 16 + c_timming_b),	// 207
+
+	/* BITMAP */				CPU_EN | (0370 * 16 + c_timming_b),	// 208
+	/* BITMAP */				CPU_EN | (0371 * 16 + c_timming_b),	// 209
+	/* SPRITE */				CPU_EN | (0372 * 16 + c_timming_b),	// 210
+	0373 * 16 + c_timming_a,	CPU_EN | (0373 * 16 + c_timming_b),	// 211
+	0374 * 16 + c_timming_a,	CPU_EN | (0374 * 16 + c_timming_b),	// 212
+	0375 * 16 + c_timming_a,	CPU_EN | (0375 * 16 + c_timming_b),	// 213
+	0376 * 16 + c_timming_a,	CPU_EN | (0376 * 16 + c_timming_b),	// 214
+	0377 * 16 + c_timming_a,	CPU_EN | (0377 * 16 + c_timming_b),	// 215
+
+	/* BITMAP */				CPU_EN | (0400 * 16 + c_timming_b),	// 216
+	/* BITMAP */				CPU_EN | (0401 * 16 + c_timming_b),	// 217
+	/* SPRITE */				CPU_EN | (0402 * 16 + c_timming_b),	// 218
+	0403 * 16 + c_timming_a,	CPU_EN | (0403 * 16 + c_timming_b),	// 219
+	0404 * 16 + c_timming_a,	CPU_EN | (0404 * 16 + c_timming_b),	// 220
+	0405 * 16 + c_timming_a,	CPU_EN | (0405 * 16 + c_timming_b),	// 221
+	0406 * 16 + c_timming_a,	CPU_EN | (0406 * 16 + c_timming_b),	// 222
+	0407 * 16 + c_timming_a,	CPU_EN | (0407 * 16 + c_timming_b),	// 223
+
+	/* BITMAP */				CPU_EN | (0410 * 16 + c_timming_b),	// 224
+	/* BITMAP */				CPU_EN | (0411 * 16 + c_timming_b),	// 225
+	/* SPRITE */				CPU_EN | (0412 * 16 + c_timming_b),	// 226
+	0413 * 16 + c_timming_a,	CPU_EN | (0413 * 16 + c_timming_b),	// 227
+	0414 * 16 + c_timming_a,	CPU_EN | (0414 * 16 + c_timming_b),	// 228
+	0415 * 16 + c_timming_a,	CPU_EN | (0415 * 16 + c_timming_b),	// 229
+	0416 * 16 + c_timming_a,	CPU_EN | (0416 * 16 + c_timming_b),	// 230
+	0417 * 16 + c_timming_a,	CPU_EN | (0417 * 16 + c_timming_b),	// 231
+
+	/* BITMAP */				CPU_EN | (0420 * 16 + c_timming_b),	// 232
+	/* BITMAP */				CPU_EN | (0421 * 16 + c_timming_b),	// 233
+	/* SPRITE */				CPU_EN | (0422 * 16 + c_timming_b),	// 234
+	0423 * 16 + c_timming_a,	CPU_EN | (0423 * 16 + c_timming_b),	// 235
+	0424 * 16 + c_timming_a,	CPU_EN | (0424 * 16 + c_timming_b),	// 236
+	0425 * 16 + c_timming_a,	CPU_EN | (0425 * 16 + c_timming_b),	// 237
+	0426 * 16 + c_timming_a,	CPU_EN | (0426 * 16 + c_timming_b),	// 238
+	0427 * 16 + c_timming_a,	CPU_EN | (0427 * 16 + c_timming_b),	// 239
+
+	/* BITMAP */				CPU_EN | (0430 * 16 + c_timming_b),	// 240
+	/* BITMAP */				CPU_EN | (0431 * 16 + c_timming_b),	// 241
+	/* SPRITE */				CPU_EN | (0432 * 16 + c_timming_b),	// 242
+	0433 * 16 + c_timming_a,	CPU_EN | (0433 * 16 + c_timming_b),	// 243
+	0434 * 16 + c_timming_a,	CPU_EN | (0434 * 16 + c_timming_b),	// 244
+	0435 * 16 + c_timming_a,	CPU_EN | (0435 * 16 + c_timming_b),	// 245
+	0436 * 16 + c_timming_a,	CPU_EN | (0436 * 16 + c_timming_b),	// 246
+	0437 * 16 + c_timming_a,	CPU_EN | (0437 * 16 + c_timming_b),	// 247
+
+	0440 * 16 + c_timming_a,	CPU_EN | (0440 * 16 + c_timming_b),	// 248
+	0441 * 16 + c_timming_a,	CPU_EN | (0441 * 16 + c_timming_b),	// 249
+	/* SPRITE */				CPU_EN | (0442 * 16 + c_timming_b),	// 250
+	0443 * 16 + c_timming_a,	CPU_EN | (0443 * 16 + c_timming_b),	// 251
+	0444 * 16 + c_timming_a,	CPU_EN | (0444 * 16 + c_timming_b),	// 252
+	0445 * 16 + c_timming_a,	CPU_EN | (0445 * 16 + c_timming_b),	// 253
+	0446 * 16 + c_timming_a,	CPU_EN | (0446 * 16 + c_timming_b),	// 254
+	0447 * 16 + c_timming_a,	CPU_EN | (0447 * 16 + c_timming_b),	// 255
+
+	0450 * 16 + c_timming_a,	CPU_EN | (0450 * 16 + c_timming_b),	// 256
+	0451 * 16 + c_timming_a,	CPU_EN | (0451 * 16 + c_timming_b),	// 257
+	/* SPRITE */				CPU_EN | (0452 * 16 + c_timming_b),	// 258
+	0453 * 16 + c_timming_a,	CPU_EN | (0453 * 16 + c_timming_b),	// 259
+	0454 * 16 + c_timming_a,	CPU_EN | (0454 * 16 + c_timming_b),	// 260
+	0455 * 16 + c_timming_a,	CPU_EN | (0455 * 16 + c_timming_b),	// 261
+	0456 * 16 + c_timming_a,	CPU_EN | (0456 * 16 + c_timming_b),	// 262
+	0457 * 16 + c_timming_a,	CPU_EN | (0457 * 16 + c_timming_b),	// 263
+
+	0460 * 16 + c_timming_a,	CPU_EN | (0460 * 16 + c_timming_b),	// 264
+	0461 * 16 + c_timming_a,	CPU_EN | (0461 * 16 + c_timming_b),	// 265
+	/* SPRITE */				CPU_EN | (0462 * 16 + c_timming_b),	// 266
+	0463 * 16 + c_timming_a,	CPU_EN | (0463 * 16 + c_timming_b),	// 267
+	0464 * 16 + c_timming_a,	CPU_EN | (0464 * 16 + c_timming_b),	// 268
+	0465 * 16 + c_timming_a,	CPU_EN | (0465 * 16 + c_timming_b),	// 269
+	0466 * 16 + c_timming_a,	CPU_EN | (0466 * 16 + c_timming_b),	// 270
+	0467 * 16 + c_timming_a,	CPU_EN | (0467 * 16 + c_timming_b),	// 271
+
+	0470 * 16 + c_timming_a,	CPU_EN | (0470 * 16 + c_timming_b),	// 272
+	0471 * 16 + c_timming_a,	CPU_EN | (0471 * 16 + c_timming_b),	// 273
+	/* SPRITE */				CPU_EN | (0472 * 16 + c_timming_b),	// 274
+	0473 * 16 + c_timming_a,	CPU_EN | (0473 * 16 + c_timming_b),	// 275
+	0474 * 16 + c_timming_a,	CPU_EN | (0474 * 16 + c_timming_b),	// 276
+	0475 * 16 + c_timming_a,	CPU_EN | (0475 * 16 + c_timming_b),	// 277
+	0476 * 16 + c_timming_a,	CPU_EN | (0476 * 16 + c_timming_b),	// 278
+	0477 * 16 + c_timming_a,	CPU_EN | (0477 * 16 + c_timming_b),	// 279
+
+	0500 * 16 + c_timming_a,	CPU_EN | (0500 * 16 + c_timming_b),	// 280
+	0501 * 16 + c_timming_a,	CPU_EN | (0501 * 16 + c_timming_b),	// 281
+	/* SPRITE */				CPU_EN | (0502 * 16 + c_timming_b),	// 282
+	0503 * 16 + c_timming_a,	CPU_EN | (0503 * 16 + c_timming_b),	// 283
+	0504 * 16 + c_timming_a,	CPU_EN | (0504 * 16 + c_timming_b),	// 284
+	0505 * 16 + c_timming_a,	CPU_EN | (0505 * 16 + c_timming_b),	// 285
+	0506 * 16 + c_timming_a,	CPU_EN | (0506 * 16 + c_timming_b),	// 286
+	0507 * 16 + c_timming_a,	CPU_EN | (0507 * 16 + c_timming_b),	// 287
+
+	0510 * 16 + c_timming_a,	CPU_EN | (0510 * 16 + c_timming_b),	// 288
+	0511 * 16 + c_timming_a,	CPU_EN | (0511 * 16 + c_timming_b),	// 289
+	/* SPRITE */				CPU_EN | (0512 * 16 + c_timming_b),	// 290
+	0513 * 16 + c_timming_a,	CPU_EN | (0513 * 16 + c_timming_b),	// 291
+	0514 * 16 + c_timming_a,	CPU_EN | (0514 * 16 + c_timming_b),	// 292
+	0515 * 16 + c_timming_a,	CPU_EN | (0515 * 16 + c_timming_b),	// 293
+	0516 * 16 + c_timming_a,	CPU_EN | (0516 * 16 + c_timming_b),	// 294
+	0517 * 16 + c_timming_a,	CPU_EN | (0517 * 16 + c_timming_b),	// 295
+
+	0520 * 16 + c_timming_a,	CPU_EN | (0520 * 16 + c_timming_b),	// 296
+	0521 * 16 + c_timming_a,	CPU_EN | (0521 * 16 + c_timming_b),	// 297
+	/* SPRITE */				CPU_EN | (0522 * 16 + c_timming_b),	// 298
+	0523 * 16 + c_timming_a,	CPU_EN | (0523 * 16 + c_timming_b),	// 299
+	0524 * 16 + c_timming_a,	CPU_EN | (0524 * 16 + c_timming_b),	// 300
+	0525 * 16 + c_timming_a,	CPU_EN | (0525 * 16 + c_timming_b),	// 301
+
+	0526 * 16 + c_timming_a,	CPU_EN | (0526 * 16 + c_timming_b),	// -40
+	0527 * 16 + c_timming_a,	CPU_EN | (0527 * 16 + c_timming_b),	// -39
+	/* SPRITE */				CPU_EN | (0530 * 16 + c_timming_b),	// -38
+	0531 * 16 + c_timming_a,	CPU_EN | (0531 * 16 + c_timming_b),	// -37
+	0532 * 16 + c_timming_a,	CPU_EN | (0532 * 16 + c_timming_b),	// -36
+	0533 * 16 + c_timming_a,	CPU_EN | (0533 * 16 + c_timming_b),	// -35
+	0534 * 16 + c_timming_a,	CPU_EN | (0534 * 16 + c_timming_b),	// -34
+	0535 * 16 + c_timming_a,	CPU_EN | (0535 * 16 + c_timming_b),	// -33
+
+	/* REFRESH */													// -32
+	0537 * 16 + c_timming_a,	CPU_EN | (0537 * 16 + c_timming_b)	// -31
 };
 
 // screen 1,2,4
-static constexpr std::array<int16_t, 256> slotsV9968PcgSpritesOff = {
-//	name  pat   spr   clr   cmd   cmd   cmd   cmd
-	   0,   16,   32,   48,   64,   80,   96,  112,	// -40
-	       144,  160,  176,  192,  208,  224,  240,	// -32 128=REFRESH
-	 256,  272,  288,  304,  320,  336,  352,  368,	// -24
-	 384,  400,  416,  432,  448,  464,  480,  496,	// -16
-	             544,        576,  592,  608,  624,	// -8
-	             672,        704,  720,  736,  752,	// 0
-	             800,        832,  848,  864,  880,
-	             928,        960,  976,  992, 1008,
-	            1056,       1088, 1104, 1120, 1136,
-	            1184,       1216, 1232, 1248, 1264,
-	            1312,       1344, 1360, 1376, 1392,
-	            1440,       1472, 1488, 1504, 1520,
-	            1568,       1600, 1616, 1632, 1648,
-	            1696,       1728, 1744, 1760, 1776,
-	            1824,       1856, 1872, 1888, 1904,
-	            1952,       1984, 2000, 2016, 2032,
-	            2080,       2112, 2128, 2144, 2160,
-	            2208,       2240, 2256, 2272, 2288,
-	            2336,       2368, 2384, 2400, 2416,
-	            2464,       2496, 2512, 2528, 2544,
-	            2592,       2624, 2640, 2656, 2672,
-	            2720,       2752, 2768, 2784, 2800,
-	            2848,       2880, 2896, 2912, 2928,
-	            2976,       3008, 3024, 3040, 3056,
-	            3104,       3136, 3152, 3168, 3184,
-	            3232,       3264, 3280, 3296, 3312,
-	            3360,       3392, 3408, 3424, 3440,
-	            3488,       3520, 3536, 3552, 3568,
-	            3616,       3648, 3664, 3680, 3696,
-	            3744,       3776, 3792, 3808, 3824,
-	            3872,       3904, 3920, 3936, 3952,
-	            4000,       4032, 4048, 4064, 4080,
-	            4128,       4160, 4176, 4192, 4208,
-	            4256,       4288, 4304, 4320, 4336,
-	            4384,       4416, 4432, 4448, 4464,
-	            4512,       4544, 4560, 4576, 4592,
-	4608, 4624, 4640, 4656, 4672, 4688, 4704, 4720,
-	4736, 4752, 4768, 4784, 4800, 4816, 4832, 4848,	// 256
-	4864, 4880, 4896, 4912, 4928, 4944, 4960, 4976,	// 264
-	4992, 5008, 5024, 5040, 5056, 5072, 5088, 5104,
-	5120, 5136, 5152, 5168, 5184, 5200, 5216, 5232,
-	5248, 5264, 5280, 5296, 5312, 5328, 5344, 5360,
-	5376, 5392, 5408, 5424, 5440, 5456,
-	5472, 5488, 5504, 5520, 5536, 5552, 5568, 5584,	// -40
-	      5616										// -32 5600=REFRESH
+static constexpr std::array<int16_t, 700-96> slotsV9968PcgSpritesOff = {
+	0000 * 16 + c_timming_a,	CPU_EN | (0000 * 16 + c_timming_b),	// -40
+	0001 * 16 + c_timming_a,	CPU_EN | (0001 * 16 + c_timming_b),	// -39
+	0002 * 16 + c_timming_a,	CPU_EN | (0002 * 16 + c_timming_b),	// -38
+	0003 * 16 + c_timming_a,	CPU_EN | (0003 * 16 + c_timming_b),	// -37
+	0004 * 16 + c_timming_a,	CPU_EN | (0004 * 16 + c_timming_b),	// -36
+	0005 * 16 + c_timming_a,	CPU_EN | (0005 * 16 + c_timming_b),	// -35
+	0006 * 16 + c_timming_a,	CPU_EN | (0006 * 16 + c_timming_b),	// -34
+	0007 * 16 + c_timming_a,	CPU_EN | (0007 * 16 + c_timming_b),	// -33
+
+	/* REFRESH */													// -32
+	0011 * 16 + c_timming_a,	CPU_EN | (0011 * 16 + c_timming_b),	// -31
+	0012 * 16 + c_timming_a,	CPU_EN | (0012 * 16 + c_timming_b),	// -30
+	0013 * 16 + c_timming_a,	CPU_EN | (0013 * 16 + c_timming_b),	// -29
+	0014 * 16 + c_timming_a,	CPU_EN | (0014 * 16 + c_timming_b),	// -28
+	0015 * 16 + c_timming_a,	CPU_EN | (0015 * 16 + c_timming_b),	// -27
+	0016 * 16 + c_timming_a,	CPU_EN | (0016 * 16 + c_timming_b),	// -26
+	0017 * 16 + c_timming_a,	CPU_EN | (0017 * 16 + c_timming_b),	// -25
+
+	0020 * 16 + c_timming_a,	CPU_EN | (0020 * 16 + c_timming_b),	// -24
+	0021 * 16 + c_timming_a,	CPU_EN | (0021 * 16 + c_timming_b),	// -23
+	0022 * 16 + c_timming_a,	CPU_EN | (0022 * 16 + c_timming_b),	// -22
+	0023 * 16 + c_timming_a,	CPU_EN | (0023 * 16 + c_timming_b),	// -21
+	0024 * 16 + c_timming_a,	CPU_EN | (0024 * 16 + c_timming_b),	// -20
+	0025 * 16 + c_timming_a,	CPU_EN | (0025 * 16 + c_timming_b),	// -19
+	0026 * 16 + c_timming_a,	CPU_EN | (0026 * 16 + c_timming_b),	// -18
+	0027 * 16 + c_timming_a,	CPU_EN | (0027 * 16 + c_timming_b),	// -17
+
+	0030 * 16 + c_timming_a,	CPU_EN | (0030 * 16 + c_timming_b),	// -16
+	0031 * 16 + c_timming_a,	CPU_EN | (0031 * 16 + c_timming_b),	// -15
+	0032 * 16 + c_timming_a,	CPU_EN | (0032 * 16 + c_timming_b),	// -14
+	0033 * 16 + c_timming_a,	CPU_EN | (0033 * 16 + c_timming_b),	// -13
+	0034 * 16 + c_timming_a,	CPU_EN | (0034 * 16 + c_timming_b),	// -12
+	0035 * 16 + c_timming_a,	CPU_EN | (0035 * 16 + c_timming_b),	// -11
+	0036 * 16 + c_timming_a,	CPU_EN | (0036 * 16 + c_timming_b),	// -10
+	0037 * 16 + c_timming_a,	CPU_EN | (0037 * 16 + c_timming_b),	// -9
+
+	/* NAME */					CPU_EN | (0040 * 16 + c_timming_b),	// -8
+	/* PATTERN */				CPU_EN | (0041 * 16 + c_timming_b),	// -7
+	0042 * 16 + c_timming_a,	CPU_EN | (0042 * 16 + c_timming_b),	// -6
+	/* COLOR */					CPU_EN | (0043 * 16 + c_timming_b),	// -5
+	0044 * 16 + c_timming_a,	CPU_EN | (0044 * 16 + c_timming_b),	// -4
+	0045 * 16 + c_timming_a,	CPU_EN | (0045 * 16 + c_timming_b),	// -3
+	0046 * 16 + c_timming_a,	CPU_EN | (0046 * 16 + c_timming_b),	// -2
+	0047 * 16 + c_timming_a,	CPU_EN | (0047 * 16 + c_timming_b),	// -1
+
+	/* NAME */					CPU_EN | (0050 * 16 + c_timming_b),	// 0
+	/* PATTERN */				CPU_EN | (0051 * 16 + c_timming_b),	// 1
+	0052 * 16 + c_timming_a,	CPU_EN | (0052 * 16 + c_timming_b),	// 2
+	/* COLOR */					CPU_EN | (0053 * 16 + c_timming_b),	// 3
+	0054 * 16 + c_timming_a,	CPU_EN | (0054 * 16 + c_timming_b),	// 4
+	0055 * 16 + c_timming_a,	CPU_EN | (0055 * 16 + c_timming_b),	// 5
+	0056 * 16 + c_timming_a,	CPU_EN | (0056 * 16 + c_timming_b),	// 6
+	0057 * 16 + c_timming_a,	CPU_EN | (0057 * 16 + c_timming_b),	// 7
+
+	/* NAME */					CPU_EN | (0060 * 16 + c_timming_b),	// 8
+	/* PATTERN */				CPU_EN | (0061 * 16 + c_timming_b),	// 9
+	0062 * 16 + c_timming_a,	CPU_EN | (0062 * 16 + c_timming_b),	// 10
+	/* COLOR */					CPU_EN | (0063 * 16 + c_timming_b),	// 11
+	0064 * 16 + c_timming_a,	CPU_EN | (0064 * 16 + c_timming_b),	// 12
+	0065 * 16 + c_timming_a,	CPU_EN | (0065 * 16 + c_timming_b),	// 13
+	0066 * 16 + c_timming_a,	CPU_EN | (0066 * 16 + c_timming_b),	// 14
+	0067 * 16 + c_timming_a,	CPU_EN | (0067 * 16 + c_timming_b),	// 15
+
+	/* NAME */					CPU_EN | (0070 * 16 + c_timming_b),	// 16
+	/* PATTERN */				CPU_EN | (0071 * 16 + c_timming_b),	// 17
+	0072 * 16 + c_timming_a,	CPU_EN | (0072 * 16 + c_timming_b),	// 18
+	/* COLOR */					CPU_EN | (0073 * 16 + c_timming_b),	// 19
+	0074 * 16 + c_timming_a,	CPU_EN | (0074 * 16 + c_timming_b),	// 20
+	0075 * 16 + c_timming_a,	CPU_EN | (0075 * 16 + c_timming_b),	// 21
+	0076 * 16 + c_timming_a,	CPU_EN | (0076 * 16 + c_timming_b),	// 22
+	0077 * 16 + c_timming_a,	CPU_EN | (0077 * 16 + c_timming_b),	// 23
+
+	/* NAME */					CPU_EN | (0100 * 16 + c_timming_b),	// 24
+	/* PATTERN */				CPU_EN | (0101 * 16 + c_timming_b),	// 25
+	0102 * 16 + c_timming_a,	CPU_EN | (0102 * 16 + c_timming_b),	// 26
+	/* COLOR */					CPU_EN | (0103 * 16 + c_timming_b),	// 27
+	0104 * 16 + c_timming_a,	CPU_EN | (0104 * 16 + c_timming_b),	// 28
+	0105 * 16 + c_timming_a,	CPU_EN | (0105 * 16 + c_timming_b),	// 29
+	0106 * 16 + c_timming_a,	CPU_EN | (0106 * 16 + c_timming_b),	// 30
+	0107 * 16 + c_timming_a,	CPU_EN | (0107 * 16 + c_timming_b),	// 31
+
+	/* NAME */					CPU_EN | (0110 * 16 + c_timming_b),	// 32
+	/* PATTERN */				CPU_EN | (0111 * 16 + c_timming_b),	// 33
+	0112 * 16 + c_timming_a,	CPU_EN | (0112 * 16 + c_timming_b),	// 34
+	/* COLOR */					CPU_EN | (0113 * 16 + c_timming_b),	// 35
+	0114 * 16 + c_timming_a,	CPU_EN | (0114 * 16 + c_timming_b),	// 36
+	0115 * 16 + c_timming_a,	CPU_EN | (0115 * 16 + c_timming_b),	// 37
+	0116 * 16 + c_timming_a,	CPU_EN | (0116 * 16 + c_timming_b),	// 38
+	0117 * 16 + c_timming_a,	CPU_EN | (0117 * 16 + c_timming_b),	// 39
+
+	/* NAME */					CPU_EN | (0120 * 16 + c_timming_b),	// 40
+	/* PATTERN */				CPU_EN | (0121 * 16 + c_timming_b),	// 41
+	0122 * 16 + c_timming_a,	CPU_EN | (0122 * 16 + c_timming_b),	// 42
+	/* COLOR */					CPU_EN | (0123 * 16 + c_timming_b),	// 43
+	0124 * 16 + c_timming_a,	CPU_EN | (0124 * 16 + c_timming_b),	// 44
+	0125 * 16 + c_timming_a,	CPU_EN | (0125 * 16 + c_timming_b),	// 45
+	0126 * 16 + c_timming_a,	CPU_EN | (0126 * 16 + c_timming_b),	// 46
+	0127 * 16 + c_timming_a,	CPU_EN | (0127 * 16 + c_timming_b),	// 47
+
+	/* NAME */					CPU_EN | (0130 * 16 + c_timming_b),	// 48
+	/* PATTERN */				CPU_EN | (0131 * 16 + c_timming_b),	// 49
+	0132 * 16 + c_timming_a,	CPU_EN | (0132 * 16 + c_timming_b),	// 50
+	/* COLOR */					CPU_EN | (0133 * 16 + c_timming_b),	// 51
+	0134 * 16 + c_timming_a,	CPU_EN | (0134 * 16 + c_timming_b),	// 52
+	0135 * 16 + c_timming_a,	CPU_EN | (0135 * 16 + c_timming_b),	// 53
+	0136 * 16 + c_timming_a,	CPU_EN | (0136 * 16 + c_timming_b),	// 54
+	0137 * 16 + c_timming_a,	CPU_EN | (0137 * 16 + c_timming_b),	// 55
+
+	/* NAME */					CPU_EN | (0140 * 16 + c_timming_b),	// 56
+	/* PATTERN */				CPU_EN | (0141 * 16 + c_timming_b),	// 57
+	0142 * 16 + c_timming_a,	CPU_EN | (0142 * 16 + c_timming_b),	// 58
+	/* COLOR */					CPU_EN | (0143 * 16 + c_timming_b),	// 59
+	0144 * 16 + c_timming_a,	CPU_EN | (0144 * 16 + c_timming_b),	// 60
+	0145 * 16 + c_timming_a,	CPU_EN | (0145 * 16 + c_timming_b),	// 61
+	0146 * 16 + c_timming_a,	CPU_EN | (0146 * 16 + c_timming_b),	// 62
+	0147 * 16 + c_timming_a,	CPU_EN | (0147 * 16 + c_timming_b),	// 63
+
+	/* NAME */					CPU_EN | (0150 * 16 + c_timming_b),	// 64
+	/* PATTERN */				CPU_EN | (0151 * 16 + c_timming_b),	// 65
+	0152 * 16 + c_timming_a,	CPU_EN | (0152 * 16 + c_timming_b),	// 66
+	/* COLOR */					CPU_EN | (0153 * 16 + c_timming_b),	// 67
+	0154 * 16 + c_timming_a,	CPU_EN | (0154 * 16 + c_timming_b),	// 68
+	0155 * 16 + c_timming_a,	CPU_EN | (0155 * 16 + c_timming_b),	// 69
+	0156 * 16 + c_timming_a,	CPU_EN | (0156 * 16 + c_timming_b),	// 70
+	0157 * 16 + c_timming_a,	CPU_EN | (0157 * 16 + c_timming_b),	// 71
+
+	/* NAME */					CPU_EN | (0160 * 16 + c_timming_b),	// 72
+	/* PATTERN */				CPU_EN | (0161 * 16 + c_timming_b),	// 73
+	0162 * 16 + c_timming_a,	CPU_EN | (0162 * 16 + c_timming_b),	// 74
+	/* COLOR */					CPU_EN | (0163 * 16 + c_timming_b),	// 75
+	0164 * 16 + c_timming_a,	CPU_EN | (0164 * 16 + c_timming_b),	// 76
+	0165 * 16 + c_timming_a,	CPU_EN | (0165 * 16 + c_timming_b),	// 77
+	0166 * 16 + c_timming_a,	CPU_EN | (0166 * 16 + c_timming_b),	// 78
+	0167 * 16 + c_timming_a,	CPU_EN | (0167 * 16 + c_timming_b),	// 79
+
+	/* PATTERN */				CPU_EN | (0170 * 16 + c_timming_b),	// 80
+	/* PATTERN */				CPU_EN | (0171 * 16 + c_timming_b),	// 81
+	0172 * 16 + c_timming_a,	CPU_EN | (0172 * 16 + c_timming_b),	// 82
+	/* COLOR */					CPU_EN | (0173 * 16 + c_timming_b),	// 83
+	0174 * 16 + c_timming_a,	CPU_EN | (0174 * 16 + c_timming_b),	// 84
+	0175 * 16 + c_timming_a,	CPU_EN | (0175 * 16 + c_timming_b),	// 85
+	0176 * 16 + c_timming_a,	CPU_EN | (0176 * 16 + c_timming_b),	// 86
+	0177 * 16 + c_timming_a,	CPU_EN | (0177 * 16 + c_timming_b),	// 87
+
+	/* NAME */					CPU_EN | (0200 * 16 + c_timming_b),	// 88
+	/* PATTERN */				CPU_EN | (0201 * 16 + c_timming_b),	// 89
+	0202 * 16 + c_timming_a,	CPU_EN | (0202 * 16 + c_timming_b),	// 90
+	/* COLOR */					CPU_EN | (0203 * 16 + c_timming_b),	// 91
+	0204 * 16 + c_timming_a,	CPU_EN | (0204 * 16 + c_timming_b),	// 92
+	0205 * 16 + c_timming_a,	CPU_EN | (0205 * 16 + c_timming_b),	// 93
+	0206 * 16 + c_timming_a,	CPU_EN | (0206 * 16 + c_timming_b),	// 94
+	0207 * 16 + c_timming_a,	CPU_EN | (0207 * 16 + c_timming_b),	// 95
+
+	/* NAME */					CPU_EN | (0210 * 16 + c_timming_b),	// 96
+	/* PATTERN */				CPU_EN | (0211 * 16 + c_timming_b),	// 97
+	0212 * 16 + c_timming_a,	CPU_EN | (0212 * 16 + c_timming_b),	// 98
+	/* COLOR */					CPU_EN | (0213 * 16 + c_timming_b),	// 99
+	0214 * 16 + c_timming_a,	CPU_EN | (0214 * 16 + c_timming_b),	// 100
+	0215 * 16 + c_timming_a,	CPU_EN | (0215 * 16 + c_timming_b),	// 101
+	0216 * 16 + c_timming_a,	CPU_EN | (0216 * 16 + c_timming_b),	// 102
+	0217 * 16 + c_timming_a,	CPU_EN | (0217 * 16 + c_timming_b),	// 103
+
+	/* NAME */					CPU_EN | (0220 * 16 + c_timming_b),	// 104
+	/* PATTERN */				CPU_EN | (0221 * 16 + c_timming_b),	// 105
+	0222 * 16 + c_timming_a,	CPU_EN | (0222 * 16 + c_timming_b),	// 106
+	/* COLOR */					CPU_EN | (0223 * 16 + c_timming_b),	// 107
+	0224 * 16 + c_timming_a,	CPU_EN | (0224 * 16 + c_timming_b),	// 108
+	0225 * 16 + c_timming_a,	CPU_EN | (0225 * 16 + c_timming_b),	// 109
+	0226 * 16 + c_timming_a,	CPU_EN | (0226 * 16 + c_timming_b),	// 110
+	0227 * 16 + c_timming_a,	CPU_EN | (0227 * 16 + c_timming_b),	// 111
+
+	/* NAME */					CPU_EN | (0230 * 16 + c_timming_b),	// 112
+	/* PATTERN */				CPU_EN | (0231 * 16 + c_timming_b),	// 113
+	0232 * 16 + c_timming_a,	CPU_EN | (0232 * 16 + c_timming_b),	// 114
+	/* COLOR */					CPU_EN | (0233 * 16 + c_timming_b),	// 115
+	0234 * 16 + c_timming_a,	CPU_EN | (0234 * 16 + c_timming_b),	// 116
+	0235 * 16 + c_timming_a,	CPU_EN | (0235 * 16 + c_timming_b),	// 117
+	0236 * 16 + c_timming_a,	CPU_EN | (0236 * 16 + c_timming_b),	// 118
+	0237 * 16 + c_timming_a,	CPU_EN | (0237 * 16 + c_timming_b),	// 119
+
+	/* NAME */					CPU_EN | (0240 * 16 + c_timming_b),	// 120
+	/* PATTERN */				CPU_EN | (0241 * 16 + c_timming_b),	// 121
+	0242 * 16 + c_timming_a,	CPU_EN | (0242 * 16 + c_timming_b),	// 122
+	/* COLOR */					CPU_EN | (0243 * 16 + c_timming_b),	// 123
+	0244 * 16 + c_timming_a,	CPU_EN | (0244 * 16 + c_timming_b),	// 124
+	0245 * 16 + c_timming_a,	CPU_EN | (0245 * 16 + c_timming_b),	// 125
+	0246 * 16 + c_timming_a,	CPU_EN | (0246 * 16 + c_timming_b),	// 126
+	0247 * 16 + c_timming_a,	CPU_EN | (0247 * 16 + c_timming_b),	// 127
+
+	/* NAME */					CPU_EN | (0250 * 16 + c_timming_b),	// 128
+	/* PATTERN */				CPU_EN | (0251 * 16 + c_timming_b),	// 129
+	0252 * 16 + c_timming_a,	CPU_EN | (0252 * 16 + c_timming_b),	// 130
+	/* COLOR */					CPU_EN | (0253 * 16 + c_timming_b),	// 131
+	0254 * 16 + c_timming_a,	CPU_EN | (0254 * 16 + c_timming_b),	// 132
+	0255 * 16 + c_timming_a,	CPU_EN | (0255 * 16 + c_timming_b),	// 133
+	0256 * 16 + c_timming_a,	CPU_EN | (0256 * 16 + c_timming_b),	// 134
+	0257 * 16 + c_timming_a,	CPU_EN | (0257 * 16 + c_timming_b),	// 135
+
+	/* NAME */					CPU_EN | (0260 * 16 + c_timming_b),	// 136
+	/* PATTERN */				CPU_EN | (0261 * 16 + c_timming_b),	// 137
+	0262 * 16 + c_timming_a,	CPU_EN | (0262 * 16 + c_timming_b),	// 138
+	/* COLOR */					CPU_EN | (0263 * 16 + c_timming_b),	// 139
+	0264 * 16 + c_timming_a,	CPU_EN | (0264 * 16 + c_timming_b),	// 140
+	0265 * 16 + c_timming_a,	CPU_EN | (0265 * 16 + c_timming_b),	// 141
+	0266 * 16 + c_timming_a,	CPU_EN | (0266 * 16 + c_timming_b),	// 142
+	0267 * 16 + c_timming_a,	CPU_EN | (0267 * 16 + c_timming_b),	// 143
+
+	/* NAME */					CPU_EN | (0270 * 16 + c_timming_b),	// 144
+	/* PATTERN */				CPU_EN | (0271 * 16 + c_timming_b),	// 145
+	0272 * 16 + c_timming_a,	CPU_EN | (0272 * 16 + c_timming_b),	// 146
+	/* COLOR */					CPU_EN | (0273 * 16 + c_timming_b),	// 147
+	0274 * 16 + c_timming_a,	CPU_EN | (0274 * 16 + c_timming_b),	// 148
+	0275 * 16 + c_timming_a,	CPU_EN | (0275 * 16 + c_timming_b),	// 149
+	0276 * 16 + c_timming_a,	CPU_EN | (0276 * 16 + c_timming_b),	// 150
+	0277 * 16 + c_timming_a,	CPU_EN | (0277 * 16 + c_timming_b),	// 151
+
+	/* NAME */					CPU_EN | (0300 * 16 + c_timming_b),	// 152
+	/* PATTERN */				CPU_EN | (0301 * 16 + c_timming_b),	// 153
+	0302 * 16 + c_timming_a,	CPU_EN | (0302 * 16 + c_timming_b),	// 154
+	/* COLOR */					CPU_EN | (0303 * 16 + c_timming_b),	// 155
+	0304 * 16 + c_timming_a,	CPU_EN | (0304 * 16 + c_timming_b),	// 156
+	0305 * 16 + c_timming_a,	CPU_EN | (0305 * 16 + c_timming_b),	// 157
+	0306 * 16 + c_timming_a,	CPU_EN | (0306 * 16 + c_timming_b),	// 158
+	0307 * 16 + c_timming_a,	CPU_EN | (0307 * 16 + c_timming_b),	// 159
+
+	/* NAME */					CPU_EN | (0310 * 16 + c_timming_b),	// 160
+	/* PATTERN */				CPU_EN | (0311 * 16 + c_timming_b),	// 161
+	0312 * 16 + c_timming_a,	CPU_EN | (0312 * 16 + c_timming_b),	// 162
+	/* COLOR */					CPU_EN | (0313 * 16 + c_timming_b),	// 163
+	0314 * 16 + c_timming_a,	CPU_EN | (0314 * 16 + c_timming_b),	// 164
+	0315 * 16 + c_timming_a,	CPU_EN | (0315 * 16 + c_timming_b),	// 165
+	0316 * 16 + c_timming_a,	CPU_EN | (0316 * 16 + c_timming_b),	// 166
+	0317 * 16 + c_timming_a,	CPU_EN | (0317 * 16 + c_timming_b),	// 167
+
+	/* NAME */					CPU_EN | (0320 * 16 + c_timming_b),	// 168
+	/* PATTERN */				CPU_EN | (0321 * 16 + c_timming_b),	// 169
+	0322 * 16 + c_timming_a,	CPU_EN | (0322 * 16 + c_timming_b),	// 170
+	/* COLOR */					CPU_EN | (0323 * 16 + c_timming_b),	// 171
+	0324 * 16 + c_timming_a,	CPU_EN | (0324 * 16 + c_timming_b),	// 172
+	0325 * 16 + c_timming_a,	CPU_EN | (0325 * 16 + c_timming_b),	// 173
+	0326 * 16 + c_timming_a,	CPU_EN | (0326 * 16 + c_timming_b),	// 174
+	0327 * 16 + c_timming_a,	CPU_EN | (0327 * 16 + c_timming_b),	// 175
+
+	/* NAME */					CPU_EN | (0330 * 16 + c_timming_b),	// 176
+	/* PATTERN */				CPU_EN | (0331 * 16 + c_timming_b),	// 177
+	0332 * 16 + c_timming_a,	CPU_EN | (0332 * 16 + c_timming_b),	// 178
+	/* COLOR */					CPU_EN | (0333 * 16 + c_timming_b),	// 179
+	0334 * 16 + c_timming_a,	CPU_EN | (0334 * 16 + c_timming_b),	// 180
+	0335 * 16 + c_timming_a,	CPU_EN | (0335 * 16 + c_timming_b),	// 181
+	0336 * 16 + c_timming_a,	CPU_EN | (0336 * 16 + c_timming_b),	// 182
+	0337 * 16 + c_timming_a,	CPU_EN | (0337 * 16 + c_timming_b),	// 183
+
+	/* NAME */					CPU_EN | (0340 * 16 + c_timming_b),	// 184
+	/* PATTERN */				CPU_EN | (0341 * 16 + c_timming_b),	// 185
+	0342 * 16 + c_timming_a,	CPU_EN | (0342 * 16 + c_timming_b),	// 186
+	/* COLOR */					CPU_EN | (0343 * 16 + c_timming_b),	// 187
+	0344 * 16 + c_timming_a,	CPU_EN | (0344 * 16 + c_timming_b),	// 188
+	0345 * 16 + c_timming_a,	CPU_EN | (0345 * 16 + c_timming_b),	// 189
+	0346 * 16 + c_timming_a,	CPU_EN | (0346 * 16 + c_timming_b),	// 190
+	0347 * 16 + c_timming_a,	CPU_EN | (0347 * 16 + c_timming_b),	// 191
+
+	/* NAME */					CPU_EN | (0350 * 16 + c_timming_b),	// 192
+	/* PATTERN */				CPU_EN | (0351 * 16 + c_timming_b),	// 193
+	0352 * 16 + c_timming_a,	CPU_EN | (0352 * 16 + c_timming_b),	// 194
+	/* COLOR */					CPU_EN | (0353 * 16 + c_timming_b),	// 195
+	0354 * 16 + c_timming_a,	CPU_EN | (0354 * 16 + c_timming_b),	// 196
+	0355 * 16 + c_timming_a,	CPU_EN | (0355 * 16 + c_timming_b),	// 197
+	0356 * 16 + c_timming_a,	CPU_EN | (0356 * 16 + c_timming_b),	// 198
+	0357 * 16 + c_timming_a,	CPU_EN | (0357 * 16 + c_timming_b),	// 199
+
+	/* NAME */					CPU_EN | (0360 * 16 + c_timming_b),	// 200
+	/* PATTERN */				CPU_EN | (0361 * 16 + c_timming_b),	// 201
+	0362 * 16 + c_timming_a,	CPU_EN | (0362 * 16 + c_timming_b),	// 202
+	/* COLOR */					CPU_EN | (0363 * 16 + c_timming_b),	// 203
+	0364 * 16 + c_timming_a,	CPU_EN | (0364 * 16 + c_timming_b),	// 204
+	0365 * 16 + c_timming_a,	CPU_EN | (0365 * 16 + c_timming_b),	// 205
+	0366 * 16 + c_timming_a,	CPU_EN | (0366 * 16 + c_timming_b),	// 206
+	0367 * 16 + c_timming_a,	CPU_EN | (0367 * 16 + c_timming_b),	// 207
+
+	/* NAME */					CPU_EN | (0370 * 16 + c_timming_b),	// 208
+	/* PATTERN */				CPU_EN | (0371 * 16 + c_timming_b),	// 209
+	0372 * 16 + c_timming_a,	CPU_EN | (0372 * 16 + c_timming_b),	// 210
+	/* COLOR */					CPU_EN | (0373 * 16 + c_timming_b),	// 211
+	0374 * 16 + c_timming_a,	CPU_EN | (0374 * 16 + c_timming_b),	// 212
+	0375 * 16 + c_timming_a,	CPU_EN | (0375 * 16 + c_timming_b),	// 213
+	0376 * 16 + c_timming_a,	CPU_EN | (0376 * 16 + c_timming_b),	// 214
+	0377 * 16 + c_timming_a,	CPU_EN | (0377 * 16 + c_timming_b),	// 215
+
+	/* NAME */					CPU_EN | (0400 * 16 + c_timming_b),	// 216
+	/* PATTERN */				CPU_EN | (0401 * 16 + c_timming_b),	// 217
+	0402 * 16 + c_timming_a,	CPU_EN | (0402 * 16 + c_timming_b),	// 218
+	/* COLOR */					CPU_EN | (0403 * 16 + c_timming_b),	// 219
+	0404 * 16 + c_timming_a,	CPU_EN | (0404 * 16 + c_timming_b),	// 220
+	0405 * 16 + c_timming_a,	CPU_EN | (0405 * 16 + c_timming_b),	// 221
+	0406 * 16 + c_timming_a,	CPU_EN | (0406 * 16 + c_timming_b),	// 222
+	0407 * 16 + c_timming_a,	CPU_EN | (0407 * 16 + c_timming_b),	// 223
+
+	/* NAME */					CPU_EN | (0410 * 16 + c_timming_b),	// 224
+	/* PATTERN */				CPU_EN | (0411 * 16 + c_timming_b),	// 225
+	0412 * 16 + c_timming_a,	CPU_EN | (0412 * 16 + c_timming_b),	// 226
+	/* COLOR */					CPU_EN | (0413 * 16 + c_timming_b),	// 227
+	0414 * 16 + c_timming_a,	CPU_EN | (0414 * 16 + c_timming_b),	// 228
+	0415 * 16 + c_timming_a,	CPU_EN | (0415 * 16 + c_timming_b),	// 229
+	0416 * 16 + c_timming_a,	CPU_EN | (0416 * 16 + c_timming_b),	// 230
+	0417 * 16 + c_timming_a,	CPU_EN | (0417 * 16 + c_timming_b),	// 231
+
+	/* NAME */					CPU_EN | (0420 * 16 + c_timming_b),	// 232
+	/* PATTERN */				CPU_EN | (0421 * 16 + c_timming_b),	// 233
+	0422 * 16 + c_timming_a,	CPU_EN | (0422 * 16 + c_timming_b),	// 234
+	/* COLOR */					CPU_EN | (0423 * 16 + c_timming_b),	// 235
+	0424 * 16 + c_timming_a,	CPU_EN | (0424 * 16 + c_timming_b),	// 236
+	0425 * 16 + c_timming_a,	CPU_EN | (0425 * 16 + c_timming_b),	// 237
+	0426 * 16 + c_timming_a,	CPU_EN | (0426 * 16 + c_timming_b),	// 238
+	0427 * 16 + c_timming_a,	CPU_EN | (0427 * 16 + c_timming_b),	// 239
+
+	/* NAME */					CPU_EN | (0430 * 16 + c_timming_b),	// 240
+	/* PATTERN */				CPU_EN | (0431 * 16 + c_timming_b),	// 241
+	0432 * 16 + c_timming_a,	CPU_EN | (0432 * 16 + c_timming_b),	// 242
+	/* COLOR */					CPU_EN | (0433 * 16 + c_timming_b),	// 243
+	0434 * 16 + c_timming_a,	CPU_EN | (0434 * 16 + c_timming_b),	// 244
+	0435 * 16 + c_timming_a,	CPU_EN | (0435 * 16 + c_timming_b),	// 245
+	0436 * 16 + c_timming_a,	CPU_EN | (0436 * 16 + c_timming_b),	// 246
+	0437 * 16 + c_timming_a,	CPU_EN | (0437 * 16 + c_timming_b),	// 247
+
+	0440 * 16 + c_timming_a,	CPU_EN | (0440 * 16 + c_timming_b),	// 248
+	0441 * 16 + c_timming_a,	CPU_EN | (0441 * 16 + c_timming_b),	// 249
+	0442 * 16 + c_timming_a,	CPU_EN | (0442 * 16 + c_timming_b),	// 250
+	0443 * 16 + c_timming_a,	CPU_EN | (0443 * 16 + c_timming_b),	// 251
+	0444 * 16 + c_timming_a,	CPU_EN | (0444 * 16 + c_timming_b),	// 252
+	0445 * 16 + c_timming_a,	CPU_EN | (0445 * 16 + c_timming_b),	// 253
+	0446 * 16 + c_timming_a,	CPU_EN | (0446 * 16 + c_timming_b),	// 254
+	0447 * 16 + c_timming_a,	CPU_EN | (0447 * 16 + c_timming_b),	// 255
+
+	0450 * 16 + c_timming_a,	CPU_EN | (0450 * 16 + c_timming_b),	// 256
+	0451 * 16 + c_timming_a,	CPU_EN | (0451 * 16 + c_timming_b),	// 257
+	0452 * 16 + c_timming_a,	CPU_EN | (0452 * 16 + c_timming_b),	// 258
+	0453 * 16 + c_timming_a,	CPU_EN | (0453 * 16 + c_timming_b),	// 259
+	0454 * 16 + c_timming_a,	CPU_EN | (0454 * 16 + c_timming_b),	// 260
+	0455 * 16 + c_timming_a,	CPU_EN | (0455 * 16 + c_timming_b),	// 261
+	0456 * 16 + c_timming_a,	CPU_EN | (0456 * 16 + c_timming_b),	// 262
+	0457 * 16 + c_timming_a,	CPU_EN | (0457 * 16 + c_timming_b),	// 263
+
+	0460 * 16 + c_timming_a,	CPU_EN | (0460 * 16 + c_timming_b),	// 264
+	0461 * 16 + c_timming_a,	CPU_EN | (0461 * 16 + c_timming_b),	// 265
+	0462 * 16 + c_timming_a,	CPU_EN | (0462 * 16 + c_timming_b),	// 266
+	0463 * 16 + c_timming_a,	CPU_EN | (0463 * 16 + c_timming_b),	// 267
+	0464 * 16 + c_timming_a,	CPU_EN | (0464 * 16 + c_timming_b),	// 268
+	0465 * 16 + c_timming_a,	CPU_EN | (0465 * 16 + c_timming_b),	// 269
+	0466 * 16 + c_timming_a,	CPU_EN | (0466 * 16 + c_timming_b),	// 270
+	0467 * 16 + c_timming_a,	CPU_EN | (0467 * 16 + c_timming_b),	// 271
+
+	0470 * 16 + c_timming_a,	CPU_EN | (0470 * 16 + c_timming_b),	// 272
+	0471 * 16 + c_timming_a,	CPU_EN | (0471 * 16 + c_timming_b),	// 273
+	0472 * 16 + c_timming_a,	CPU_EN | (0472 * 16 + c_timming_b),	// 274
+	0473 * 16 + c_timming_a,	CPU_EN | (0473 * 16 + c_timming_b),	// 275
+	0474 * 16 + c_timming_a,	CPU_EN | (0474 * 16 + c_timming_b),	// 276
+	0475 * 16 + c_timming_a,	CPU_EN | (0475 * 16 + c_timming_b),	// 277
+	0476 * 16 + c_timming_a,	CPU_EN | (0476 * 16 + c_timming_b),	// 278
+	0477 * 16 + c_timming_a,	CPU_EN | (0477 * 16 + c_timming_b),	// 279
+
+	0500 * 16 + c_timming_a,	CPU_EN | (0500 * 16 + c_timming_b),	// 280
+	0501 * 16 + c_timming_a,	CPU_EN | (0501 * 16 + c_timming_b),	// 281
+	0502 * 16 + c_timming_a,	CPU_EN | (0502 * 16 + c_timming_b),	// 282
+	0503 * 16 + c_timming_a,	CPU_EN | (0503 * 16 + c_timming_b),	// 283
+	0504 * 16 + c_timming_a,	CPU_EN | (0504 * 16 + c_timming_b),	// 284
+	0505 * 16 + c_timming_a,	CPU_EN | (0505 * 16 + c_timming_b),	// 285
+	0506 * 16 + c_timming_a,	CPU_EN | (0506 * 16 + c_timming_b),	// 286
+	0507 * 16 + c_timming_a,	CPU_EN | (0507 * 16 + c_timming_b),	// 287
+
+	0510 * 16 + c_timming_a,	CPU_EN | (0510 * 16 + c_timming_b),	// 288
+	0511 * 16 + c_timming_a,	CPU_EN | (0511 * 16 + c_timming_b),	// 289
+	0512 * 16 + c_timming_a,	CPU_EN | (0512 * 16 + c_timming_b),	// 290
+	0513 * 16 + c_timming_a,	CPU_EN | (0513 * 16 + c_timming_b),	// 291
+	0514 * 16 + c_timming_a,	CPU_EN | (0514 * 16 + c_timming_b),	// 292
+	0515 * 16 + c_timming_a,	CPU_EN | (0515 * 16 + c_timming_b),	// 293
+	0516 * 16 + c_timming_a,	CPU_EN | (0516 * 16 + c_timming_b),	// 294
+	0517 * 16 + c_timming_a,	CPU_EN | (0517 * 16 + c_timming_b),	// 295
+
+	0520 * 16 + c_timming_a,	CPU_EN | (0520 * 16 + c_timming_b),	// 296
+	0521 * 16 + c_timming_a,	CPU_EN | (0521 * 16 + c_timming_b),	// 297
+	0522 * 16 + c_timming_a,	CPU_EN | (0522 * 16 + c_timming_b),	// 298
+	0523 * 16 + c_timming_a,	CPU_EN | (0523 * 16 + c_timming_b),	// 299
+	0524 * 16 + c_timming_a,	CPU_EN | (0524 * 16 + c_timming_b),	// 300
+	0525 * 16 + c_timming_a,	CPU_EN | (0525 * 16 + c_timming_b),	// 301
+
+	0526 * 16 + c_timming_a,	CPU_EN | (0526 * 16 + c_timming_b),	// -40
+	0527 * 16 + c_timming_a,	CPU_EN | (0527 * 16 + c_timming_b),	// -39
+	0530 * 16 + c_timming_a,	CPU_EN | (0530 * 16 + c_timming_b),	// -38
+	0531 * 16 + c_timming_a,	CPU_EN | (0531 * 16 + c_timming_b),	// -37
+	0532 * 16 + c_timming_a,	CPU_EN | (0532 * 16 + c_timming_b),	// -36
+	0533 * 16 + c_timming_a,	CPU_EN | (0533 * 16 + c_timming_b),	// -35
+	0534 * 16 + c_timming_a,	CPU_EN | (0534 * 16 + c_timming_b),	// -34
+	0535 * 16 + c_timming_a,	CPU_EN | (0535 * 16 + c_timming_b),	// -33
+
+	/* REFRESH */													// -32
+	0537 * 16 + c_timming_a,	CPU_EN | (0537 * 16 + c_timming_b)	// -31
 };
 
 // screen 1,2,4
-static constexpr std::array<int16_t, 212> slotsV9968PcgSpritesOn = {
-//	name  pat   spr   clr   cmd   cmd   cmd   cmd
-	   0,   16,         48,   64,   80,   96,  112,	// -40
-	       144,        176,  192,  208,  224,  240,	// -32 128=REFRESH
-	 256,  272,        304,  320,  336,  352,  368,	// -24
-	 384,  400,        432,  448,  464,  480,  496,	// -16
-	                         576,  592,  608,  624,	// -8
-	                         704,  720,  736,  752,	// 0
-	                         832,  848,  864,  880,
-	                         960,  976,  992, 1008,
-	                        1088, 1104, 1120, 1136,
-	                        1216, 1232, 1248, 1264,
-	                        1344, 1360, 1376, 1392,
-	                        1472, 1488, 1504, 1520,
-	                        1600, 1616, 1632, 1648,
-	                        1728, 1744, 1760, 1776,
-	                        1856, 1872, 1888, 1904,
-	                        1984, 2000, 2016, 2032,
-	                        2112, 2128, 2144, 2160,
-	                        2240, 2256, 2272, 2288,
-	                        2368, 2384, 2400, 2416,
-	                        2496, 2512, 2528, 2544,
-	                        2624, 2640, 2656, 2672,
-	                        2752, 2768, 2784, 2800,
-	                        2880, 2896, 2912, 2928,
-	                        3008, 3024, 3040, 3056,
-	                        3136, 3152, 3168, 3184,
-	                        3264, 3280, 3296, 3312,
-	                        3392, 3408, 3424, 3440,
-	                        3520, 3536, 3552, 3568,
-	                        3648, 3664, 3680, 3696,
-	                        3776, 3792, 3808, 3824,
-	                        3904, 3920, 3936, 3952,
-	                        4032, 4048, 4064, 4080,
-	                        4160, 4176, 4192, 4208,
-	                        4288, 4304, 4320, 4336,
-	                        4416, 4432, 4448, 4464,
-	                        4544, 4560, 4576, 4592,
-	4608, 4624,       4656, 4672, 4688, 4704, 4720,
-	4736, 4752,       4784, 4800, 4816, 4832, 4848,	// 256
-	4864, 4880,       4912, 4928, 4944, 4960, 4976,	// 264
-	4992, 5008,       5040, 5056, 5072, 5088, 5104,
-	5120, 5136,       5168, 5184, 5200, 5216, 5232,
-	5248, 5264,       5296, 5312, 5328, 5344, 5360,
-	5376, 5392,       5424, 5440, 5456,
-	5472, 5488,       5520, 5536, 5552, 5568, 5584,	// -40
-	      5616										// -32 5600=REFRESH
+static constexpr std::array<int16_t, 700-96-44> slotsV9968PcgSpritesOn = {
+	0000 * 16 + c_timming_a,	CPU_EN | (0000 * 16 + c_timming_b),	// -40
+	0001 * 16 + c_timming_a,	CPU_EN | (0001 * 16 + c_timming_b),	// -39
+	/* SPRITE */				CPU_EN | (0002 * 16 + c_timming_b),	// -38
+	0003 * 16 + c_timming_a,	CPU_EN | (0003 * 16 + c_timming_b),	// -37
+	0004 * 16 + c_timming_a,	CPU_EN | (0004 * 16 + c_timming_b),	// -36
+	0005 * 16 + c_timming_a,	CPU_EN | (0005 * 16 + c_timming_b),	// -35
+	0006 * 16 + c_timming_a,	CPU_EN | (0006 * 16 + c_timming_b),	// -34
+	0007 * 16 + c_timming_a,	CPU_EN | (0007 * 16 + c_timming_b),	// -33
+
+	/* REFRESH */													// -32
+	0011 * 16 + c_timming_a,	CPU_EN | (0011 * 16 + c_timming_b),	// -31
+	/* SPRITE */				CPU_EN | (0012 * 16 + c_timming_b),	// -30
+	0013 * 16 + c_timming_a,	CPU_EN | (0013 * 16 + c_timming_b),	// -29
+	0014 * 16 + c_timming_a,	CPU_EN | (0014 * 16 + c_timming_b),	// -28
+	0015 * 16 + c_timming_a,	CPU_EN | (0015 * 16 + c_timming_b),	// -27
+	0016 * 16 + c_timming_a,	CPU_EN | (0016 * 16 + c_timming_b),	// -26
+	0017 * 16 + c_timming_a,	CPU_EN | (0017 * 16 + c_timming_b),	// -25
+
+	0020 * 16 + c_timming_a,	CPU_EN | (0020 * 16 + c_timming_b),	// -24
+	0021 * 16 + c_timming_a,	CPU_EN | (0021 * 16 + c_timming_b),	// -23
+	/* SPRITE */				CPU_EN | (0022 * 16 + c_timming_b),	// -22
+	0023 * 16 + c_timming_a,	CPU_EN | (0023 * 16 + c_timming_b),	// -21
+	0024 * 16 + c_timming_a,	CPU_EN | (0024 * 16 + c_timming_b),	// -20
+	0025 * 16 + c_timming_a,	CPU_EN | (0025 * 16 + c_timming_b),	// -19
+	0026 * 16 + c_timming_a,	CPU_EN | (0026 * 16 + c_timming_b),	// -18
+	0027 * 16 + c_timming_a,	CPU_EN | (0027 * 16 + c_timming_b),	// -17
+
+	0030 * 16 + c_timming_a,	CPU_EN | (0030 * 16 + c_timming_b),	// -16
+	0031 * 16 + c_timming_a,	CPU_EN | (0031 * 16 + c_timming_b),	// -15
+	/* SPRITE */				CPU_EN | (0032 * 16 + c_timming_b),	// -14
+	0033 * 16 + c_timming_a,	CPU_EN | (0033 * 16 + c_timming_b),	// -13
+	0034 * 16 + c_timming_a,	CPU_EN | (0034 * 16 + c_timming_b),	// -12
+	0035 * 16 + c_timming_a,	CPU_EN | (0035 * 16 + c_timming_b),	// -11
+	0036 * 16 + c_timming_a,	CPU_EN | (0036 * 16 + c_timming_b),	// -10
+	0037 * 16 + c_timming_a,	CPU_EN | (0037 * 16 + c_timming_b),	// -9
+
+	/* NAME */					CPU_EN | (0040 * 16 + c_timming_b),	// -8
+	/* PATTERN */				CPU_EN | (0041 * 16 + c_timming_b),	// -7
+	/* SPRITE */				CPU_EN | (0042 * 16 + c_timming_b),	// -6
+	/* COLOR */					CPU_EN | (0043 * 16 + c_timming_b),	// -5
+	0044 * 16 + c_timming_a,	CPU_EN | (0044 * 16 + c_timming_b),	// -4
+	0045 * 16 + c_timming_a,	CPU_EN | (0045 * 16 + c_timming_b),	// -3
+	0046 * 16 + c_timming_a,	CPU_EN | (0046 * 16 + c_timming_b),	// -2
+	0047 * 16 + c_timming_a,	CPU_EN | (0047 * 16 + c_timming_b),	// -1
+
+	/* NAME */					CPU_EN | (0050 * 16 + c_timming_b),	// 0
+	/* PATTERN */				CPU_EN | (0051 * 16 + c_timming_b),	// 1
+	/* SPRITE */				CPU_EN | (0052 * 16 + c_timming_b),	// 2
+	/* COLOR */					CPU_EN | (0053 * 16 + c_timming_b),	// 3
+	0054 * 16 + c_timming_a,	CPU_EN | (0054 * 16 + c_timming_b),	// 4
+	0055 * 16 + c_timming_a,	CPU_EN | (0055 * 16 + c_timming_b),	// 5
+	0056 * 16 + c_timming_a,	CPU_EN | (0056 * 16 + c_timming_b),	// 6
+	0057 * 16 + c_timming_a,	CPU_EN | (0057 * 16 + c_timming_b),	// 7
+
+	/* NAME */					CPU_EN | (0060 * 16 + c_timming_b),	// 8
+	/* PATTERN */				CPU_EN | (0061 * 16 + c_timming_b),	// 9
+	/* SPRITE */				CPU_EN | (0062 * 16 + c_timming_b),	// 10
+	/* COLOR */					CPU_EN | (0063 * 16 + c_timming_b),	// 11
+	0064 * 16 + c_timming_a,	CPU_EN | (0064 * 16 + c_timming_b),	// 12
+	0065 * 16 + c_timming_a,	CPU_EN | (0065 * 16 + c_timming_b),	// 13
+	0066 * 16 + c_timming_a,	CPU_EN | (0066 * 16 + c_timming_b),	// 14
+	0067 * 16 + c_timming_a,	CPU_EN | (0067 * 16 + c_timming_b),	// 15
+
+	/* NAME */					CPU_EN | (0070 * 16 + c_timming_b),	// 16
+	/* PATTERN */				CPU_EN | (0071 * 16 + c_timming_b),	// 17
+	/* SPRITE */				CPU_EN | (0072 * 16 + c_timming_b),	// 18
+	/* COLOR */					CPU_EN | (0073 * 16 + c_timming_b),	// 19
+	0074 * 16 + c_timming_a,	CPU_EN | (0074 * 16 + c_timming_b),	// 20
+	0075 * 16 + c_timming_a,	CPU_EN | (0075 * 16 + c_timming_b),	// 21
+	0076 * 16 + c_timming_a,	CPU_EN | (0076 * 16 + c_timming_b),	// 22
+	0077 * 16 + c_timming_a,	CPU_EN | (0077 * 16 + c_timming_b),	// 23
+
+	/* NAME */					CPU_EN | (0100 * 16 + c_timming_b),	// 24
+	/* PATTERN */				CPU_EN | (0101 * 16 + c_timming_b),	// 25
+	/* SPRITE */				CPU_EN | (0102 * 16 + c_timming_b),	// 26
+	/* COLOR */					CPU_EN | (0103 * 16 + c_timming_b),	// 27
+	0104 * 16 + c_timming_a,	CPU_EN | (0104 * 16 + c_timming_b),	// 28
+	0105 * 16 + c_timming_a,	CPU_EN | (0105 * 16 + c_timming_b),	// 29
+	0106 * 16 + c_timming_a,	CPU_EN | (0106 * 16 + c_timming_b),	// 30
+	0107 * 16 + c_timming_a,	CPU_EN | (0107 * 16 + c_timming_b),	// 31
+
+	/* NAME */					CPU_EN | (0110 * 16 + c_timming_b),	// 32
+	/* PATTERN */				CPU_EN | (0111 * 16 + c_timming_b),	// 33
+	/* SPRITE */				CPU_EN | (0112 * 16 + c_timming_b),	// 34
+	/* COLOR */					CPU_EN | (0113 * 16 + c_timming_b),	// 35
+	0114 * 16 + c_timming_a,	CPU_EN | (0114 * 16 + c_timming_b),	// 36
+	0115 * 16 + c_timming_a,	CPU_EN | (0115 * 16 + c_timming_b),	// 37
+	0116 * 16 + c_timming_a,	CPU_EN | (0116 * 16 + c_timming_b),	// 38
+	0117 * 16 + c_timming_a,	CPU_EN | (0117 * 16 + c_timming_b),	// 39
+
+	/* NAME */					CPU_EN | (0120 * 16 + c_timming_b),	// 40
+	/* PATTERN */				CPU_EN | (0121 * 16 + c_timming_b),	// 41
+	/* SPRITE */				CPU_EN | (0122 * 16 + c_timming_b),	// 42
+	/* COLOR */					CPU_EN | (0123 * 16 + c_timming_b),	// 43
+	0124 * 16 + c_timming_a,	CPU_EN | (0124 * 16 + c_timming_b),	// 44
+	0125 * 16 + c_timming_a,	CPU_EN | (0125 * 16 + c_timming_b),	// 45
+	0126 * 16 + c_timming_a,	CPU_EN | (0126 * 16 + c_timming_b),	// 46
+	0127 * 16 + c_timming_a,	CPU_EN | (0127 * 16 + c_timming_b),	// 47
+
+	/* NAME */					CPU_EN | (0130 * 16 + c_timming_b),	// 48
+	/* PATTERN */				CPU_EN | (0131 * 16 + c_timming_b),	// 49
+	/* SPRITE */				CPU_EN | (0132 * 16 + c_timming_b),	// 50
+	/* COLOR */					CPU_EN | (0133 * 16 + c_timming_b),	// 51
+	0134 * 16 + c_timming_a,	CPU_EN | (0134 * 16 + c_timming_b),	// 52
+	0135 * 16 + c_timming_a,	CPU_EN | (0135 * 16 + c_timming_b),	// 53
+	0136 * 16 + c_timming_a,	CPU_EN | (0136 * 16 + c_timming_b),	// 54
+	0137 * 16 + c_timming_a,	CPU_EN | (0137 * 16 + c_timming_b),	// 55
+
+	/* NAME */					CPU_EN | (0140 * 16 + c_timming_b),	// 56
+	/* PATTERN */				CPU_EN | (0141 * 16 + c_timming_b),	// 57
+	/* SPRITE */				CPU_EN | (0142 * 16 + c_timming_b),	// 58
+	/* COLOR */					CPU_EN | (0143 * 16 + c_timming_b),	// 59
+	0144 * 16 + c_timming_a,	CPU_EN | (0144 * 16 + c_timming_b),	// 60
+	0145 * 16 + c_timming_a,	CPU_EN | (0145 * 16 + c_timming_b),	// 61
+	0146 * 16 + c_timming_a,	CPU_EN | (0146 * 16 + c_timming_b),	// 62
+	0147 * 16 + c_timming_a,	CPU_EN | (0147 * 16 + c_timming_b),	// 63
+
+	/* NAME */					CPU_EN | (0150 * 16 + c_timming_b),	// 64
+	/* PATTERN */				CPU_EN | (0151 * 16 + c_timming_b),	// 65
+	/* SPRITE */				CPU_EN | (0152 * 16 + c_timming_b),	// 66
+	/* COLOR */					CPU_EN | (0153 * 16 + c_timming_b),	// 67
+	0154 * 16 + c_timming_a,	CPU_EN | (0154 * 16 + c_timming_b),	// 68
+	0155 * 16 + c_timming_a,	CPU_EN | (0155 * 16 + c_timming_b),	// 69
+	0156 * 16 + c_timming_a,	CPU_EN | (0156 * 16 + c_timming_b),	// 70
+	0157 * 16 + c_timming_a,	CPU_EN | (0157 * 16 + c_timming_b),	// 71
+
+	/* NAME */					CPU_EN | (0160 * 16 + c_timming_b),	// 72
+	/* PATTERN */				CPU_EN | (0161 * 16 + c_timming_b),	// 73
+	/* SPRITE */				CPU_EN | (0162 * 16 + c_timming_b),	// 74
+	/* COLOR */					CPU_EN | (0163 * 16 + c_timming_b),	// 75
+	0164 * 16 + c_timming_a,	CPU_EN | (0164 * 16 + c_timming_b),	// 76
+	0165 * 16 + c_timming_a,	CPU_EN | (0165 * 16 + c_timming_b),	// 77
+	0166 * 16 + c_timming_a,	CPU_EN | (0166 * 16 + c_timming_b),	// 78
+	0167 * 16 + c_timming_a,	CPU_EN | (0167 * 16 + c_timming_b),	// 79
+
+	/* PATTERN */				CPU_EN | (0170 * 16 + c_timming_b),	// 80
+	/* PATTERN */				CPU_EN | (0171 * 16 + c_timming_b),	// 81
+	/* SPRITE */				CPU_EN | (0172 * 16 + c_timming_b),	// 82
+	/* COLOR */					CPU_EN | (0173 * 16 + c_timming_b),	// 83
+	0174 * 16 + c_timming_a,	CPU_EN | (0174 * 16 + c_timming_b),	// 84
+	0175 * 16 + c_timming_a,	CPU_EN | (0175 * 16 + c_timming_b),	// 85
+	0176 * 16 + c_timming_a,	CPU_EN | (0176 * 16 + c_timming_b),	// 86
+	0177 * 16 + c_timming_a,	CPU_EN | (0177 * 16 + c_timming_b),	// 87
+
+	/* NAME */					CPU_EN | (0200 * 16 + c_timming_b),	// 88
+	/* PATTERN */				CPU_EN | (0201 * 16 + c_timming_b),	// 89
+	/* SPRITE */				CPU_EN | (0202 * 16 + c_timming_b),	// 90
+	/* COLOR */					CPU_EN | (0203 * 16 + c_timming_b),	// 91
+	0204 * 16 + c_timming_a,	CPU_EN | (0204 * 16 + c_timming_b),	// 92
+	0205 * 16 + c_timming_a,	CPU_EN | (0205 * 16 + c_timming_b),	// 93
+	0206 * 16 + c_timming_a,	CPU_EN | (0206 * 16 + c_timming_b),	// 94
+	0207 * 16 + c_timming_a,	CPU_EN | (0207 * 16 + c_timming_b),	// 95
+
+	/* NAME */					CPU_EN | (0210 * 16 + c_timming_b),	// 96
+	/* PATTERN */				CPU_EN | (0211 * 16 + c_timming_b),	// 97
+	/* SPRITE */				CPU_EN | (0212 * 16 + c_timming_b),	// 98
+	/* COLOR */					CPU_EN | (0213 * 16 + c_timming_b),	// 99
+	0214 * 16 + c_timming_a,	CPU_EN | (0214 * 16 + c_timming_b),	// 100
+	0215 * 16 + c_timming_a,	CPU_EN | (0215 * 16 + c_timming_b),	// 101
+	0216 * 16 + c_timming_a,	CPU_EN | (0216 * 16 + c_timming_b),	// 102
+	0217 * 16 + c_timming_a,	CPU_EN | (0217 * 16 + c_timming_b),	// 103
+
+	/* NAME */					CPU_EN | (0220 * 16 + c_timming_b),	// 104
+	/* PATTERN */				CPU_EN | (0221 * 16 + c_timming_b),	// 105
+	/* SPRITE */				CPU_EN | (0222 * 16 + c_timming_b),	// 106
+	/* COLOR */					CPU_EN | (0223 * 16 + c_timming_b),	// 107
+	0224 * 16 + c_timming_a,	CPU_EN | (0224 * 16 + c_timming_b),	// 108
+	0225 * 16 + c_timming_a,	CPU_EN | (0225 * 16 + c_timming_b),	// 109
+	0226 * 16 + c_timming_a,	CPU_EN | (0226 * 16 + c_timming_b),	// 110
+	0227 * 16 + c_timming_a,	CPU_EN | (0227 * 16 + c_timming_b),	// 111
+
+	/* NAME */					CPU_EN | (0230 * 16 + c_timming_b),	// 112
+	/* PATTERN */				CPU_EN | (0231 * 16 + c_timming_b),	// 113
+	/* SPRITE */				CPU_EN | (0232 * 16 + c_timming_b),	// 114
+	/* COLOR */					CPU_EN | (0233 * 16 + c_timming_b),	// 115
+	0234 * 16 + c_timming_a,	CPU_EN | (0234 * 16 + c_timming_b),	// 116
+	0235 * 16 + c_timming_a,	CPU_EN | (0235 * 16 + c_timming_b),	// 117
+	0236 * 16 + c_timming_a,	CPU_EN | (0236 * 16 + c_timming_b),	// 118
+	0237 * 16 + c_timming_a,	CPU_EN | (0237 * 16 + c_timming_b),	// 119
+
+	/* NAME */					CPU_EN | (0240 * 16 + c_timming_b),	// 120
+	/* PATTERN */				CPU_EN | (0241 * 16 + c_timming_b),	// 121
+	/* SPRITE */				CPU_EN | (0242 * 16 + c_timming_b),	// 122
+	/* COLOR */					CPU_EN | (0243 * 16 + c_timming_b),	// 123
+	0244 * 16 + c_timming_a,	CPU_EN | (0244 * 16 + c_timming_b),	// 124
+	0245 * 16 + c_timming_a,	CPU_EN | (0245 * 16 + c_timming_b),	// 125
+	0246 * 16 + c_timming_a,	CPU_EN | (0246 * 16 + c_timming_b),	// 126
+	0247 * 16 + c_timming_a,	CPU_EN | (0247 * 16 + c_timming_b),	// 127
+
+	/* NAME */					CPU_EN | (0250 * 16 + c_timming_b),	// 128
+	/* PATTERN */				CPU_EN | (0251 * 16 + c_timming_b),	// 129
+	/* SPRITE */				CPU_EN | (0252 * 16 + c_timming_b),	// 130
+	/* COLOR */					CPU_EN | (0253 * 16 + c_timming_b),	// 131
+	0254 * 16 + c_timming_a,	CPU_EN | (0254 * 16 + c_timming_b),	// 132
+	0255 * 16 + c_timming_a,	CPU_EN | (0255 * 16 + c_timming_b),	// 133
+	0256 * 16 + c_timming_a,	CPU_EN | (0256 * 16 + c_timming_b),	// 134
+	0257 * 16 + c_timming_a,	CPU_EN | (0257 * 16 + c_timming_b),	// 135
+
+	/* NAME */					CPU_EN | (0260 * 16 + c_timming_b),	// 136
+	/* PATTERN */				CPU_EN | (0261 * 16 + c_timming_b),	// 137
+	/* SPRITE */				CPU_EN | (0262 * 16 + c_timming_b),	// 138
+	/* COLOR */					CPU_EN | (0263 * 16 + c_timming_b),	// 139
+	0264 * 16 + c_timming_a,	CPU_EN | (0264 * 16 + c_timming_b),	// 140
+	0265 * 16 + c_timming_a,	CPU_EN | (0265 * 16 + c_timming_b),	// 141
+	0266 * 16 + c_timming_a,	CPU_EN | (0266 * 16 + c_timming_b),	// 142
+	0267 * 16 + c_timming_a,	CPU_EN | (0267 * 16 + c_timming_b),	// 143
+
+	/* NAME */					CPU_EN | (0270 * 16 + c_timming_b),	// 144
+	/* PATTERN */				CPU_EN | (0271 * 16 + c_timming_b),	// 145
+	/* SPRITE */				CPU_EN | (0272 * 16 + c_timming_b),	// 146
+	/* COLOR */					CPU_EN | (0273 * 16 + c_timming_b),	// 147
+	0274 * 16 + c_timming_a,	CPU_EN | (0274 * 16 + c_timming_b),	// 148
+	0275 * 16 + c_timming_a,	CPU_EN | (0275 * 16 + c_timming_b),	// 149
+	0276 * 16 + c_timming_a,	CPU_EN | (0276 * 16 + c_timming_b),	// 150
+	0277 * 16 + c_timming_a,	CPU_EN | (0277 * 16 + c_timming_b),	// 151
+
+	/* NAME */					CPU_EN | (0300 * 16 + c_timming_b),	// 152
+	/* PATTERN */				CPU_EN | (0301 * 16 + c_timming_b),	// 153
+	/* SPRITE */				CPU_EN | (0302 * 16 + c_timming_b),	// 154
+	/* COLOR */					CPU_EN | (0303 * 16 + c_timming_b),	// 155
+	0304 * 16 + c_timming_a,	CPU_EN | (0304 * 16 + c_timming_b),	// 156
+	0305 * 16 + c_timming_a,	CPU_EN | (0305 * 16 + c_timming_b),	// 157
+	0306 * 16 + c_timming_a,	CPU_EN | (0306 * 16 + c_timming_b),	// 158
+	0307 * 16 + c_timming_a,	CPU_EN | (0307 * 16 + c_timming_b),	// 159
+
+	/* NAME */					CPU_EN | (0310 * 16 + c_timming_b),	// 160
+	/* PATTERN */				CPU_EN | (0311 * 16 + c_timming_b),	// 161
+	/* SPRITE */				CPU_EN | (0312 * 16 + c_timming_b),	// 162
+	/* COLOR */					CPU_EN | (0313 * 16 + c_timming_b),	// 163
+	0314 * 16 + c_timming_a,	CPU_EN | (0314 * 16 + c_timming_b),	// 164
+	0315 * 16 + c_timming_a,	CPU_EN | (0315 * 16 + c_timming_b),	// 165
+	0316 * 16 + c_timming_a,	CPU_EN | (0316 * 16 + c_timming_b),	// 166
+	0317 * 16 + c_timming_a,	CPU_EN | (0317 * 16 + c_timming_b),	// 167
+
+	/* NAME */					CPU_EN | (0320 * 16 + c_timming_b),	// 168
+	/* PATTERN */				CPU_EN | (0321 * 16 + c_timming_b),	// 169
+	/* SPRITE */				CPU_EN | (0322 * 16 + c_timming_b),	// 170
+	/* COLOR */					CPU_EN | (0323 * 16 + c_timming_b),	// 171
+	0324 * 16 + c_timming_a,	CPU_EN | (0324 * 16 + c_timming_b),	// 172
+	0325 * 16 + c_timming_a,	CPU_EN | (0325 * 16 + c_timming_b),	// 173
+	0326 * 16 + c_timming_a,	CPU_EN | (0326 * 16 + c_timming_b),	// 174
+	0327 * 16 + c_timming_a,	CPU_EN | (0327 * 16 + c_timming_b),	// 175
+
+	/* NAME */					CPU_EN | (0330 * 16 + c_timming_b),	// 176
+	/* PATTERN */				CPU_EN | (0331 * 16 + c_timming_b),	// 177
+	/* SPRITE */				CPU_EN | (0332 * 16 + c_timming_b),	// 178
+	/* COLOR */					CPU_EN | (0333 * 16 + c_timming_b),	// 179
+	0334 * 16 + c_timming_a,	CPU_EN | (0334 * 16 + c_timming_b),	// 180
+	0335 * 16 + c_timming_a,	CPU_EN | (0335 * 16 + c_timming_b),	// 181
+	0336 * 16 + c_timming_a,	CPU_EN | (0336 * 16 + c_timming_b),	// 182
+	0337 * 16 + c_timming_a,	CPU_EN | (0337 * 16 + c_timming_b),	// 183
+
+	/* NAME */					CPU_EN | (0340 * 16 + c_timming_b),	// 184
+	/* PATTERN */				CPU_EN | (0341 * 16 + c_timming_b),	// 185
+	/* SPRITE */				CPU_EN | (0342 * 16 + c_timming_b),	// 186
+	/* COLOR */					CPU_EN | (0343 * 16 + c_timming_b),	// 187
+	0344 * 16 + c_timming_a,	CPU_EN | (0344 * 16 + c_timming_b),	// 188
+	0345 * 16 + c_timming_a,	CPU_EN | (0345 * 16 + c_timming_b),	// 189
+	0346 * 16 + c_timming_a,	CPU_EN | (0346 * 16 + c_timming_b),	// 190
+	0347 * 16 + c_timming_a,	CPU_EN | (0347 * 16 + c_timming_b),	// 191
+
+	/* NAME */					CPU_EN | (0350 * 16 + c_timming_b),	// 192
+	/* PATTERN */				CPU_EN | (0351 * 16 + c_timming_b),	// 193
+	/* SPRITE */				CPU_EN | (0352 * 16 + c_timming_b),	// 194
+	/* COLOR */					CPU_EN | (0353 * 16 + c_timming_b),	// 195
+	0354 * 16 + c_timming_a,	CPU_EN | (0354 * 16 + c_timming_b),	// 196
+	0355 * 16 + c_timming_a,	CPU_EN | (0355 * 16 + c_timming_b),	// 197
+	0356 * 16 + c_timming_a,	CPU_EN | (0356 * 16 + c_timming_b),	// 198
+	0357 * 16 + c_timming_a,	CPU_EN | (0357 * 16 + c_timming_b),	// 199
+
+	/* NAME */					CPU_EN | (0360 * 16 + c_timming_b),	// 200
+	/* PATTERN */				CPU_EN | (0361 * 16 + c_timming_b),	// 201
+	/* SPRITE */				CPU_EN | (0362 * 16 + c_timming_b),	// 202
+	/* COLOR */					CPU_EN | (0363 * 16 + c_timming_b),	// 203
+	0364 * 16 + c_timming_a,	CPU_EN | (0364 * 16 + c_timming_b),	// 204
+	0365 * 16 + c_timming_a,	CPU_EN | (0365 * 16 + c_timming_b),	// 205
+	0366 * 16 + c_timming_a,	CPU_EN | (0366 * 16 + c_timming_b),	// 206
+	0367 * 16 + c_timming_a,	CPU_EN | (0367 * 16 + c_timming_b),	// 207
+
+	/* NAME */					CPU_EN | (0370 * 16 + c_timming_b),	// 208
+	/* PATTERN */				CPU_EN | (0371 * 16 + c_timming_b),	// 209
+	/* SPRITE */				CPU_EN | (0372 * 16 + c_timming_b),	// 210
+	/* COLOR */					CPU_EN | (0373 * 16 + c_timming_b),	// 211
+	0374 * 16 + c_timming_a,	CPU_EN | (0374 * 16 + c_timming_b),	// 212
+	0375 * 16 + c_timming_a,	CPU_EN | (0375 * 16 + c_timming_b),	// 213
+	0376 * 16 + c_timming_a,	CPU_EN | (0376 * 16 + c_timming_b),	// 214
+	0377 * 16 + c_timming_a,	CPU_EN | (0377 * 16 + c_timming_b),	// 215
+
+	/* NAME */					CPU_EN | (0400 * 16 + c_timming_b),	// 216
+	/* PATTERN */				CPU_EN | (0401 * 16 + c_timming_b),	// 217
+	/* SPRITE */				CPU_EN | (0402 * 16 + c_timming_b),	// 218
+	/* COLOR */					CPU_EN | (0403 * 16 + c_timming_b),	// 219
+	0404 * 16 + c_timming_a,	CPU_EN | (0404 * 16 + c_timming_b),	// 220
+	0405 * 16 + c_timming_a,	CPU_EN | (0405 * 16 + c_timming_b),	// 221
+	0406 * 16 + c_timming_a,	CPU_EN | (0406 * 16 + c_timming_b),	// 222
+	0407 * 16 + c_timming_a,	CPU_EN | (0407 * 16 + c_timming_b),	// 223
+
+	/* NAME */					CPU_EN | (0410 * 16 + c_timming_b),	// 224
+	/* PATTERN */				CPU_EN | (0411 * 16 + c_timming_b),	// 225
+	/* SPRITE */				CPU_EN | (0412 * 16 + c_timming_b),	// 226
+	/* COLOR */					CPU_EN | (0413 * 16 + c_timming_b),	// 227
+	0414 * 16 + c_timming_a,	CPU_EN | (0414 * 16 + c_timming_b),	// 228
+	0415 * 16 + c_timming_a,	CPU_EN | (0415 * 16 + c_timming_b),	// 229
+	0416 * 16 + c_timming_a,	CPU_EN | (0416 * 16 + c_timming_b),	// 230
+	0417 * 16 + c_timming_a,	CPU_EN | (0417 * 16 + c_timming_b),	// 231
+
+	/* NAME */					CPU_EN | (0420 * 16 + c_timming_b),	// 232
+	/* PATTERN */				CPU_EN | (0421 * 16 + c_timming_b),	// 233
+	/* SPRITE */				CPU_EN | (0422 * 16 + c_timming_b),	// 234
+	/* COLOR */					CPU_EN | (0423 * 16 + c_timming_b),	// 235
+	0424 * 16 + c_timming_a,	CPU_EN | (0424 * 16 + c_timming_b),	// 236
+	0425 * 16 + c_timming_a,	CPU_EN | (0425 * 16 + c_timming_b),	// 237
+	0426 * 16 + c_timming_a,	CPU_EN | (0426 * 16 + c_timming_b),	// 238
+	0427 * 16 + c_timming_a,	CPU_EN | (0427 * 16 + c_timming_b),	// 239
+
+	/* NAME */					CPU_EN | (0430 * 16 + c_timming_b),	// 240
+	/* PATTERN */				CPU_EN | (0431 * 16 + c_timming_b),	// 241
+	/* SPRITE */				CPU_EN | (0432 * 16 + c_timming_b),	// 242
+	/* COLOR */					CPU_EN | (0433 * 16 + c_timming_b),	// 243
+	0434 * 16 + c_timming_a,	CPU_EN | (0434 * 16 + c_timming_b),	// 244
+	0435 * 16 + c_timming_a,	CPU_EN | (0435 * 16 + c_timming_b),	// 245
+	0436 * 16 + c_timming_a,	CPU_EN | (0436 * 16 + c_timming_b),	// 246
+	0437 * 16 + c_timming_a,	CPU_EN | (0437 * 16 + c_timming_b),	// 247
+
+	0440 * 16 + c_timming_a,	CPU_EN | (0440 * 16 + c_timming_b),	// 248
+	0441 * 16 + c_timming_a,	CPU_EN | (0441 * 16 + c_timming_b),	// 249
+	/* SPRITE */				CPU_EN | (0442 * 16 + c_timming_b),	// 250
+	0443 * 16 + c_timming_a,	CPU_EN | (0443 * 16 + c_timming_b),	// 251
+	0444 * 16 + c_timming_a,	CPU_EN | (0444 * 16 + c_timming_b),	// 252
+	0445 * 16 + c_timming_a,	CPU_EN | (0445 * 16 + c_timming_b),	// 253
+	0446 * 16 + c_timming_a,	CPU_EN | (0446 * 16 + c_timming_b),	// 254
+	0447 * 16 + c_timming_a,	CPU_EN | (0447 * 16 + c_timming_b),	// 255
+
+	0450 * 16 + c_timming_a,	CPU_EN | (0450 * 16 + c_timming_b),	// 256
+	0451 * 16 + c_timming_a,	CPU_EN | (0451 * 16 + c_timming_b),	// 257
+	/* SPRITE */				CPU_EN | (0452 * 16 + c_timming_b),	// 258
+	0453 * 16 + c_timming_a,	CPU_EN | (0453 * 16 + c_timming_b),	// 259
+	0454 * 16 + c_timming_a,	CPU_EN | (0454 * 16 + c_timming_b),	// 260
+	0455 * 16 + c_timming_a,	CPU_EN | (0455 * 16 + c_timming_b),	// 261
+	0456 * 16 + c_timming_a,	CPU_EN | (0456 * 16 + c_timming_b),	// 262
+	0457 * 16 + c_timming_a,	CPU_EN | (0457 * 16 + c_timming_b),	// 263
+
+	0460 * 16 + c_timming_a,	CPU_EN | (0460 * 16 + c_timming_b),	// 264
+	0461 * 16 + c_timming_a,	CPU_EN | (0461 * 16 + c_timming_b),	// 265
+	/* SPRITE */				CPU_EN | (0462 * 16 + c_timming_b),	// 266
+	0463 * 16 + c_timming_a,	CPU_EN | (0463 * 16 + c_timming_b),	// 267
+	0464 * 16 + c_timming_a,	CPU_EN | (0464 * 16 + c_timming_b),	// 268
+	0465 * 16 + c_timming_a,	CPU_EN | (0465 * 16 + c_timming_b),	// 269
+	0466 * 16 + c_timming_a,	CPU_EN | (0466 * 16 + c_timming_b),	// 270
+	0467 * 16 + c_timming_a,	CPU_EN | (0467 * 16 + c_timming_b),	// 271
+
+	0470 * 16 + c_timming_a,	CPU_EN | (0470 * 16 + c_timming_b),	// 272
+	0471 * 16 + c_timming_a,	CPU_EN | (0471 * 16 + c_timming_b),	// 273
+	/* SPRITE */				CPU_EN | (0472 * 16 + c_timming_b),	// 274
+	0473 * 16 + c_timming_a,	CPU_EN | (0473 * 16 + c_timming_b),	// 275
+	0474 * 16 + c_timming_a,	CPU_EN | (0474 * 16 + c_timming_b),	// 276
+	0475 * 16 + c_timming_a,	CPU_EN | (0475 * 16 + c_timming_b),	// 277
+	0476 * 16 + c_timming_a,	CPU_EN | (0476 * 16 + c_timming_b),	// 278
+	0477 * 16 + c_timming_a,	CPU_EN | (0477 * 16 + c_timming_b),	// 279
+
+	0500 * 16 + c_timming_a,	CPU_EN | (0500 * 16 + c_timming_b),	// 280
+	0501 * 16 + c_timming_a,	CPU_EN | (0501 * 16 + c_timming_b),	// 281
+	/* SPRITE */				CPU_EN | (0502 * 16 + c_timming_b),	// 282
+	0503 * 16 + c_timming_a,	CPU_EN | (0503 * 16 + c_timming_b),	// 283
+	0504 * 16 + c_timming_a,	CPU_EN | (0504 * 16 + c_timming_b),	// 284
+	0505 * 16 + c_timming_a,	CPU_EN | (0505 * 16 + c_timming_b),	// 285
+	0506 * 16 + c_timming_a,	CPU_EN | (0506 * 16 + c_timming_b),	// 286
+	0507 * 16 + c_timming_a,	CPU_EN | (0507 * 16 + c_timming_b),	// 287
+
+	0510 * 16 + c_timming_a,	CPU_EN | (0510 * 16 + c_timming_b),	// 288
+	0511 * 16 + c_timming_a,	CPU_EN | (0511 * 16 + c_timming_b),	// 289
+	/* SPRITE */				CPU_EN | (0512 * 16 + c_timming_b),	// 290
+	0513 * 16 + c_timming_a,	CPU_EN | (0513 * 16 + c_timming_b),	// 291
+	0514 * 16 + c_timming_a,	CPU_EN | (0514 * 16 + c_timming_b),	// 292
+	0515 * 16 + c_timming_a,	CPU_EN | (0515 * 16 + c_timming_b),	// 293
+	0516 * 16 + c_timming_a,	CPU_EN | (0516 * 16 + c_timming_b),	// 294
+	0517 * 16 + c_timming_a,	CPU_EN | (0517 * 16 + c_timming_b),	// 295
+
+	0520 * 16 + c_timming_a,	CPU_EN | (0520 * 16 + c_timming_b),	// 296
+	0521 * 16 + c_timming_a,	CPU_EN | (0521 * 16 + c_timming_b),	// 297
+	/* SPRITE */				CPU_EN | (0522 * 16 + c_timming_b),	// 298
+	0523 * 16 + c_timming_a,	CPU_EN | (0523 * 16 + c_timming_b),	// 299
+	0524 * 16 + c_timming_a,	CPU_EN | (0524 * 16 + c_timming_b),	// 300
+	0525 * 16 + c_timming_a,	CPU_EN | (0525 * 16 + c_timming_b),	// 301
+
+	0526 * 16 + c_timming_a,	CPU_EN | (0526 * 16 + c_timming_b),	// -40
+	0527 * 16 + c_timming_a,	CPU_EN | (0527 * 16 + c_timming_b),	// -39
+	/* SPRITE */				CPU_EN | (0530 * 16 + c_timming_b),	// -38
+	0531 * 16 + c_timming_a,	CPU_EN | (0531 * 16 + c_timming_b),	// -37
+	0532 * 16 + c_timming_a,	CPU_EN | (0532 * 16 + c_timming_b),	// -36
+	0533 * 16 + c_timming_a,	CPU_EN | (0533 * 16 + c_timming_b),	// -35
+	0534 * 16 + c_timming_a,	CPU_EN | (0534 * 16 + c_timming_b),	// -34
+	0535 * 16 + c_timming_a,	CPU_EN | (0535 * 16 + c_timming_b),	// -33
+
+	/* REFRESH */													// -32
+	0537 * 16 + c_timming_a,	CPU_EN | (0537 * 16 + c_timming_b)	// -31
 };
 
 // Helper functions to transform the above tables into a format that is easier
@@ -638,7 +3793,7 @@ protected:
 
 struct CycleTable : AccessTable
 {
-	constexpr CycleTable(const bool msx1, const bool v9968, std::span<const int16_t> slots)
+	constexpr CycleTable(const bool msx1, const bool v9968, const bool cpu, std::span<const int16_t> slots)
 	{
 		// !!! Keep this in sync with the 'Delta' enum !!!
 		constexpr std::array<int, NUM_DELTAS> delta = {
@@ -652,10 +3807,18 @@ struct CycleTable : AccessTable
 		for (auto step_raw : delta) {
 			const int step = step_raw * mul;
 			int p = 0;
-			while (slots[p] * mul < step) ++p;
+			if (cpu) {
+				while ((slots[p] & SLOT_MASK) * mul < step || (0 == (slots[p] & CPU_EN))) ++p;
+			} else {
+				while ((slots[p] & SLOT_MASK) * mul < step) ++p;
+			}
 			for (auto i : xrange(TICKS)) {
-				if ((slots[p] * mul - i) < step /*&& p < slots.size()-1*/) ++p;
-				const int16_t slot_val = slots[p] * mul;
+				if (cpu) {
+					while (((slots[p] & SLOT_MASK) * mul - i) < step || (0 == (slots[p] & CPU_EN))) ++p;
+				} else {
+					while (((slots[p] & SLOT_MASK) * mul - i) < step) ++p;
+				}
+				const int16_t slot_val = (slots[p] & SLOT_MASK) * mul;
 				assert((slot_val - i) >= step);
 				unsigned t = slot_val - i;
 				if (msx1) {
@@ -674,45 +3837,63 @@ struct ZeroTable : AccessTable
 };
 
 #ifdef NDEBUG
-static constexpr CycleTable tabSpritesOn     (false, false, slotsSpritesOn);
-static constexpr CycleTable tabSpritesOff    (false, false, slotsSpritesOff);
-static constexpr CycleTable tabChar          (false, false, slotsChar);
-static constexpr CycleTable tabText          (false, false, slotsText);
-static constexpr CycleTable tabScreenOff     (false, false, slotsScreenOff);
-static constexpr CycleTable tabMsx1Gfx12     (true,  false, slotsMsx1Gfx12);
-static constexpr CycleTable tabMsx1Gfx3      (true,  false, slotsMsx1Gfx3);
-static constexpr CycleTable tabMsx1Text      (true,  false, slotsMsx1Text);
-static constexpr CycleTable tabMsx1ScreenOff (true,  false, slotsMsx1ScreenOff);
+static constexpr CycleTable tabSpritesOn     (false, false, false, slotsSpritesOn);
+static constexpr CycleTable tabSpritesOff    (false, false, false, slotsSpritesOff);
+static constexpr CycleTable tabChar          (false, false, false, slotsChar);
+static constexpr CycleTable tabText          (false, false, false, slotsText);
+static constexpr CycleTable tabScreenOff     (false, false, false, slotsScreenOff);
+static constexpr CycleTable tabMsx1Gfx12     (true,  false, false, slotsMsx1Gfx12);
+static constexpr CycleTable tabMsx1Gfx3      (true,  false, false, slotsMsx1Gfx3);
+static constexpr CycleTable tabMsx1Text      (true,  false, false, slotsMsx1Text);
+static constexpr CycleTable tabMsx1ScreenOff (true,  false, false, slotsMsx1ScreenOff);
 static constexpr ZeroTable  tabBroken;
-static constexpr CycleTable tabV9968ScreenOff			(false,  true, slotsV9968ScreenOff);
-static constexpr CycleTable tabV9968TextLow				(false,  true, slotsV9968TextLow);
-static constexpr CycleTable tabV9968TextHigh			(false,  true, slotsV9968TextHigh);
-static constexpr CycleTable tabV9968BmpLowSpritesOff	(false,  true, slotsV9968BitmapLowSpritesOff);
-static constexpr CycleTable tabV9968BmpLowSpritesOn		(false,  true, slotsV9968BitmapLowSpritesOn);
-static constexpr CycleTable tabV9968BmpHighSpritesOff	(false,  true, slotsV9968BitmapHighSpritesOff);
-static constexpr CycleTable tabV9968BmpHighSpritesOn	(false,  true, slotsV9968BitmapHighSpritesOn);
-static constexpr CycleTable tabV9968PcgSpritesOff		(false,  true, slotsV9968PcgSpritesOff);
-static constexpr CycleTable tabV9968PcgSpritesOn		(false,  true, slotsV9968PcgSpritesOn);
+static constexpr CycleTable tabV9968ScreenOff			(false,  true, false, slotsV9968ScreenOff);
+static constexpr CycleTable tabV9968TextLow				(false,  true, false, slotsV9968TextLow);
+static constexpr CycleTable tabV9968TextHigh			(false,  true, false, slotsV9968TextHigh);
+static constexpr CycleTable tabV9968BmpLowSpritesOff	(false,  true, false, slotsV9968BitmapLowSpritesOff);
+static constexpr CycleTable tabV9968BmpLowSpritesOn		(false,  true, false, slotsV9968BitmapLowSpritesOn);
+static constexpr CycleTable tabV9968BmpHighSpritesOff	(false,  true, false, slotsV9968BitmapHighSpritesOff);
+static constexpr CycleTable tabV9968BmpHighSpritesOn	(false,  true, false, slotsV9968BitmapHighSpritesOn);
+static constexpr CycleTable tabV9968PcgSpritesOff		(false,  true, false, slotsV9968PcgSpritesOff);
+static constexpr CycleTable tabV9968PcgSpritesOn		(false,  true, false, slotsV9968PcgSpritesOn);
+static constexpr CycleTable tabV9968CpuScreenOff			(false,  true, true, slotsV9968ScreenOff);
+static constexpr CycleTable tabV9968CpuTextLow				(false,  true, true, slotsV9968TextLow);
+static constexpr CycleTable tabV9968CpuTextHigh				(false,  true, true, slotsV9968TextHigh);
+static constexpr CycleTable tabV9968CpuBmpLowSpritesOff		(false,  true, true, slotsV9968BitmapLowSpritesOff);
+static constexpr CycleTable tabV9968CpuBmpLowSpritesOn		(false,  true, true, slotsV9968BitmapLowSpritesOn);
+static constexpr CycleTable tabV9968CpuBmpHighSpritesOff	(false,  true, true, slotsV9968BitmapHighSpritesOff);
+static constexpr CycleTable tabV9968CpuBmpHighSpritesOn		(false,  true, true, slotsV9968BitmapHighSpritesOn);
+static constexpr CycleTable tabV9968CpuPcgSpritesOff		(false,  true, true, slotsV9968PcgSpritesOff);
+static constexpr CycleTable tabV9968CpuPcgSpritesOn			(false,  true, true, slotsV9968PcgSpritesOn);
 #else
-static  CycleTable tabSpritesOn     (false, false, slotsSpritesOn);
-static  CycleTable tabSpritesOff    (false, false, slotsSpritesOff);
-static  CycleTable tabChar          (false, false, slotsChar);
-static  CycleTable tabText          (false, false, slotsText);
-static  CycleTable tabScreenOff     (false, false, slotsScreenOff);
-static  CycleTable tabMsx1Gfx12     (true,  false, slotsMsx1Gfx12);
-static  CycleTable tabMsx1Gfx3      (true,  false, slotsMsx1Gfx3);
-static  CycleTable tabMsx1Text      (true,  false, slotsMsx1Text);
-static  CycleTable tabMsx1ScreenOff (true,  false, slotsMsx1ScreenOff);
+static  CycleTable tabSpritesOn     (false, false, false, slotsSpritesOn);
+static  CycleTable tabSpritesOff    (false, false, false, slotsSpritesOff);
+static  CycleTable tabChar          (false, false, false, slotsChar);
+static  CycleTable tabText          (false, false, false, slotsText);
+static  CycleTable tabScreenOff     (false, false, false, slotsScreenOff);
+static  CycleTable tabMsx1Gfx12     (true,  false, false, slotsMsx1Gfx12);
+static  CycleTable tabMsx1Gfx3      (true,  false, false, slotsMsx1Gfx3);
+static  CycleTable tabMsx1Text      (true,  false, false, slotsMsx1Text);
+static  CycleTable tabMsx1ScreenOff (true,  false, false, slotsMsx1ScreenOff);
 static  ZeroTable  tabBroken;
-static  CycleTable tabV9968ScreenOff			(false,  true, slotsV9968ScreenOff);
-static  CycleTable tabV9968TextLow				(false,  true, slotsV9968TextLow);
-static  CycleTable tabV9968TextHigh				(false,  true, slotsV9968TextHigh);
-static  CycleTable tabV9968BmpLowSpritesOff		(false,  true, slotsV9968BitmapLowSpritesOff);
-static  CycleTable tabV9968BmpLowSpritesOn		(false,  true, slotsV9968BitmapLowSpritesOn);
-static  CycleTable tabV9968BmpHighSpritesOff	(false,  true, slotsV9968BitmapHighSpritesOff);
-static  CycleTable tabV9968BmpHighSpritesOn		(false,  true, slotsV9968BitmapHighSpritesOn);
-static  CycleTable tabV9968PcgSpritesOff		(false,  true, slotsV9968PcgSpritesOff);
-static  CycleTable tabV9968PcgSpritesOn			(false,  true, slotsV9968PcgSpritesOn);
+static  CycleTable tabV9968ScreenOff			(false,  true, false, slotsV9968ScreenOff);
+static  CycleTable tabV9968TextLow				(false,  true, false, slotsV9968TextLow);
+static  CycleTable tabV9968TextHigh				(false,  true, false, slotsV9968TextHigh);
+static  CycleTable tabV9968BmpLowSpritesOff		(false,  true, false, slotsV9968BitmapLowSpritesOff);
+static  CycleTable tabV9968BmpLowSpritesOn		(false,  true, false, slotsV9968BitmapLowSpritesOn);
+static  CycleTable tabV9968BmpHighSpritesOff	(false,  true, false, slotsV9968BitmapHighSpritesOff);
+static  CycleTable tabV9968BmpHighSpritesOn		(false,  true, false, slotsV9968BitmapHighSpritesOn);
+static  CycleTable tabV9968PcgSpritesOff		(false,  true, false, slotsV9968PcgSpritesOff);
+static  CycleTable tabV9968PcgSpritesOn			(false,  true, false, slotsV9968PcgSpritesOn);
+static  CycleTable tabV9968CpuScreenOff			(false,  true, true, slotsV9968ScreenOff);
+static  CycleTable tabV9968CpuTextLow			(false,  true, true, slotsV9968TextLow);
+static  CycleTable tabV9968CpuTextHigh			(false,  true, true, slotsV9968TextHigh);
+static  CycleTable tabV9968CpuBmpLowSpritesOff	(false,  true, true, slotsV9968BitmapLowSpritesOff);
+static  CycleTable tabV9968CpuBmpLowSpritesOn	(false,  true, true, slotsV9968BitmapLowSpritesOn);
+static  CycleTable tabV9968CpuBmpHighSpritesOff	(false,  true, true, slotsV9968BitmapHighSpritesOff);
+static  CycleTable tabV9968CpuBmpHighSpritesOn	(false,  true, true, slotsV9968BitmapHighSpritesOn);
+static  CycleTable tabV9968CpuPcgSpritesOff		(false,  true, true, slotsV9968PcgSpritesOff);
+static  CycleTable tabV9968CpuPcgSpritesOn		(false,  true, true, slotsV9968PcgSpritesOn);
 #endif
 
 [[nodiscard]] static inline std::span<const tab_value, NUM_DELTAS * TICKS> getTab(const VDP& vdp)
@@ -763,6 +3944,54 @@ static  CycleTable tabV9968PcgSpritesOn			(false,  true, slotsV9968PcgSpritesOn)
 	}
 }
 
+[[nodiscard]] static inline std::span<const tab_value, NUM_DELTAS * TICKS> getCpuTab(const VDP& vdp)
+{
+	if (vdp.getBrokenCmdTiming()) return tabBroken;
+	bool enabled = vdp.isDisplayEnabled();
+	bool sprites = vdp.spritesEnabledRegister();
+	auto mode    = vdp.getDisplayMode();
+	bool bitmap  = mode.isBitmapMode();
+	bool text    = mode.isTextMode();
+	bool gfx3    = mode.getBase() == DisplayMode::GRAPHIC3;
+
+	if (vdp.useHS()) {
+		if (!enabled) return tabV9968ScreenOff;
+		switch (mode.getByte()) {
+			case DisplayMode::TEXT1:
+				return tabV9968CpuTextLow;
+			case DisplayMode::TEXT2:
+				return tabV9968CpuTextHigh;
+			case DisplayMode::GRAPHIC1:
+			case DisplayMode::GRAPHIC2:
+			case DisplayMode::GRAPHIC3:
+			case DisplayMode::MULTICOLOR:
+				return sprites ? tabV9968CpuPcgSpritesOn : tabV9968CpuPcgSpritesOff;
+			case DisplayMode::GRAPHIC6:
+			case DisplayMode::GRAPHIC7:
+				return sprites ? tabV9968CpuBmpHighSpritesOn : tabV9968CpuBmpHighSpritesOff;
+			default:
+				return sprites ? tabV9968CpuBmpLowSpritesOn : tabV9968CpuBmpLowSpritesOff;
+		}
+	} else if (vdp.isMSX1VDP()) {
+		if (!enabled) return tabMsx1ScreenOff;
+		return text ? tabMsx1Text
+		            : (gfx3 ? tabMsx1Gfx3
+		                    : tabMsx1Gfx12);
+		// TODO undocumented modes
+	} else {
+		if (bitmap) {
+			return !enabled ? tabScreenOff
+			      : sprites ? tabSpritesOn
+			                : tabSpritesOff;
+		} else {
+			// 'enabled' or 'sprites' doesn't matter in V99x8 non-bitmap mode
+			// See: https://github.com/openMSX/openMSX/issues/1754
+			return text ? tabText
+			            : tabChar;
+		}
+	}
+}
+
 EmuTime getAccessSlot(
 	EmuTime frame_, EmuTime time, Delta delta,
 	const VDP& vdp)
@@ -780,6 +4009,14 @@ EmuTime getAccessSlot(EmuTime frame_, EmuTime time, int delay, int wait, VDPCmdC
 	unsigned start_ticks = frame.getTicksTill_fast(time);
 	unsigned end_ticks = getAccessSlotTick(start_ticks, delay, wait, penalty, tab);
 	return time + VDP::VDPClock::duration(end_ticks - start_ticks);
+}
+
+EmuTime getCpuAccessSlot(EmuTime frame_, EmuTime time, const VDP& vdp)
+{
+	VDP::VDPClock frame(frame_);
+	unsigned ticks = frame.getTicksTill_fast(time) % TICKS;
+	auto tab = getCpuTab(vdp);
+	return time + VDP::VDPClock::duration(tab[ticks]);
 }
 
 unsigned getAccessSlotTick(unsigned ticks, int delay, int wait, VDPCmdCache::CachePenalty penalty, std::span<const tab_value, NUM_DELTAS * TICKS> tab)

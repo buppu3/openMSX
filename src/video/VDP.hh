@@ -802,6 +802,7 @@ public:
 	  * the future. */
 	[[nodiscard]] EmuTime getAccessSlot(EmuTime time, VDPAccessSlots::Delta delta) const;
 	[[nodiscard]] EmuTime getAccessSlot(EmuTime time, int delay, int wait, VDPCmdCache::CachePenalty penalty) const;
+	[[nodiscard]] EmuTime getCpuAccessSlot(EmuTime time) const;
 
 	/** Same as getAccessSlot(), but it can be _much_ faster for repeated
 	  * calls, e.g. in the implementation of VDP commands. However it does
