@@ -4,9 +4,9 @@
 
   <info>
     <manufacturer>Panasonic</manufacturer>
-    <code>FS-A1ST</code>
+    <code>FS-A1ST_V9968</code>
     <release_year>1990</release_year>
-    <description>The first released MSXturboR. With built in disk drive, sampler, Ren-sha turbo, MSX-MUSIC, MSX-DOS2 and software.</description>
+    <description>The first released MSXturboR. With built in disk drive, sampler, Ren-sha turbo, MSX-MUSIC, MSX-DOS2 and software. Replaced the VDP with a V9968.</description>
     <type>MSXturboR</type>
     <region>jp</region>
   </info>
