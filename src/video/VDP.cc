@@ -199,6 +199,7 @@ VDP::VDP(const DeviceConfig& config)
 		controlValueMasks[20] |= 0x08;
 	}
 	if (hasEPAL()) {
+		controlValueMasks[16] |= 0xFF;
 		controlValueMasks[20] |= 0x10;
 	}
 	if (hasECOM()) {
@@ -775,23 +776,21 @@ void VDP::writeIO(uint16_t port, uint8_t value, EmuTime time_)
 		break;
 	case 2: // Palette data write
 		if (isEPAL()) {
-			unsigned index = controlRegs[16];
-			uint16_t grb = getPalette(index);
-			switch (paletteDataPointer) {
+			switch (paletteDataPointer & 0x03) {
 				case 0:	// R
-					grb = (grb & ~(31 << 5)) | ((value & 31) << 5);
+					paletteLatchR = value & 31;
 					break;
 				case 1:	// G
-					grb = (grb & ~(31 << 10)) | ((value & 31) << 10);
+					paletteLatchG = value & 31;
 					break;
 				case 2:	// B
-					grb = (grb & ~(31 << 0)) | ((value & 31) << 0);
+					paletteLatchB = value & 31;
 					break;
 			}
 			if (++paletteDataPointer >= 3) {
 				paletteDataPointer = 0;
-				controlRegs[16] = (index + 1) & 0xFF;
-				setPalette(index, grb, time);
+				setPalette(controlRegs[16] & 0xFF, (paletteLatchG << 10) | (paletteLatchR << 5) | paletteLatchB, time);
+				controlRegs[16] = (controlRegs[16] + 1) & 0xFF;
 			}
 		} else {
 			if (paletteDataStored) {
@@ -1279,7 +1278,7 @@ void VDP::changeRegister(uint8_t reg, uint8_t val, EmuTime time)
 	case 16:
 		// Any half-finished palette loads are aborted.
 		paletteDataStored = false;
-		paletteDataPointer = false;
+		paletteDataPointer = 0;
 		break;
 	case 18:
 		if (change & 0x0F) {

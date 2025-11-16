@@ -1448,6 +1448,9 @@ private:
 	  */
 	bool paletteDataStored;
 	uint8_t paletteDataPointer;
+	uint8_t paletteLatchR;
+	uint8_t paletteLatchG;
+	uint8_t paletteLatchB;
 
 	/** VRAM is read as soon as VRAM pointer changes.
 	  * TODO: Is this actually what happens?
