@@ -1,3 +1,6 @@
+This port is for MSX2++ application development.
+It adds the features of the V9968, which is the VDP planned for inclusion in the MSX2++.
+
 ----------------------------------------------------------------------------
 openMSX - the MSX emulator that aims for perfection
 ----------------------------------------------------------------------------
