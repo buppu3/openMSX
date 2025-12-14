@@ -1,6 +1,59 @@
 This port is for MSX2++ application development.
 It adds the features of the V9968, which is the VDP planned for inclusion in the MSX2++.
 
+# Embedding the V9968 into the MSX console
+
+To enable the embedded V9968 features, modifications (or new entries) are required in share/machines/*.xml.
+Modify the <VDP id="VDP">～</VDP> section as follows:
+
+    <VDP id="VDP">
+      <version>V9968</version>
+      <vram>128</vram>
+      <io base="0x98" num="5" type="O"/> <!-- No mirroring of VDP ports -->
+      <io base="0x98" num="5" type="I"/>
+      <timing>0</timing> <!-- 0:V9968 compatible / 1:Normal Speed Mode uses V9958 timing. -->
+    </VDP>
+
+<vram> is ignored; 128 kilobytes of VRAM is always allocated.
+<timing> defines the behavior when the HS bit in R#20 is 0.
+- If 0 is specified, it behaves similarly to V9968 low-speed mode emulation.
+- If 1 is specified, it behaves the same as traditional V9958 emulation.
+
+# Use as an expansion cartridge
+
+Using share/extensions/HRA_V9968.xml as the cartridge's extension will cause it to function as an extended V9968 cartridge.
+It does not support multi-display, so you must select V9968 in the menu under “Settings - Video - Misc - Video source to display” to switch screens.
+The I/O port address used is 88h.
+
+----
+
+これは MSX2++ アプリケーション開発用のポートです。
+MSX2++ に搭載予定の V9968 機能を追加しています。
+
+# V9968 を本体に内蔵する構成で使用する場合
+
+V9968 の機能を有効にするために、share/machines/*.xml の修正(または追加)が必要です。
+<VDP id="VDP">～</VDP> を下記のように修正してください。
+
+    <VDP id="VDP">
+      <version>V9968</version>
+      <vram>128</vram>
+      <io base="0x98" num="5" type="O"/> <!-- No mirroring of VDP ports -->
+      <io base="0x98" num="5" type="I"/>
+      <timing>0</timing> <!-- 0:V9968 compatible / 1:Normal Speed Mode uses V9958 timing. -->
+    </VDP>
+
+<vram> は無視され、常に 128キロバイトの VRAM が確保されます。
+<timing> は R#20 の HS ビットが 0 の時の動作を定義します。
+- 0 を指定するとV9968の低速モードエミュレーションと同様の動作を行います。
+- 1 を指定すると従来の V9958 エミュレーションと同じ動作を行います。
+
+# V9968 拡張カートリッジとして使用する場合
+
+share/extensions/HRA_V9968.xml をカートリッジの extension として使用すると、拡張 V9968 カートリッジとして動作します。
+マルチディスプレイをサポートしませんので、メニューの "Settings - Video - Misc - Video source to display" で V9968 を選択して画面の切り替えが必要です。
+I/O ポートアドレスは 88h を使用します。
+
 ----------------------------------------------------------------------------
 openMSX - the MSX emulator that aims for perfection
 ----------------------------------------------------------------------------
