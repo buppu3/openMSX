@@ -14,7 +14,7 @@ Modify the <VDP id="VDP">～</VDP> section as follows:
       <timing>0</timing> <!-- 0:V9968 compatible / 1:Normal Speed Mode uses V9958 timing. -->
     </VDP>
 
-<vram> is ignored; 128 kilobytes of VRAM is always allocated.
+<vram> is ignored; 256 kilobytes of VRAM is always allocated.
 <timing> defines the behavior when the HS bit in R#20 is 0.
 - If 0 is specified, it behaves similarly to V9968 low-speed mode emulation.
 - If 1 is specified, it behaves the same as traditional V9958 emulation.
@@ -43,7 +43,7 @@ V9968 の機能を有効にするために、share/machines/*.xml の修正(ま�
       <timing>0</timing> <!-- 0:V9968 compatible / 1:Normal Speed Mode uses V9958 timing. -->
     </VDP>
 
-<vram> は無視され、常に 128キロバイトの VRAM が確保されます。
+<vram> は無視され、常に 256キロバイトの VRAM が確保されます。
 <timing> は R#20 の HS ビットが 0 の時の動作を定義します。
 - 0 を指定するとV9968の低速モードエミュレーションと同様の動作を行います。
 - 1 を指定すると従来の V9958 エミュレーションと同じ動作を行います。
