@@ -631,8 +631,12 @@ void ImGuiSpriteViewer::paint(MSXMotherBoard* motherBoard)
 						ImGui::SameLine();
 						im::Group([&]{
 							if (mode == 3) {
-								ImGui::StrCat("X: ", attTable[addr + 4],
-								              "  Y: ", attTable[addr + 0] | ((attTable[addr + 1] & 0x03) << 8));
+								int y = (int)attTable[addr + 0] | ((int)attTable[addr + 1] & 0x03) << 8;
+								if (y & 0x200) y |= ~0x1FF;
+								int x = (int)attTable[addr + 4] | ((int)attTable[addr + 5] & 0x03) << 8;
+								if (x & 0x200) x |= ~0x1FF;
+								ImGui::StrCat("X: ", x,
+								              "  Y: ", y);
 								ImGui::StrCat("PX: ", attTable[addr + 7] & 15,
 								              "  PY: ", (attTable[addr + 7] >> 4) & 15, " PTS:", (attTable[addr + 5] >> 4) & 7);
 								ImGui::StrCat("SZ: ", 16 << ((attTable[addr + 1] >> 6) & 3));
@@ -907,7 +911,7 @@ void ImGuiSpriteViewer::paint(MSXMotherBoard* motherBoard)
 							if (x >= 0 && x <= 255) {
 								int patX = 16 * i / spr.mgx;
 								uint8_t color = (pattern >> (60 - patX * 4)) & 0x0F;
-								if (color != 0 && lineBuf[x] == 0) {
+								if (color != 0) {
 									lineBuf[x] = palette[color_base | color];
 								}
 							}
@@ -922,10 +926,10 @@ void ImGuiSpriteViewer::paint(MSXMotherBoard* motherBoard)
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, lines, 0,
 			             GL_RGBA, GL_UNSIGNED_BYTE, screen.data());
 
-			std::array<SpriteBox, 2 * 32> clippedBoxes;
+			std::array<SpriteBox, 2 * 64> clippedBoxes;
 			int nrClippedBoxes = 0;
 			auto addClippedBox = [&](SpriteBox b) {
-				assert(nrClippedBoxes < 64);
+				assert(nrClippedBoxes < 2 * 64);
 				clippedBoxes[nrClippedBoxes] = b;
 				++nrClippedBoxes;
 			};

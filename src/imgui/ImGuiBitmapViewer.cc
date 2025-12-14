@@ -39,10 +39,10 @@ static_vector<Rect, 2> rectFromVdpCmd(
 	const auto [width, height, pixelsPerByte] = [&] {
 		switch (screenMode) {
 		using enum ImGuiBitmapViewer::ScrnMode;
-		case SCR5: return std::tuple{256, 1024, 2};
-		case SCR6: return std::tuple{512, 1024, 4};
-		case SCR7: return std::tuple{512,  512, 2};
-		default:   return std::tuple{256,  512, 1}; // screen 8, 11, 12  (and fallback for non-bitmap)
+		case SCR5: return std::tuple{256, 1024 * 2, 2};
+		case SCR6: return std::tuple{512, 1024 * 2, 4};
+		case SCR7: return std::tuple{512,  512 * 2, 2};
+		default:   return std::tuple{256,  512 * 2, 1}; // screen 8, 11, 12  (and fallback for non-bitmap)
 		}
 	}();
 
@@ -208,8 +208,9 @@ void ImGuiBitmapViewer::paint(MSXMotherBoard* motherBoard)
 		int vdpMode = parseMode(vdp->getDisplayMode());
 
 		int vdpPages = vdpMode <= SCR6 ? 4 : 2;
+		if (vdp->isEVR()) vdpPages *= 2;
 		int vdpPage = vdp->getDisplayPage();
-		if (vdpPage >= vdpPages) vdpPage &= 1;
+		if (vdpPage >= vdpPages) vdpPage = vdp->isEVR() ? (vdpPage % vdpPages) : (vdpPage & 1);
 
 		int vdpLines = (vdp->getNumberOfLines() == 192) ? 0 : 1;
 
@@ -277,10 +278,11 @@ void ImGuiBitmapViewer::paint(MSXMotherBoard* motherBoard)
 					im::Disabled(!manualPage, [&]{
 						// note: 'mode', not 'bitmapScrnMode'
 						int mode = manualMode ? bitmapScrnMode : vdpMode;
-						int numPages = mode <= SCR6 ? 4 : 2; // TODO extended VRAM
+						int numPages = mode <= SCR6 ? 4 : 2;
+						if (vdp->isEVR()) numPages *= 2;
 						if (bitmapPage >= numPages) bitmapPage = numPages - 1;
 						if (bitmapPage < 0) bitmapPage = numPages;
-						ImGui::Combo("##Display page", &bitmapPage, numPages == 2 ? "0\0001\000All\000" : "0\0001\0002\0003\000All\000");
+						ImGui::Combo("##Display page", &bitmapPage, numPages == 2 ? "0\0001\000All\000" : (numPages == 4 ? "0\0001\0002\0003\000All\000" : "0\0001\0002\0003\0004\0005\0006\0007\000All\000"));
 						if (bitmapPage == numPages) bitmapPage = -1;
 					});
 					im::Disabled(!manualLines || bitmapPage < 0, [&]{
@@ -309,6 +311,7 @@ void ImGuiBitmapViewer::paint(MSXMotherBoard* motherBoard)
 		           : 256;
 		if (page < 0) {
 			int numPages = mode <= SCR6 ? 4 : 2;
+			if (vdp->isEVR()) numPages *= 2;
 			height = 256 * numPages;
 			page = 0;
 		}
@@ -363,7 +366,7 @@ void ImGuiBitmapViewer::paint(MSXMotherBoard* motherBoard)
 		if (cmd == one_of(9, 10, 13)) { // lmmm, lmcm, hmmm
 			srcRect = rectFromVdpCmd(sx, sy, nx, ny, dix, diy, ScrnMode(mode), byteMode);
 		}
-		if (cmd == one_of(8, 9, 11, 12, 13, 15)) { // lmmv, lmmm, lmmc, hmmv, hmmm, hmmc
+		if (cmd == one_of(1, 2, 3, 8, 9, 11, 12, 13, 15)) { // lmmv, lmmm, lmmc, hmmv, hmmm, hmmc
 			dstRect = rectFromVdpCmd(dx, dy, nx, ny, dix, diy, ScrnMode(mode), byteMode);
 		}
 		if (cmd == 14) { // ymmm
@@ -458,8 +461,20 @@ void ImGuiBitmapViewer::paint(MSXMotherBoard* motherBoard)
 					ImGui::TextUnformatted(logOp);
 				};
 				switch (cmd) {
-				case 0: case 1: case 2: case 3:
+				case 0:// case 1: case 2: case 3:
 					ImGui::TextUnformatted("ABORT"sv);
+					break;
+				case 1:
+					printRect("LFMM ", dstRect);
+					printLogOp();
+					break;
+				case 2:
+					printRect("LFMC ", dstRect);
+					printLogOp();
+					break;
+				case 3:
+					printRect("LRMM ", dstRect);	// ToDo: src rect(P0,P1,P2,P3)
+					printLogOp();
 					break;
 				case 4:
 					ImGui::Text("POINT (%d,%d)", sx, sy);
@@ -519,7 +534,7 @@ void ImGuiBitmapViewer::paint(MSXMotherBoard* motherBoard)
 		auto palette = manager.palette->getPalette(vdp);
 		if (color0 < 16) palette[0] = palette[color0];
 
-		MemBuffer<uint32_t> pixels(512 * 256 * 4); // max size: screen 6/7, show all pages
+		MemBuffer<uint32_t> pixels(512 * 256 * 4 * 2); // max size: screen 6/7, show all pages
 		renderBitmap(vram.getData(), palette, vdp->isEPAL(), mode, height, page,
 				pixels.data());
 		if (!bitmapTex) {

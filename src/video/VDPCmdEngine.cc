@@ -2803,8 +2803,8 @@ void VDPCmdEngine::startLrmm(EmuTime time)
 	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_pixel<Mode>(DX, NX, ARG);
 	unsigned tmpNY = clipNY_1(DY, NY, ARG);
-	ASX_12P8 = SX_12P8 = (SX << 8);
-	ASY_12P8 = SY_12P8 = (ARG & XHR) ? (SY << 9) : (SY << 8);
+	ASX_12P8 = SX_12P8 = (SX | ((SX & 0x0800) ? ~0x07FF : 0x0000)) << 8;
+	ASY_12P8 = SY_12P8 = (SY | ((SY & 0x1000) ? ~0x0FFF : 0x0000)) << ((ARG & XHR) ? 9 : 8);
 	ADX = DX;
 	ANX = tmpNX;
 	nextAccessSlot(time);
@@ -2898,8 +2898,8 @@ void VDPCmdEngine::startLrmmHs(EmuTime time)
 	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_pixel<Mode>(DX, NX, ARG);
 	unsigned tmpNY = clipNY_1(DY, NY, ARG);
-	ASX_12P8 = SX_12P8 = (SX << 8);
-	ASY_12P8 = SY_12P8 = (ARG & XHR) ? (SY << 9) : (SY << 8);
+	ASX_12P8 = SX_12P8 = (SX | ((SX & 0x0800) ? ~0x07FF : 0x0000)) << 8;
+	ASY_12P8 = SY_12P8 = (SY | ((SY & 0x1000) ? ~0x0FFF : 0x0000)) << ((ARG & XHR) ? 9 : 8);
 	ADX = DX;
 	ANX = tmpNX;
 	bool srcExt  = getMXS(ARG, vdp.hasEVR());
@@ -3053,28 +3053,32 @@ void VDPCmdEngine::setCmdReg(uint8_t index, uint8_t value, EmuTime time)
 		ASA = (ASA & 0x3FF00) | value;
 		break;
 	case 0x01: // source X high
-		SX = (SX & 0x0FF) | ((value & 0x01) << 8);
+		SX = (SX & 0x0FF) | (value<< 8);
+		SX &= vdp.hasECOM() ? 0x0FFF : 0x01FF;
 		ASA = (ASA & 0x300FF) | (value << 8);
 		break;
 	case 0x02: // source Y low
-		SY = (SY & 0x300) | value;
+		SY = (SY & 0x700) | value;
 		ASA = (ASA & 0x0FFFF) | ((value & 0x03) << 16);
 		break;
 	case 0x03: // source Y high
-		SY = (SY & 0x0FF) | ((value & 0x03) << 8);
+		SY = (SY & 0x0FF) | (value << 8);
+		SY &= vdp.hasECOM() ? 0x1FFF : 0x03FF;
 		break;
 
 	case 0x04: // destination X low
 		DX = (DX & 0x100) | value;
 		break;
 	case 0x05: // destination X high
-		DX = (DX & 0x0FF) | ((value & 0x01) << 8);
+		DX = (DX & 0x0FF) | (value << 8);
+		DX &= vdp.isECOM() ? 0x01FF : 0x01FF;
 		break;
 	case 0x06: // destination Y low
-		DY = (DY & 0x300) | value;
+		DY = (DY & 0x700) | value;
 		break;
 	case 0x07: // destination Y high
-		DY = (DY & 0x0FF) | ((value & 0x03) << 8);
+		DY = (DY & 0x0FF) | (value << 8);
+		DY &= vdp.isEVR() ? 0x07FF : 0x03FF;
 		break;
 
 	// TODO is DX 9 or 10 bits, at least current implementation needs
@@ -3083,13 +3087,15 @@ void VDPCmdEngine::setCmdReg(uint8_t index, uint8_t value, EmuTime time)
 		NX = (NX & 0x300) | value;
 		break;
 	case 0x09: // number X high
-		NX = (NX & 0x0FF) | ((value & 0x03) << 8);
+		NX = (NX & 0x0FF) | (value << 8);
+		NY &= vdp.isECOM() ? 0x3FF : 0x1FF;
 		break;
 	case 0x0A: // number Y low
-		NY = (NY & 0x300) | value;
+		NY = (NY & 0x700) | value;
 		break;
 	case 0x0B: // number Y high
-		NY = (NY & 0x0FF) | ((value & 0x03) << 8);
+		NY = (NY & 0x0FF) | (value << 8);
+		NY &= vdp.isEVR() ? 0x7FF : 0x3FF;
 		break;
 
 	case 0x0C: // color

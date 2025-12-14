@@ -211,16 +211,16 @@ static constexpr auto registerDescriptionsV9968 = std::array{
 	RD{{" - ", " - ", " - ", " - ", " - ", " - ", " - ", " - "}, ""}, // R#31
 
 	RD{{"SX7", "SX6", "SX5", "SX4", "SX3", "SX2", "SX1", "SX0"}, "Source X low register"}, // R#32
-	RD{{" 0 ", " 0 ", " 0 ", " 0 ", " 0 ", " 0 ", " 0 ", "SX8"}, "Source X high register"}, // R#33
+	RD{{" 0 ", " 0 ", " 0 ", " 0 ","SX11","SX10", "SX9", "SX8"}, "Source X high register"}, // R#33
 	RD{{"SY7", "SY6", "SY5", "SY4", "SY3", "SY2", "SY1", "SY0"}, "Source Y low register"}, // R#34
-	RD{{" 0 ", " 0 ", " 0 ", " 0 ", " 0 ", "SY10","SY9", "SY8"}, "Source Y high register"}, // R#35
+	RD{{" 0 ", " 0 ", " 0 ","SY12","SY11","SY10","SY9", "SY8"}, "Source Y high register"}, // R#35
 	RD{{"DX7", "DX6", "DX5", "DX4", "DX3", "DX2", "DX1", "DX0"}, "Destination X low register"}, // R#36
 	RD{{" 0 ", " 0 ", " 0 ", " 0 ", " 0 ", " 0 ", " 0 ", "DX8"}, "Destination X high register"}, // R#37
 	RD{{"DY7", "DY6", "DY5", "DY4", "DY3", "DY2", "DY1", "DY0"}, "Destination Y low register"}, // R#38
 	RD{{" 0 ", " 0 ", " 0 ", " 0 ", " 0 ", "DY10","DY9", "DY8"}, "Destination Y high register"}, // R#39
 
 	RD{{"NX7", "NX6", "NX5", "NX4", "NX3", "NX2", "NX1", "NX0"}, "Number of dots X low register"}, // R#40
-	RD{{" 0 ", " 0 ", " 0 ", " 0 ", " 0 ", " 0 ", " 0 ", "NX8"}, "Number of dots X high register"}, // R#41
+	RD{{" 0 ", " 0 ", " 0 ", " 0 ", " 0 ","NX10", "NX9", "NX8"}, "Number of dots X high register"}, // R#41
 	RD{{"NY7", "NY6", "NY5", "NY4", "NY3", "NY2", "NY1", "NY0"}, "Number of dots Y low register"}, // R#42
 	RD{{" 0 ", " 0 ", " 0 ", " 0 ", " 0 ", "NY10","NY9", "NY8"}, "Number of dots Y high register"}, // R#43
 	RD{{"CH3", "CH2", "CH1", "CH0", "CL3", "CL2", "CL1", "CL0"}, "Color register"}, // R#44
@@ -511,27 +511,32 @@ static constexpr auto regFunctions = std::array{
 		return TemporaryString(OPS[v]);
 	}},
 	R{VER_ALL  ,{S{32, 0}}, "", [](uint32_t) { return TemporaryString("("); }},
-	R{VER_ALL  ,{S{32, 0xFF}, S{33, 0x01}}, "source X", [](uint32_t v) { return tmpStrCat(v); }},
+	R{VER_V9958,{S{32, 0xFF}, S{33, 0x01}}, "source X", [](uint32_t v) { return tmpStrCat(v); }},
+	R{VER_V9968,{S{32, 0xFF}, S{33, 0x0F}}, "source X", [](uint32_t v) { return tmpStrCat(v | ((v & 0x0800) ? ~0x07FF : 0x0000)); }},
 	R{VER_ALL  ,{S{32, 0}}, "", [](uint32_t) { return TemporaryString(","); }},
-	R{VER_ALL  ,{S{34, 0xFF}, S{35, 0x03}}, "source Y", [](uint32_t v) { return tmpStrCat(v); }},
+	R{VER_V9958,{S{34, 0xFF}, S{35, 0x03}}, "source Y", [](uint32_t v) { return tmpStrCat(v); }},
+	R{VER_V9968,{S{34, 0xFF}, S{35, 0x1F}}, "source Y", [](uint32_t v) { return tmpStrCat(v | ((v & 0x1000) ? ~0x0FFF : 0x0000)); }},
 	R{VER_ALL  ,{S{32, 0}}, "", [](uint32_t) { return TemporaryString(")->("); }},
 	R{VER_ALL  ,{S{36, 0xFF}, S{37, 0x01}}, "destination X", [](uint32_t v) { return tmpStrCat(v); }},
 	R{VER_ALL  ,{S{32, 0}}, "", [](uint32_t) { return TemporaryString(","); }},
-	R{VER_ALL  ,{S{38, 0xFF}, S{39, 0x03}}, "destination Y", [](uint32_t v) { return tmpStrCat(v); }},
+	R{VER_V9958,{S{38, 0xFF}, S{39, 0x03}}, "destination Y", [](uint32_t v) { return tmpStrCat(v); }},
+	R{VER_V9968,{S{38, 0xFF}, S{39, 0x07}}, "destination Y", [](uint32_t v) { return tmpStrCat(v); }},
 	R{VER_ALL  ,{S{32, 0}}, "", [](uint32_t) { return TemporaryString("),"); }},
 	R{VER_ALL  ,{S{44, 0xFF}}, "color", [](uint32_t v) { return tmpStrCat(v); }},
 	R{VER_ALL  ,{S{32, 0}}, "", [](uint32_t) { return TemporaryString(" ["); }},
 	R{VER_ALL  ,{S{45, 0x04}}, "direction X", [](uint32_t v) { return TemporaryString(v ? "-" : "+"); }},
-	R{VER_ALL  ,{S{40, 0xFF}, S{41, 0x01}}, "number of dots X", [](uint32_t v) { return tmpStrCat(v); }},
+	R{VER_V9958,{S{40, 0xFF}, S{41, 0x01}}, "number of dots X", [](uint32_t v) { return tmpStrCat(v); }},
+	R{VER_V9968,{S{40, 0xFF}, S{41, 0x07}}, "number of dots X", [](uint32_t v) { return tmpStrCat(v); }},
 	R{VER_ALL  ,{S{32, 0}}, "", [](uint32_t) { return TemporaryString(","); }},
 	R{VER_ALL  ,{S{45, 0x08}}, "direction Y", [](uint32_t v) { return TemporaryString(v ? "-" : "+"); }},
-	R{VER_ALL  ,{S{42, 0xFF}, S{43, 0x03}}, "number of dots Y", [](uint32_t v) { return tmpStrCat(v); }},
+	R{VER_V9958,{S{42, 0xFF}, S{43, 0x03}}, "number of dots Y", [](uint32_t v) { return tmpStrCat(v); }},
+	R{VER_V9968,{S{42, 0xFF}, S{43, 0x07}}, "number of dots Y", [](uint32_t v) { return tmpStrCat(v); }},
 	R{VER_ALL  ,{S{32, 0}}, "", [](uint32_t) { return TemporaryString("]\n"); }},
 
 	R{VER_V9968,{S{32, 0}}, "", [](uint32_t) { return TemporaryString("("); }},
-	R{VER_V9968,{S{47, 0xFF}, S{48, 0xFF}}, "Volume of movement X", [](uint32_t v) { return tmpStrCat((int16_t)v); }},
+	R{VER_V9968,{S{47, 0xFF}, S{48, 0xFF}}, "vector X", [](uint32_t v) { return tmpStrCat((int16_t)v); }},
 	R{VER_V9968,{S{32, 0}}, "", [](uint32_t) { return TemporaryString(","); }},
-	R{VER_V9968,{S{49, 0xFF}, S{50, 0xFF}}, "Volume of movement Y", [](uint32_t v) { return tmpStrCat((int16_t)v); }},
+	R{VER_V9968,{S{49, 0xFF}, S{50, 0xFF}}, "vector Y", [](uint32_t v) { return tmpStrCat((int16_t)v); }},
 	R{VER_V9968,{S{32, 0}}, "", [](uint32_t) { return TemporaryString(") ("); }},
 	R{VER_V9968,{S{51, 0xFF}, S{52, 0x01}}, "Window start X", [](uint32_t v) { return tmpStrCat(v); }},
 	R{VER_V9968,{S{32, 0}}, "", [](uint32_t) { return TemporaryString(","); }},

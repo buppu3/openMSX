@@ -515,6 +515,7 @@ inline void SpriteChecker::checkSprites3(int minLine, int maxLine)
 	int sprite = vdp.isSPS() ? (vdp.getSpsTopPlane() & 63) : 0;
 	for (int count = 0; count < 64; ++count, sprite = vdp.isSPS() ? ((sprite + SPS_NEXT_PLANE) & 63) : (sprite + 1)) {
 		int y = attributePtr[8 * sprite + 0] | ((attributePtr[8 * sprite + 1] & 0x03) << 8);
+		y |= (y & 0x200) ? ~0x1FF : 0x000;
 
 		if (y == 216 && !vdp.isSPS()) break;
 
@@ -537,10 +538,13 @@ inline void SpriteChecker::checkSprites3(int minLine, int maxLine)
 		for (int line = minLine; line < maxLine; ++line) { // 'line' changes in loop
 			// Calculate line number within the sprite.
 			int displayLine = line + displayDelta;
-			int spriteLine = (displayLine - y) & 0xFF;
+			int spriteLine = displayLine - y;
 			if (spriteLine >= mgy) {
-				// Skip ahead till sprite becomes visible.
-				line += 256 - spriteLine - 1; // -1 because of for-loop
+				break;
+			}
+			if (spriteLine < 0) {
+				line -= spriteLine;
+				line--;
 				continue;
 			}
 
