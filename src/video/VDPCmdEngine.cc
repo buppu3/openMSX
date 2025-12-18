@@ -791,6 +791,12 @@ void VDPCmdEngine::calcFinishTime(unsigned nx, unsigned ny, unsigned ticksPerPix
   */
 void VDPCmdEngine::startAbrt(EmuTime time)
 {
+	if (vdp.useHS()) {
+		auto calculator = getSlotCalculator(time);
+		calculator.nextHs(0, 0, flushCache());
+		commandDone(calculator.getTime());
+		return;
+	}
 	commandDone(time);
 }
 
