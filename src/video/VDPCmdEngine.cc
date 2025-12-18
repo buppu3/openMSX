@@ -1851,7 +1851,9 @@ void VDPCmdEngine::executeLmmcHs(EmuTime limit)
 			DY += TY; --NY;
 			ADX = DX; ANX = tmpNX;
 			if (--tmpNY == 0) {
-				commandDone(limit);
+				auto calculator = getSlotCalculator(limit);
+				calculator.nextHs(0, 0, flushCache());
+				commandDone(calculator.getTime());
 			}
 		}
 	}
@@ -2518,7 +2520,9 @@ void VDPCmdEngine::executeHmmcHs(EmuTime limit)
 			DY += TY; --NY;
 			ADX = DX; ANX = tmpNX;
 			if (--tmpNY == 0) {
-				commandDone(limit);
+				auto calculator = getSlotCalculator(limit);
+				calculator.nextHs(0, 0, flushCache());
+				commandDone(calculator.getTime());
 			}
 		}
 	}
@@ -2696,6 +2700,7 @@ loop:	if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 			ADX = DX;
 			ANX = tmpNX;
 			if (tmpNX <= 0) {
+				calculator.nextHs(0, 0, flushCache());
 				commandDone(calculator.getTime());
 				break;
 			}
@@ -2977,6 +2982,7 @@ loop:		if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 			ADX = DX;
 			ANX = tmpNX;
 			if (--tmpNY == 0) {
+				calculator.nextHs(0, 0, flushCache());
 				commandDone(calculator.getTime());
 				break;
 			}
