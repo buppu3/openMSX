@@ -153,7 +153,7 @@ static constexpr int16_t SLOT_MASK = 0x7FFFu;
 static constexpr int16_t c_timming_a = 1;
 static constexpr int16_t c_timming_b = 9;
 
-static constexpr std::array<int16_t, 700> slotsV9968ScreenOff = {
+static constexpr std::array<int16_t, 702> slotsV9968ScreenOff = {
 	0000 * 16 + c_timming_a,	CPU_EN | (0000 * 16 + c_timming_b),	// -40
 	0001 * 16 + c_timming_a,	CPU_EN | (0001 * 16 + c_timming_b),	// -39
 	0002 * 16 + c_timming_a,	CPU_EN | (0002 * 16 + c_timming_b),	// -38
@@ -163,7 +163,7 @@ static constexpr std::array<int16_t, 700> slotsV9968ScreenOff = {
 	0006 * 16 + c_timming_a,	CPU_EN | (0006 * 16 + c_timming_b),	// -34
 	0007 * 16 + c_timming_a,	CPU_EN | (0007 * 16 + c_timming_b),	// -33
 
-	/* REFRESH */													// -32
+	0010 * 16 + c_timming_a,	CPU_EN | (0010 * 16 + c_timming_b),	// -32
 	0011 * 16 + c_timming_a,	CPU_EN | (0011 * 16 + c_timming_b),	// -31
 	0012 * 16 + c_timming_a,	CPU_EN | (0012 * 16 + c_timming_b),	// -30
 	0013 * 16 + c_timming_a,	CPU_EN | (0013 * 16 + c_timming_b),	// -29
@@ -181,7 +181,7 @@ static constexpr std::array<int16_t, 700> slotsV9968ScreenOff = {
 	0026 * 16 + c_timming_a,	CPU_EN | (0026 * 16 + c_timming_b),	// -18
 	0027 * 16 + c_timming_a,	CPU_EN | (0027 * 16 + c_timming_b),	// -17
 
-	0030 * 16 + c_timming_a,	CPU_EN | (0030 * 16 + c_timming_b),	// -16
+	/* REFRESH */													// -16
 	0031 * 16 + c_timming_a,	CPU_EN | (0031 * 16 + c_timming_b),	// -15
 	0032 * 16 + c_timming_a,	CPU_EN | (0032 * 16 + c_timming_b),	// -14
 	0033 * 16 + c_timming_a,	CPU_EN | (0033 * 16 + c_timming_b),	// -13
@@ -548,12 +548,12 @@ static constexpr std::array<int16_t, 700> slotsV9968ScreenOff = {
 	0534 * 16 + c_timming_a,	CPU_EN | (0534 * 16 + c_timming_b),	// -34
 	0535 * 16 + c_timming_a,	CPU_EN | (0535 * 16 + c_timming_b),	// -33
 
-	/* REFRESH */													// -32
+	0536 * 16 + c_timming_a,	CPU_EN | (0536 * 16 + c_timming_b),	// -32
 	0537 * 16 + c_timming_a,	CPU_EN | (0537 * 16 + c_timming_b),	// -31
 };
 
 // screen0:width40
-static constexpr std::array<int16_t, 580> slotsV9968TextLow = {
+static constexpr std::array<int16_t, 582> slotsV9968TextLow = {
 	0000 * 16 + c_timming_a,	CPU_EN | (0000 * 16 + c_timming_b),	// -42
 	0001 * 16 + c_timming_a,	CPU_EN | (0001 * 16 + c_timming_b),	// -41
 	0002 * 16 + c_timming_a,	CPU_EN | (0002 * 16 + c_timming_b),	// -40
@@ -563,7 +563,7 @@ static constexpr std::array<int16_t, 580> slotsV9968TextLow = {
 
 	0006 * 16 + c_timming_a,	CPU_EN | (0006 * 16 + c_timming_b),	// -36
 	0007 * 16 + c_timming_a,	CPU_EN | (0007 * 16 + c_timming_b),	// -35
-	/* REFRESH */													// -34
+	0010 * 16 + c_timming_a,	CPU_EN | (0010 * 16 + c_timming_b),	// -34
 	0011 * 16 + c_timming_a,	CPU_EN | (0011 * 16 + c_timming_b),	// -33
 	0012 * 16 + c_timming_a,	CPU_EN | (0012 * 16 + c_timming_b),	// -32
 	0013 * 16 + c_timming_a,	CPU_EN | (0013 * 16 + c_timming_b),	// -31
@@ -582,7 +582,7 @@ static constexpr std::array<int16_t, 580> slotsV9968TextLow = {
 	0026 * 16 + c_timming_a,	CPU_EN | (0026 * 16 + c_timming_b),	// -20
 	0027 * 16 + c_timming_a,	CPU_EN | (0027 * 16 + c_timming_b),	// -19
 
-	0030 * 16 + c_timming_a,	CPU_EN | (0030 * 16 + c_timming_b),	// -18
+	/* REFRESH */													// -18
 	0031 * 16 + c_timming_a,	CPU_EN | (0031 * 16 + c_timming_b),	// -17
 	0032 * 16 + c_timming_a,	CPU_EN | (0032 * 16 + c_timming_b),	// -16
 	0033 * 16 + c_timming_a,	CPU_EN | (0033 * 16 + c_timming_b),	// -15
@@ -962,12 +962,12 @@ static constexpr std::array<int16_t, 580> slotsV9968TextLow = {
 
 	0534 * 16 + c_timming_a,	CPU_EN | (0534 * 16 + c_timming_b),	// -36
 	0535 * 16 + c_timming_a,	CPU_EN | (0535 * 16 + c_timming_b),	// -35
-	/* REFRESH */													// -34
+	0536 * 16 + c_timming_a,	CPU_EN | (0536 * 16 + c_timming_b),	// -34
 	0537 * 16 + c_timming_a,	CPU_EN | (0537 * 16 + c_timming_b)	// -33
 };
 
 // screen0:width80
-static constexpr std::array<int16_t, 540> slotsV9968TextHigh = {
+static constexpr std::array<int16_t, 542> slotsV9968TextHigh = {
 	0000 * 16 + c_timming_a,	CPU_EN | (0000 * 16 + c_timming_b),	// -42
 	0001 * 16 + c_timming_a,	CPU_EN | (0001 * 16 + c_timming_b),	// -41
 	0002 * 16 + c_timming_a,	CPU_EN | (0002 * 16 + c_timming_b),	// -40
@@ -977,7 +977,7 @@ static constexpr std::array<int16_t, 540> slotsV9968TextHigh = {
 
 	0006 * 16 + c_timming_a,	CPU_EN | (0006 * 16 + c_timming_b),	// -36
 	0007 * 16 + c_timming_a,	CPU_EN | (0007 * 16 + c_timming_b),	// -35
-	/* REFRESH */													// -34
+	0010 * 16 + c_timming_a,	CPU_EN | (0010 * 16 + c_timming_b),	// -34
 	0011 * 16 + c_timming_a,	CPU_EN | (0011 * 16 + c_timming_b),	// -33
 	0012 * 16 + c_timming_a,	CPU_EN | (0012 * 16 + c_timming_b),	// -32
 	0013 * 16 + c_timming_a,	CPU_EN | (0013 * 16 + c_timming_b),	// -31
@@ -996,7 +996,7 @@ static constexpr std::array<int16_t, 540> slotsV9968TextHigh = {
 	0026 * 16 + c_timming_a,	CPU_EN | (0026 * 16 + c_timming_b),	// -20
 	0027 * 16 + c_timming_a,	CPU_EN | (0027 * 16 + c_timming_b),	// -19
 
-	0030 * 16 + c_timming_a,	CPU_EN | (0030 * 16 + c_timming_b),	// -18
+	/* REFRESH */													// -18
 	0031 * 16 + c_timming_a,	CPU_EN | (0031 * 16 + c_timming_b),	// -17
 	0032 * 16 + c_timming_a,	CPU_EN | (0032 * 16 + c_timming_b),	// -16
 	0033 * 16 + c_timming_a,	CPU_EN | (0033 * 16 + c_timming_b),	// -15
@@ -1376,12 +1376,12 @@ static constexpr std::array<int16_t, 540> slotsV9968TextHigh = {
 
 	0534 * 16 + c_timming_a,	CPU_EN | (0534 * 16 + c_timming_b),	// -36
 	0535 * 16 + c_timming_a,	CPU_EN | (0535 * 16 + c_timming_b),	// -35
-	/* REFRESH */													// -34
+	0536 * 16 + c_timming_a,	CPU_EN | (0536 * 16 + c_timming_b),	// -34
 	0537 * 16 + c_timming_a,	CPU_EN | (0537 * 16 + c_timming_b)	// -33
 };
 
 // screen 5,6
-static constexpr std::array<int16_t, 700-32> slotsV9968BitmapLowSpritesOff = {
+static constexpr std::array<int16_t, 702-32> slotsV9968BitmapLowSpritesOff = {
 	0000 * 16 + c_timming_a,	CPU_EN | (0000 * 16 + c_timming_b),	// -40
 	0001 * 16 + c_timming_a,	CPU_EN | (0001 * 16 + c_timming_b),	// -39
 	0002 * 16 + c_timming_a,	CPU_EN | (0002 * 16 + c_timming_b),	// -38
@@ -1391,7 +1391,7 @@ static constexpr std::array<int16_t, 700-32> slotsV9968BitmapLowSpritesOff = {
 	0006 * 16 + c_timming_a,	CPU_EN | (0006 * 16 + c_timming_b),	// -34
 	0007 * 16 + c_timming_a,	CPU_EN | (0007 * 16 + c_timming_b),	// -33
 
-	/* REFRESH */													// -32
+	0010 * 16 + c_timming_a,	CPU_EN | (0010 * 16 + c_timming_b),	// -32
 	0011 * 16 + c_timming_a,	CPU_EN | (0011 * 16 + c_timming_b),	// -31
 	0012 * 16 + c_timming_a,	CPU_EN | (0012 * 16 + c_timming_b),	// -30
 	0013 * 16 + c_timming_a,	CPU_EN | (0013 * 16 + c_timming_b),	// -29
@@ -1409,7 +1409,7 @@ static constexpr std::array<int16_t, 700-32> slotsV9968BitmapLowSpritesOff = {
 	0026 * 16 + c_timming_a,	CPU_EN | (0026 * 16 + c_timming_b),	// -18
 	0027 * 16 + c_timming_a,	CPU_EN | (0027 * 16 + c_timming_b),	// -17
 
-	0030 * 16 + c_timming_a,	CPU_EN | (0030 * 16 + c_timming_b),	// -16
+	/* REFRESH */													// -16
 	0031 * 16 + c_timming_a,	CPU_EN | (0031 * 16 + c_timming_b),	// -15
 	0032 * 16 + c_timming_a,	CPU_EN | (0032 * 16 + c_timming_b),	// -14
 	0033 * 16 + c_timming_a,	CPU_EN | (0033 * 16 + c_timming_b),	// -13
@@ -1776,12 +1776,12 @@ static constexpr std::array<int16_t, 700-32> slotsV9968BitmapLowSpritesOff = {
 	0534 * 16 + c_timming_a,	CPU_EN | (0534 * 16 + c_timming_b),	// -34
 	0535 * 16 + c_timming_a,	CPU_EN | (0535 * 16 + c_timming_b),	// -33
 
-	/* REFRESH */													// -32
+	0536 * 16 + c_timming_a,	CPU_EN | (0536 * 16 + c_timming_b),	// -32
 	0537 * 16 + c_timming_a,	CPU_EN | (0537 * 16 + c_timming_b)	// -31
 };
 
 // screen 5,6
-static constexpr std::array<int16_t, 700-32-44> slotsV9968BitmapLowSpritesOn = {
+static constexpr std::array<int16_t, 702-32-44> slotsV9968BitmapLowSpritesOn = {
 	0000 * 16 + c_timming_a,	CPU_EN | (0000 * 16 + c_timming_b),	// -40
 	0001 * 16 + c_timming_a,	CPU_EN | (0001 * 16 + c_timming_b),	// -39
 	/* SPRITE */				CPU_EN | (0002 * 16 + c_timming_b),	// -38
@@ -1791,7 +1791,7 @@ static constexpr std::array<int16_t, 700-32-44> slotsV9968BitmapLowSpritesOn = {
 	0006 * 16 + c_timming_a,	CPU_EN | (0006 * 16 + c_timming_b),	// -34
 	0007 * 16 + c_timming_a,	CPU_EN | (0007 * 16 + c_timming_b),	// -33
 
-	/* REFRESH */											// -32
+	0010 * 16 + c_timming_a,	CPU_EN | (0010 * 16 + c_timming_b),	// -32
 	0011 * 16 + c_timming_a,	CPU_EN | (0011 * 16 + c_timming_b),	// -31
 	/* SPRITE */				CPU_EN | (0012 * 16 + c_timming_b),	// -30
 	0013 * 16 + c_timming_a,	CPU_EN | (0013 * 16 + c_timming_b),	// -29
@@ -1809,7 +1809,7 @@ static constexpr std::array<int16_t, 700-32-44> slotsV9968BitmapLowSpritesOn = {
 	0026 * 16 + c_timming_a,	CPU_EN | (0026 * 16 + c_timming_b),	// -18
 	0027 * 16 + c_timming_a,	CPU_EN | (0027 * 16 + c_timming_b),	// -17
 
-	0030 * 16 + c_timming_a,	CPU_EN | (0030 * 16 + c_timming_b),	// -16
+	/* REFRESH */													// -16
 	0031 * 16 + c_timming_a,	CPU_EN | (0031 * 16 + c_timming_b),	// -15
 	/* SPRITE */				CPU_EN | (0032 * 16 + c_timming_b),	// -14
 	0033 * 16 + c_timming_a,	CPU_EN | (0033 * 16 + c_timming_b),	// -13
@@ -2176,12 +2176,12 @@ static constexpr std::array<int16_t, 700-32-44> slotsV9968BitmapLowSpritesOn = {
 	0534 * 16 + c_timming_a,	CPU_EN | (0534 * 16 + c_timming_b),	// -34
 	0535 * 16 + c_timming_a,	CPU_EN | (0535 * 16 + c_timming_b),	// -33
 
-	/* REFRESH */													// -32
+	0536 * 16 + c_timming_a,	CPU_EN | (0536 * 16 + c_timming_b),	// -32
 	0537 * 16 + c_timming_a,	CPU_EN | (0537 * 16 + c_timming_b)	// -31
 };
 
 // screen 7,8,10,11,12
-static constexpr std::array<int16_t, 700-64> slotsV9968BitmapHighSpritesOff = {
+static constexpr std::array<int16_t, 702-64> slotsV9968BitmapHighSpritesOff = {
 	0000 * 16 + c_timming_a,	CPU_EN | (0000 * 16 + c_timming_b),	// -40
 	0001 * 16 + c_timming_a,	CPU_EN | (0001 * 16 + c_timming_b),	// -39
 	0002 * 16 + c_timming_a,	CPU_EN | (0002 * 16 + c_timming_b),	// -38
@@ -2191,7 +2191,7 @@ static constexpr std::array<int16_t, 700-64> slotsV9968BitmapHighSpritesOff = {
 	0006 * 16 + c_timming_a,	CPU_EN | (0006 * 16 + c_timming_b),	// -34
 	0007 * 16 + c_timming_a,	CPU_EN | (0007 * 16 + c_timming_b),	// -33
 
-	/* REFRESH */													// -32
+	0010 * 16 + c_timming_a,	CPU_EN | (0010 * 16 + c_timming_b),	// -32
 	0011 * 16 + c_timming_a,	CPU_EN | (0011 * 16 + c_timming_b),	// -31
 	0012 * 16 + c_timming_a,	CPU_EN | (0012 * 16 + c_timming_b),	// -30
 	0013 * 16 + c_timming_a,	CPU_EN | (0013 * 16 + c_timming_b),	// -29
@@ -2209,7 +2209,7 @@ static constexpr std::array<int16_t, 700-64> slotsV9968BitmapHighSpritesOff = {
 	0026 * 16 + c_timming_a,	CPU_EN | (0026 * 16 + c_timming_b),	// -18
 	0027 * 16 + c_timming_a,	CPU_EN | (0027 * 16 + c_timming_b),	// -17
 
-	0030 * 16 + c_timming_a,	CPU_EN | (0030 * 16 + c_timming_b),	// -16
+	/* REFRESH */													// -16
 	0031 * 16 + c_timming_a,	CPU_EN | (0031 * 16 + c_timming_b),	// -15
 	0032 * 16 + c_timming_a,	CPU_EN | (0032 * 16 + c_timming_b),	// -14
 	0033 * 16 + c_timming_a,	CPU_EN | (0033 * 16 + c_timming_b),	// -13
@@ -2576,12 +2576,12 @@ static constexpr std::array<int16_t, 700-64> slotsV9968BitmapHighSpritesOff = {
 	0534 * 16 + c_timming_a,	CPU_EN | (0534 * 16 + c_timming_b),	// -34
 	0535 * 16 + c_timming_a,	CPU_EN | (0535 * 16 + c_timming_b),	// -33
 
-	/* REFRESH */													// -32
+	0536 * 16 + c_timming_a,	CPU_EN | (0536 * 16 + c_timming_b),	// -32
 	0537 * 16 + c_timming_a,	CPU_EN | (0537 * 16 + c_timming_b)	// -31
 };
 
 // screen 7,8,10,11,12
-static constexpr std::array<int16_t, 700-64-44> slotsV9968BitmapHighSpritesOn = {
+static constexpr std::array<int16_t, 702-64-44> slotsV9968BitmapHighSpritesOn = {
 	0000 * 16 + c_timming_a,	CPU_EN | (0000 * 16 + c_timming_b),	// -40
 	0001 * 16 + c_timming_a,	CPU_EN | (0001 * 16 + c_timming_b),	// -39
 	/* SPRITE */				CPU_EN | (0002 * 16 + c_timming_b),	// -38
@@ -2591,7 +2591,7 @@ static constexpr std::array<int16_t, 700-64-44> slotsV9968BitmapHighSpritesOn = 
 	0006 * 16 + c_timming_a,	CPU_EN | (0006 * 16 + c_timming_b),	// -34
 	0007 * 16 + c_timming_a,	CPU_EN | (0007 * 16 + c_timming_b),	// -33
 
-	/* REFRESH */													// -32
+	0010 * 16 + c_timming_a,	CPU_EN | (0010 * 16 + c_timming_b),	// -32
 	0011 * 16 + c_timming_a,	CPU_EN | (0011 * 16 + c_timming_b),	// -31
 	/* SPRITE */				CPU_EN | (0012 * 16 + c_timming_b),	// -30
 	0013 * 16 + c_timming_a,	CPU_EN | (0013 * 16 + c_timming_b),	// -29
@@ -2609,7 +2609,7 @@ static constexpr std::array<int16_t, 700-64-44> slotsV9968BitmapHighSpritesOn = 
 	0026 * 16 + c_timming_a,	CPU_EN | (0026 * 16 + c_timming_b),	// -18
 	0027 * 16 + c_timming_a,	CPU_EN | (0027 * 16 + c_timming_b),	// -17
 
-	0030 * 16 + c_timming_a,	CPU_EN | (0030 * 16 + c_timming_b),	// -16
+	/* REFRESH */													// -16
 	0031 * 16 + c_timming_a,	CPU_EN | (0031 * 16 + c_timming_b),	// -15
 	/* SPRITE */				CPU_EN | (0032 * 16 + c_timming_b),	// -14
 	0033 * 16 + c_timming_a,	CPU_EN | (0033 * 16 + c_timming_b),	// -13
@@ -2976,12 +2976,12 @@ static constexpr std::array<int16_t, 700-64-44> slotsV9968BitmapHighSpritesOn = 
 	0534 * 16 + c_timming_a,	CPU_EN | (0534 * 16 + c_timming_b),	// -34
 	0535 * 16 + c_timming_a,	CPU_EN | (0535 * 16 + c_timming_b),	// -33
 
-	/* REFRESH */													// -32
+	0536 * 16 + c_timming_a,	CPU_EN | (0536 * 16 + c_timming_b),	// -32
 	0537 * 16 + c_timming_a,	CPU_EN | (0537 * 16 + c_timming_b)	// -31
 };
 
 // screen 1,2,4
-static constexpr std::array<int16_t, 700-96> slotsV9968PcgSpritesOff = {
+static constexpr std::array<int16_t, 702-96> slotsV9968PcgSpritesOff = {
 	0000 * 16 + c_timming_a,	CPU_EN | (0000 * 16 + c_timming_b),	// -40
 	0001 * 16 + c_timming_a,	CPU_EN | (0001 * 16 + c_timming_b),	// -39
 	0002 * 16 + c_timming_a,	CPU_EN | (0002 * 16 + c_timming_b),	// -38
@@ -2991,7 +2991,7 @@ static constexpr std::array<int16_t, 700-96> slotsV9968PcgSpritesOff = {
 	0006 * 16 + c_timming_a,	CPU_EN | (0006 * 16 + c_timming_b),	// -34
 	0007 * 16 + c_timming_a,	CPU_EN | (0007 * 16 + c_timming_b),	// -33
 
-	/* REFRESH */													// -32
+	0010 * 16 + c_timming_a,	CPU_EN | (0010 * 16 + c_timming_b),	// -32
 	0011 * 16 + c_timming_a,	CPU_EN | (0011 * 16 + c_timming_b),	// -31
 	0012 * 16 + c_timming_a,	CPU_EN | (0012 * 16 + c_timming_b),	// -30
 	0013 * 16 + c_timming_a,	CPU_EN | (0013 * 16 + c_timming_b),	// -29
@@ -3009,7 +3009,7 @@ static constexpr std::array<int16_t, 700-96> slotsV9968PcgSpritesOff = {
 	0026 * 16 + c_timming_a,	CPU_EN | (0026 * 16 + c_timming_b),	// -18
 	0027 * 16 + c_timming_a,	CPU_EN | (0027 * 16 + c_timming_b),	// -17
 
-	0030 * 16 + c_timming_a,	CPU_EN | (0030 * 16 + c_timming_b),	// -16
+	/* REFRESH */													// -16
 	0031 * 16 + c_timming_a,	CPU_EN | (0031 * 16 + c_timming_b),	// -15
 	0032 * 16 + c_timming_a,	CPU_EN | (0032 * 16 + c_timming_b),	// -14
 	0033 * 16 + c_timming_a,	CPU_EN | (0033 * 16 + c_timming_b),	// -13
@@ -3376,12 +3376,12 @@ static constexpr std::array<int16_t, 700-96> slotsV9968PcgSpritesOff = {
 	0534 * 16 + c_timming_a,	CPU_EN | (0534 * 16 + c_timming_b),	// -34
 	0535 * 16 + c_timming_a,	CPU_EN | (0535 * 16 + c_timming_b),	// -33
 
-	/* REFRESH */													// -32
+	0536 * 16 + c_timming_a,	CPU_EN | (0536 * 16 + c_timming_b),	// -32
 	0537 * 16 + c_timming_a,	CPU_EN | (0537 * 16 + c_timming_b)	// -31
 };
 
 // screen 1,2,4
-static constexpr std::array<int16_t, 700-96-44> slotsV9968PcgSpritesOn = {
+static constexpr std::array<int16_t, 702-96-44> slotsV9968PcgSpritesOn = {
 	0000 * 16 + c_timming_a,	CPU_EN | (0000 * 16 + c_timming_b),	// -40
 	0001 * 16 + c_timming_a,	CPU_EN | (0001 * 16 + c_timming_b),	// -39
 	/* SPRITE */				CPU_EN | (0002 * 16 + c_timming_b),	// -38
@@ -3391,7 +3391,7 @@ static constexpr std::array<int16_t, 700-96-44> slotsV9968PcgSpritesOn = {
 	0006 * 16 + c_timming_a,	CPU_EN | (0006 * 16 + c_timming_b),	// -34
 	0007 * 16 + c_timming_a,	CPU_EN | (0007 * 16 + c_timming_b),	// -33
 
-	/* REFRESH */													// -32
+	0010 * 16 + c_timming_a,	CPU_EN | (0010 * 16 + c_timming_b),	// -32
 	0011 * 16 + c_timming_a,	CPU_EN | (0011 * 16 + c_timming_b),	// -31
 	/* SPRITE */				CPU_EN | (0012 * 16 + c_timming_b),	// -30
 	0013 * 16 + c_timming_a,	CPU_EN | (0013 * 16 + c_timming_b),	// -29
@@ -3409,7 +3409,7 @@ static constexpr std::array<int16_t, 700-96-44> slotsV9968PcgSpritesOn = {
 	0026 * 16 + c_timming_a,	CPU_EN | (0026 * 16 + c_timming_b),	// -18
 	0027 * 16 + c_timming_a,	CPU_EN | (0027 * 16 + c_timming_b),	// -17
 
-	0030 * 16 + c_timming_a,	CPU_EN | (0030 * 16 + c_timming_b),	// -16
+	/* REFRESH */													// -16
 	0031 * 16 + c_timming_a,	CPU_EN | (0031 * 16 + c_timming_b),	// -15
 	/* SPRITE */				CPU_EN | (0032 * 16 + c_timming_b),	// -14
 	0033 * 16 + c_timming_a,	CPU_EN | (0033 * 16 + c_timming_b),	// -13
@@ -3776,7 +3776,7 @@ static constexpr std::array<int16_t, 700-96-44> slotsV9968PcgSpritesOn = {
 	0534 * 16 + c_timming_a,	CPU_EN | (0534 * 16 + c_timming_b),	// -34
 	0535 * 16 + c_timming_a,	CPU_EN | (0535 * 16 + c_timming_b),	// -33
 
-	/* REFRESH */													// -32
+	0536 * 16 + c_timming_a,	CPU_EN | (0536 * 16 + c_timming_b),	// -32
 	0537 * 16 + c_timming_a,	CPU_EN | (0537 * 16 + c_timming_b)	// -31
 };
 
