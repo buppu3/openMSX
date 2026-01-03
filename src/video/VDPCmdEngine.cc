@@ -113,15 +113,15 @@ static constexpr unsigned clipNX_2_byte(unsigned SX, unsigned DX, unsigned NX, u
 		: std::min(NX, BYTES_PER_LINE - std::max(SX, DX));
 }
 
-static constexpr unsigned clipNY_1(unsigned DY, unsigned NY, uint8_t ARG)
+static constexpr unsigned clipNY_1(unsigned DY, unsigned NY, uint8_t ARG, bool evr)
 {
-	NY = NY ? NY : 1024;
+	NY = NY ? NY : (evr ? 2048 : 1024);
 	return (ARG & VDPCmdEngine::DIY) ? std::min(NY, DY + 1) : NY;
 }
 
-static constexpr unsigned clipNY_2(unsigned SY, unsigned DY, unsigned NY, uint8_t ARG)
+static constexpr unsigned clipNY_2(unsigned SY, unsigned DY, unsigned NY, uint8_t ARG, bool evr)
 {
-	NY = NY ? NY : 1024;
+	NY = NY ? NY : (evr ? 2048 : 1024);
 	return (ARG & VDPCmdEngine::DIY) ? std::min(NY, std::min(SY, DY) + 1) : NY;
 }
 
@@ -1232,7 +1232,7 @@ void VDPCmdEngine::startLmmv(EmuTime time)
 	setWriteMask(time, vram, vdp.hasEVR(), true);	//vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
 	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_pixel<Mode>(DX, NX, ARG);
-	unsigned tmpNY = clipNY_1(DY, NY, ARG);
+	unsigned tmpNY = clipNY_1(DY, NY, ARG, vdp.hasEVR());
 	ADX = DX;
 	ANX = tmpNX;
 	nextAccessSlot(time);
@@ -1245,7 +1245,7 @@ void VDPCmdEngine::executeLmmv(EmuTime limit)
 {
 	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_pixel<Mode>(DX, NX, ARG);
-	unsigned tmpNY = clipNY_1(DY, NY, ARG);
+	unsigned tmpNY = clipNY_1(DY, NY, ARG, vdp.hasEVR());
 	int TX = (ARG & DIX) ? -1 : 1;
 	int TY = (ARG & DIY) ? -1 : 1;
 	ANX = clipNX_1_pixel<Mode>(ADX, ANX, ARG);
@@ -1354,7 +1354,7 @@ void VDPCmdEngine::startLmmvHs(EmuTime time)
 	setWriteMask(time, vram, vdp.hasEVR(), true);	//vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
 	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_pixel<Mode>(DX, NX, ARG);
-	unsigned tmpNY = clipNY_1(DY, NY, ARG);
+	unsigned tmpNY = clipNY_1(DY, NY, ARG, vdp.hasEVR());
 	ADX = DX;
 	ANX = tmpNX;
 	bool dstExt = getMXD(ARG, vdp.hasEVR());
@@ -1368,7 +1368,7 @@ void VDPCmdEngine::executeLmmvHs(EmuTime limit)
 {
 	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_pixel<Mode>(DX, NX, ARG);
-	unsigned tmpNY = clipNY_1(DY, NY, ARG);
+	unsigned tmpNY = clipNY_1(DY, NY, ARG, vdp.hasEVR());
 	int TX = (ARG & DIX) ? -1 : 1;
 	int TY = (ARG & DIY) ? -1 : 1;
 	ANX = clipNX_1_pixel<Mode>(ADX, ANX, ARG);
@@ -1422,7 +1422,7 @@ void VDPCmdEngine::startLmmm(EmuTime time)
 	setWriteMask(time, vram, vdp.hasEVR(), true);	//vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
 	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_2_pixel<Mode>(SX, DX, NX, ARG);
-	unsigned tmpNY = clipNY_2(SY, DY, NY, ARG);
+	unsigned tmpNY = clipNY_2(SY, DY, NY, ARG, vdp.hasEVR());
 	ASX = SX;
 	ADX = DX;
 	ANX = tmpNX;
@@ -1436,7 +1436,7 @@ void VDPCmdEngine::executeLmmm(EmuTime limit)
 {
 	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_2_pixel<Mode>(SX, DX, NX, ARG);
-	unsigned tmpNY = clipNY_2(SY, DY, NY, ARG);
+	unsigned tmpNY = clipNY_2(SY, DY, NY, ARG, vdp.hasEVR());
 	int TX = (ARG & DIX) ? -1 : 1;
 	int TY = (ARG & DIY) ? -1 : 1;
 	ANX = clipNX_2_pixel<Mode>(ASX, ADX, ANX, ARG);
@@ -1569,7 +1569,7 @@ void VDPCmdEngine::startLmmmHs(EmuTime time)
 	setWriteMask(time, vram, vdp.hasEVR(), true);	//vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
 	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_2_pixel<Mode>(SX, DX, NX, ARG);
-	unsigned tmpNY = clipNY_2(SY, DY, NY, ARG);
+	unsigned tmpNY = clipNY_2(SY, DY, NY, ARG, vdp.hasEVR());
 	ASX = SX;
 	ADX = DX;
 	ANX = tmpNX;
@@ -1584,7 +1584,7 @@ void VDPCmdEngine::executeLmmmHs(EmuTime limit)
 {
 	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_2_pixel<Mode>(SX, DX, NX, ARG);
-	unsigned tmpNY = clipNY_2(SY, DY, NY, ARG);
+	unsigned tmpNY = clipNY_2(SY, DY, NY, ARG, vdp.hasEVR());
 	int TX = (ARG & DIX) ? -1 : 1;
 	int TY = (ARG & DIY) ? -1 : 1;
 	ANX = clipNX_2_pixel<Mode>(ASX, ADX, ANX, ARG);
@@ -1667,7 +1667,7 @@ void VDPCmdEngine::executeLmcm(EmuTime limit)
 
 	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_pixel<Mode>(SX, NX, ARG);
-	unsigned tmpNY = clipNY_1(SY, NY, ARG);
+	unsigned tmpNY = clipNY_1(SY, NY, ARG, vdp.hasEVR());
 	int TX = (ARG & DIX) ? -1 : 1;
 	int TY = (ARG & DIY) ? -1 : 1;
 	ANX = clipNX_1_pixel<Mode>(ASX, ANX, ARG);
@@ -1717,7 +1717,7 @@ void VDPCmdEngine::executeLmcmHs(EmuTime limit)
 
 	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_pixel<Mode>(SX, NX, ARG);
-	unsigned tmpNY = clipNY_1(SY, NY, ARG);
+	unsigned tmpNY = clipNY_1(SY, NY, ARG, vdp.hasEVR());
 	int TX = (ARG & DIX) ? -1 : 1;
 	int TY = (ARG & DIY) ? -1 : 1;
 	ANX = clipNX_1_pixel<Mode>(ASX, ANX, ARG);
@@ -1766,7 +1766,7 @@ void VDPCmdEngine::executeLmmc(EmuTime limit)
 {
 	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_pixel<Mode>(DX, NX, ARG);
-	unsigned tmpNY = clipNY_1(DY, NY, ARG);
+	unsigned tmpNY = clipNY_1(DY, NY, ARG, vdp.hasEVR());
 	int TX = (ARG & DIX) ? -1 : 1;
 	int TY = (ARG & DIY) ? -1 : 1;
 	ANX = clipNX_1_pixel<Mode>(ADX, ANX, ARG);
@@ -1826,7 +1826,7 @@ void VDPCmdEngine::executeLmmcHs(EmuTime limit)
 {
 	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_pixel<Mode>(DX, NX, ARG);
-	unsigned tmpNY = clipNY_1(DY, NY, ARG);
+	unsigned tmpNY = clipNY_1(DY, NY, ARG, vdp.hasEVR());
 	int TX = (ARG & DIX) ? -1 : 1;
 	int TY = (ARG & DIY) ? -1 : 1;
 	ANX = clipNX_1_pixel<Mode>(ADX, ANX, ARG);
@@ -1875,7 +1875,7 @@ void VDPCmdEngine::startHmmv(EmuTime time)
 	setWriteMask(time, vram, vdp.hasEVR(), true);	//vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
 	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_byte<Mode>(DX, NX, ARG);
-	unsigned tmpNY = clipNY_1(DY, NY, ARG);
+	unsigned tmpNY = clipNY_1(DY, NY, ARG, vdp.hasEVR());
 	ADX = DX;
 	ANX = tmpNX;
 	nextAccessSlot(time);
@@ -1887,7 +1887,7 @@ void VDPCmdEngine::executeHmmv(EmuTime limit)
 {
 	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_byte<Mode>(DX, NX, ARG);
-	unsigned tmpNY = clipNY_1(DY, NY, ARG);
+	unsigned tmpNY = clipNY_1(DY, NY, ARG, vdp.hasEVR());
 	int TX = (ARG & DIX)
 		? -Mode::PIXELS_PER_BYTE : Mode::PIXELS_PER_BYTE;
 	int TY = (ARG & DIY) ? -1 : 1;
@@ -1977,7 +1977,7 @@ void VDPCmdEngine::startHmmvHs(EmuTime time)
 	setWriteMask(time, vram, vdp.hasEVR(), true);	//vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
 	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_byte<Mode>(DX, NX, ARG);
-	unsigned tmpNY = clipNY_1(DY, NY, ARG);
+	unsigned tmpNY = clipNY_1(DY, NY, ARG, vdp.hasEVR());
 	ADX = DX;
 	ANX = tmpNX;
 	bool dstExt = getMXD(ARG, vdp.hasEVR());
@@ -1990,7 +1990,7 @@ void VDPCmdEngine::executeHmmvHs(EmuTime limit)
 {
 	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_byte<Mode>(DX, NX, ARG);
-	unsigned tmpNY = clipNY_1(DY, NY, ARG);
+	unsigned tmpNY = clipNY_1(DY, NY, ARG, vdp.hasEVR());
 	int TX = (ARG & DIX)
 		? -Mode::PIXELS_PER_BYTE : Mode::PIXELS_PER_BYTE;
 	int TY = (ARG & DIY) ? -1 : 1;
@@ -2030,7 +2030,7 @@ void VDPCmdEngine::startHmmm(EmuTime time)
 	setWriteMask(time, vram, vdp.hasEVR(), true);	//vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
 	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_2_byte<Mode>(SX, DX, NX, ARG);
-	unsigned tmpNY = clipNY_2(SY, DY, NY, ARG);
+	unsigned tmpNY = clipNY_2(SY, DY, NY, ARG, vdp.hasEVR());
 	ASX = SX;
 	ADX = DX;
 	ANX = tmpNX;
@@ -2044,7 +2044,7 @@ void VDPCmdEngine::executeHmmm(EmuTime limit)
 {
 	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_2_byte<Mode>(SX, DX, NX, ARG);
-	unsigned tmpNY = clipNY_2(SY, DY, NY, ARG);
+	unsigned tmpNY = clipNY_2(SY, DY, NY, ARG, vdp.hasEVR());
 	int TX = (ARG & DIX)
 	       ? -Mode::PIXELS_PER_BYTE : Mode::PIXELS_PER_BYTE;
 	int TY = (ARG & DIY) ? -1 : 1;
@@ -2164,7 +2164,7 @@ void VDPCmdEngine::startHmmmHs(EmuTime time)
 	setWriteMask(time, vram, vdp.hasEVR(), true);	//vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
 	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_2_byte<Mode>(SX, DX, NX, ARG);
-	unsigned tmpNY = clipNY_2(SY, DY, NY, ARG);
+	unsigned tmpNY = clipNY_2(SY, DY, NY, ARG, vdp.hasEVR());
 	ASX = SX;
 	ADX = DX;
 	ANX = tmpNX;
@@ -2179,7 +2179,7 @@ void VDPCmdEngine::executeHmmmHs(EmuTime limit)
 {
 	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_2_byte<Mode>(SX, DX, NX, ARG);
-	unsigned tmpNY = clipNY_2(SY, DY, NY, ARG);
+	unsigned tmpNY = clipNY_2(SY, DY, NY, ARG, vdp.hasEVR());
 	int TX = (ARG & DIX)
 	       ? -Mode::PIXELS_PER_BYTE : Mode::PIXELS_PER_BYTE;
 	int TY = (ARG & DIY) ? -1 : 1;
@@ -2239,7 +2239,7 @@ void VDPCmdEngine::startYmmm(EmuTime time)
 	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_byte<Mode>(DX, 512, ARG);
 		// large enough so that it gets clipped
-	unsigned tmpNY = clipNY_2(SY, DY, NY, ARG);
+	unsigned tmpNY = clipNY_2(SY, DY, NY, ARG, vdp.hasEVR());
 	ADX = DX;
 	ANX = tmpNX;
 	nextAccessSlot(time);
@@ -2253,7 +2253,7 @@ void VDPCmdEngine::executeYmmm(EmuTime limit)
 	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_byte<Mode>(DX, 512, ARG);
 		// large enough so that it gets clipped
-	unsigned tmpNY = clipNY_2(SY, DY, NY, ARG);
+	unsigned tmpNY = clipNY_2(SY, DY, NY, ARG, vdp.hasEVR());
 	int TX = (ARG & DIX)
 		? -Mode::PIXELS_PER_BYTE : Mode::PIXELS_PER_BYTE;
 	int TY = (ARG & DIY) ? -1 : 1;
@@ -2365,7 +2365,7 @@ void VDPCmdEngine::startYmmmHs(EmuTime time)
 	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_byte<Mode>(DX, 512, ARG);
 		// large enough so that it gets clipped
-	unsigned tmpNY = clipNY_2(SY, DY, NY, ARG);
+	unsigned tmpNY = clipNY_2(SY, DY, NY, ARG, vdp.hasEVR());
 	ADX = DX;
 	ANX = tmpNX;
 	bool dstExt = getMXD(ARG, vdp.hasEVR());
@@ -2380,7 +2380,7 @@ void VDPCmdEngine::executeYmmmHs(EmuTime limit)
 	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_byte<Mode>(DX, 512, ARG);
 		// large enough so that it gets clipped
-	unsigned tmpNY = clipNY_2(SY, DY, NY, ARG);
+	unsigned tmpNY = clipNY_2(SY, DY, NY, ARG, vdp.hasEVR());
 	int TX = (ARG & DIX)
 		? -Mode::PIXELS_PER_BYTE : Mode::PIXELS_PER_BYTE;
 	int TY = (ARG & DIY) ? -1 : 1;
@@ -2450,7 +2450,7 @@ void VDPCmdEngine::executeHmmc(EmuTime limit)
 {
 	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_byte<Mode>(DX, NX, ARG);
-	unsigned tmpNY = clipNY_1(DY, NY, ARG);
+	unsigned tmpNY = clipNY_1(DY, NY, ARG, vdp.hasEVR());
 	int TX = (ARG & DIX)
 		? -Mode::PIXELS_PER_BYTE : Mode::PIXELS_PER_BYTE;
 	int TY = (ARG & DIY) ? -1 : 1;
@@ -2502,7 +2502,7 @@ void VDPCmdEngine::executeHmmcHs(EmuTime limit)
 {
 	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_byte<Mode>(DX, NX, ARG);
-	unsigned tmpNY = clipNY_1(DY, NY, ARG);
+	unsigned tmpNY = clipNY_1(DY, NY, ARG, vdp.hasEVR());
 	int TX = (ARG & DIX)
 		? -Mode::PIXELS_PER_BYTE : Mode::PIXELS_PER_BYTE;
 	int TY = (ARG & DIY) ? -1 : 1;
@@ -2544,7 +2544,7 @@ void VDPCmdEngine::startLfmm(EmuTime time)
 	setWriteMask(time, vram, vdp.hasEVR(), true);	//vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
 	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_pixel<Mode>(DX, NX * 8, ARG);
-	unsigned tmpNY = NY;//clipNY_1(DY, NY, ARG);
+	unsigned tmpNY = NY;
 	ADX = DX;
 	ADY = DY;
 	ANX = tmpNX;
@@ -2561,7 +2561,7 @@ void VDPCmdEngine::executeLfmm(EmuTime limit)
 {
 	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_pixel<Mode>(DX, NX * 8, ARG);
-	unsigned tmpNY = NY;//clipNY_1(DY, NY, ARG);
+	unsigned tmpNY = NY;
 	int TX = (ARG & DIX) ? -1 : 1;
 	int TY = (ARG & DIY) ? -1 : 1;
 	ANX = clipNX_1_pixel<Mode>(ADX, ANX, ARG);
@@ -2636,7 +2636,7 @@ void VDPCmdEngine::startLfmmHs(EmuTime time)
 	setWriteMask(time, vram, vdp.hasEVR(), true);	//vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
 	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_pixel<Mode>(DX, NX * 8, ARG);
-	unsigned tmpNY = NY;//clipNY_1(DY, NY, ARG);
+	unsigned tmpNY = NY;
 	ADX = DX;
 	ADY = DY;
 	ANX = tmpNX;
@@ -2653,7 +2653,7 @@ void VDPCmdEngine::executeLfmmHs(EmuTime limit)
 {
 	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_pixel<Mode>(DX, NX * 8, ARG);
-	unsigned tmpNY = NY;//clipNY_1(DY, NY, ARG);
+	unsigned tmpNY = NY;
 	int TX = (ARG & DIX) ? -1 : 1;
 	int TY = (ARG & DIY) ? -1 : 1;
 	ANX = clipNX_1_pixel<Mode>(ADX, ANX, ARG);
@@ -2747,7 +2747,7 @@ void VDPCmdEngine::executeLfmc(EmuTime limit)
 {
 	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_pixel<Mode>(DX, NX, ARG);
-	unsigned tmpNY = clipNY_1(DY, NY, ARG);
+	unsigned tmpNY = clipNY_1(DY, NY, ARG, vdp.hasEVR());
 	int TX = (ARG & DIX) ? -1 : 1;
 	int TY = (ARG & DIY) ? -1 : 1;
 	ANX = clipNX_1_pixel<Mode>(ADX, ANX, ARG);
@@ -2813,7 +2813,7 @@ void VDPCmdEngine::startLrmm(EmuTime time)
 	setWriteMask(time, vram, vdp.hasEVR(), true);	//vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
 	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_pixel<Mode>(DX, NX, ARG);
-	unsigned tmpNY = clipNY_1(DY, NY, ARG);
+	unsigned tmpNY = clipNY_1(DY, NY, ARG, vdp.hasEVR());
 	ASX_12P8 = SX_12P8 = (SX | ((SX & 0x0800) ? ~0x07FF : 0x0000)) << 8;
 	ASY_12P8 = SY_12P8 = (SY | ((SY & 0x1000) ? ~0x0FFF : 0x0000)) << ((ARG & XHR) ? 9 : 8);
 	ADX = DX;
@@ -2828,7 +2828,7 @@ void VDPCmdEngine::executeLrmm(EmuTime limit)
 {
 	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_pixel<Mode>(DX, NX, ARG);
-	unsigned tmpNY = clipNY_1(DY, NY, ARG);
+	unsigned tmpNY = clipNY_1(DY, NY, ARG, vdp.hasEVR());
 	int TX = (ARG & DIX) ? -1 : 1;
 	int TY = (ARG & DIY) ? -1 : 1;
 	ANX = clipNX_1_pixel<Mode>(ADX, ANX, ARG);
@@ -2908,7 +2908,7 @@ void VDPCmdEngine::startLrmmHs(EmuTime time)
 	setWriteMask(time, vram, vdp.hasEVR(), true);	//vram.cmdWriteWindow.setMask(0x3FFFF, ~0u << 18, time);
 	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_pixel<Mode>(DX, NX, ARG);
-	unsigned tmpNY = clipNY_1(DY, NY, ARG);
+	unsigned tmpNY = clipNY_1(DY, NY, ARG, vdp.hasEVR());
 	ASX_12P8 = SX_12P8 = (SX | ((SX & 0x0800) ? ~0x07FF : 0x0000)) << 8;
 	ASY_12P8 = SY_12P8 = (SY | ((SY & 0x1000) ? ~0x0FFF : 0x0000)) << ((ARG & XHR) ? 9 : 8);
 	ADX = DX;
@@ -2930,7 +2930,7 @@ void VDPCmdEngine::executeLrmmHs(EmuTime limit)
 {
 	NY &= getYBitMask(vdp.isEVR());
 	unsigned tmpNX = clipNX_1_pixel<Mode>(DX, NX, ARG);
-	unsigned tmpNY = clipNY_1(DY, NY, ARG);
+	unsigned tmpNY = clipNY_1(DY, NY, ARG, vdp.hasEVR());
 	int TX = (ARG & DIX) ? -1 : 1;
 	int TY = (ARG & DIY) ? -1 : 1;
 	ANX = clipNX_1_pixel<Mode>(ADX, ANX, ARG);
@@ -3055,59 +3055,67 @@ void VDPCmdEngine::reset(EmuTime time)
 
 void VDPCmdEngine::setCmdReg(uint8_t index, uint8_t value, EmuTime time)
 {
+	const uint16_t maskSX  = vdp.hasECOM() ? 0x0FFF : 0x01FF;
+	const uint16_t maskSY  = vdp.hasECOM() ? 0x1FFF : 0x03FF;
+	const uint16_t maskDX  = 0x01FF;
+	const uint16_t maskDY  = vdp.isEVR()   ? 0x07FF : 0x03FF;
+	const uint16_t maskNX  = vdp.isECOM()  ? 0x03FF : 0x01FF;
+	const uint16_t maskNY  = vdp.isEVR()   ? 0x07FF : 0x03FF;
+	const uint8_t  maskARG = vdp.isECOM()  ? 0xFF   : 0x3F;
+
 	sync(time);
 	if (CMD && (index != 12)) {
 		cmdInProgressCallback.execute(index, value);
 	}
 	switch (index) {
 	case 0x00: // source X low
-		SX = (SX & 0x100) | value;
+		SX = (SX & maskSX & 0xFF00) | value;
 		ASA = (ASA & 0x3FF00) | value;
 		break;
 	case 0x01: // source X high
 		SX = (SX & 0x0FF) | (value<< 8);
-		SX &= vdp.hasECOM() ? 0x0FFF : 0x01FF;
+		SX &= maskSX;
 		ASA = (ASA & 0x300FF) | (value << 8);
 		break;
 	case 0x02: // source Y low
-		SY = (SY & 0x700) | value;
+		SY = (SY & maskSY & 0xFF00) | value;
 		ASA = (ASA & 0x0FFFF) | ((value & 0x03) << 16);
 		break;
 	case 0x03: // source Y high
 		SY = (SY & 0x0FF) | (value << 8);
-		SY &= vdp.hasECOM() ? 0x1FFF : 0x03FF;
+		SY &= maskSY;
 		break;
 
 	case 0x04: // destination X low
-		DX = (DX & 0x100) | value;
+		DX = (DX & maskDX & 0xFF00) | value;
 		break;
 	case 0x05: // destination X high
 		DX = (DX & 0x0FF) | (value << 8);
-		DX &= vdp.isECOM() ? 0x01FF : 0x01FF;
+		DX &= maskDX;
 		break;
 	case 0x06: // destination Y low
-		DY = (DY & 0x700) | value;
+		DY = (DY & maskDY & 0xFF00) | value;
 		break;
 	case 0x07: // destination Y high
 		DY = (DY & 0x0FF) | (value << 8);
-		DY &= vdp.isEVR() ? 0x07FF : 0x03FF;
+		DY &= maskDY;
 		break;
 
 	// TODO is DX 9 or 10 bits, at least current implementation needs
 	// 10 bits (otherwise texts in UR are screwed)
 	case 0x08: // number X low
-		NX = (NX & 0x300) | value;
+		NX = (NX & maskNX & 0xFF00) | value;
 		break;
 	case 0x09: // number X high
 		NX = (NX & 0x0FF) | (value << 8);
-		NY &= vdp.isECOM() ? 0x3FF : 0x1FF;
+		NX &= maskNX;
 		break;
 	case 0x0A: // number Y low
-		NY = (NY & 0x700) | value;
+		NY = (NY & maskNY & 0xFF00) | value;
 		break;
 	case 0x0B: // number Y high
 		NY = (NY & 0x0FF) | (value << 8);
-		NY &= vdp.isEVR() ? 0x7FF : 0x3FF;
+		NY &= maskNY;
 		break;
 
 	case 0x0C: // color
@@ -3119,7 +3127,7 @@ void VDPCmdEngine::setCmdReg(uint8_t index, uint8_t value, EmuTime time)
 		transfer = true;
 		break;
 	case 0x0D: // argument
-		ARG = value & (vdp.isECOM() ? 0xFF : 0x3F);
+		ARG = value & maskARG;
 		break;
 	case 0x0E: // command
 		CMD = value;
