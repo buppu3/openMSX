@@ -603,12 +603,12 @@ inline void SpriteChecker::checkSprites3(int minLine, int maxLine)
 		// According to TMS9918.pdf 5th sprite detection is only
 		// active when F flag is zero.
 		if ((status & 0xC0) == 0) {
-			status = uint8_t(0x40 | (status & 0x20) | fifthSpriteNum);
+			status = uint8_t(0x40 | (status & 0x20) | (fifthSpriteNum & 0x1F));
 		}
 	}
 	if (~status & 0x40) {
 		// No 5th sprite detected, store number of latest sprite processed.
-		status = (status & 0x20) | uint8_t(std::min(sprite, 63));
+		status = (status & 0x20) | (uint8_t(std::min(sprite, 63)) & 0x1F);
 	}
 	vdp.setSpriteStatus(status);
 }
