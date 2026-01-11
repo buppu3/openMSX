@@ -611,6 +611,46 @@ inline void SpriteChecker::checkSprites3(int minLine, int maxLine)
 		status = (status & 0x20) | (uint8_t(std::min(sprite, 63)) & 0x1F);
 	}
 	vdp.setSpriteStatus(status);
+
+	// collision
+	if (vdp.getStatusReg0() & 0x20) return;
+	std::array<uint8_t, 256> col_buffer;
+	for (auto line : xrange(minLine, maxLine)) {
+		std::ranges::fill(col_buffer, 0);
+		int count = std::min<int>(maxVisible, spriteCount[line]);
+		for (int i = 0; i < count; i++) {
+			int dst_x = spriteBuffer[line][i].x;
+			int width = spriteBuffer[line][i].mgx;
+			if (dst_x >= 256) continue;
+			if (dst_x + width <= 0) continue;
+
+			int ofs_x = 0;
+			if (dst_x < 0) {
+				width += dst_x;
+				ofs_x += dst_x;
+				dst_x = 0;
+			}
+
+			uint64_t pattern = ((uint64_t)spriteBuffer[line][i].pattern << 32) | spriteBuffer[line][i].pattern2;
+			while (ofs_x < width) {
+				int pat_x = ofs_x * 16 / width;
+				uint8_t color = (pattern >> (60 - pat_x * 4)) & 0x0F;
+
+				if (color) {
+					if (col_buffer[dst_x]) {
+						vdp.setSpriteStatus(vdp.getStatusReg0() | 0x20);
+						collisionX = dst_x + 12;
+						collisionY = line - vdp.getLineZero() + 8;
+						return;
+					}
+					col_buffer[dst_x] = 1;
+				}
+
+				if (++dst_x >= 256) break;
+				ofs_x++;
+			}
+		}
+	}
 }
 
 // version 1: initial version
