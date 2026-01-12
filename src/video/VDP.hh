@@ -1162,6 +1162,10 @@ private:
 	  */
 	void updateDisplayMode(DisplayMode newMode, bool cmdBit, EmuTime time);
 
+	/** EVR has changed.
+	  */
+	void updateAddressMask(bool evr);
+
 	// Observer<Setting>
 	void update(const Setting& setting) noexcept override;
 

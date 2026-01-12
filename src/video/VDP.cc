@@ -206,12 +206,7 @@ VDP::VDP(const DeviceConfig& config)
 		controlValueMasks[20] |= 0x20;
 	}
 	if (hasEVR()) {
-		controlValueMasks[2] |= 0x80;	// enable A17
-		controlValueMasks[4] |= 0x40;	// enable A17
-		controlValueMasks[6] |= 0x40;	// enable A17
-		controlValueMasks[10] |= 0x08;	// enable A17
-		controlValueMasks[11] |= 0x04;	// enable A17
-		controlValueMasks[14] |= 0x08;	// enable A17
+		updateAddressMask(false);
 		controlValueMasks[20] |= 0x40;
 	}
 	if (hasS16()) {
@@ -1293,6 +1288,7 @@ void VDP::changeRegister(uint8_t reg, uint8_t val, EmuTime time)
 			syncAtNextLine(syncSetMode, time);
 		}
 		if (hasEVR() && (change & 0x40)) {
+			updateAddressMask((val & 0x40) != 0);
 			vram->updateEVRMode((val & 0x40) != 0, time);
 		}
 		if (hasS16()  && (change & 0x80)) {
@@ -1616,6 +1612,16 @@ void VDP::updateDisplayMode(DisplayMode newMode, bool cmdBit, EmuTime time)
 	// which affects the moment hscan occurs.
 	// TODO: Why didn't I implement this yet?
 	//       It's one line of code and overhead is not huge either.
+}
+
+void VDP::updateAddressMask(bool evr)
+{
+	controlValueMasks[ 2] = evr ? 0xFF : 0xFF;
+	controlValueMasks[ 4] = evr ? 0x7F : 0x7F;
+	controlValueMasks[ 6] = evr ? 0x7F : 0x7F;
+	controlValueMasks[10] = evr ? 0x0F : 0x0F;
+	controlValueMasks[11] = evr ? 0x07 : 0x07;
+	controlValueMasks[14] = evr ? 0x0F : 0x07;
 }
 
 void VDP::update(const Setting& setting) noexcept
