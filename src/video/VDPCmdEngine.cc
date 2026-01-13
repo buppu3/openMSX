@@ -3058,8 +3058,8 @@ void VDPCmdEngine::setCmdReg(uint8_t index, uint8_t value, EmuTime time)
 	const uint16_t maskSX  = vdp.hasECOM() ? 0x0FFF : 0x01FF;
 	const uint16_t maskSY  = vdp.hasECOM() ? 0x1FFF : 0x03FF;
 	const uint16_t maskDX  = 0x01FF;
-	const uint16_t maskDY  = vdp.isEVR()   ? 0x07FF : 0x03FF;
-	const uint16_t maskNX  = vdp.isECOM()  ? 0x03FF : 0x01FF;
+	const uint16_t maskDY  = vdp.hasECOM() ? 0x07FF : 0x03FF;
+	const uint16_t maskNX  = vdp.hasECOM() ? 0x07FF : 0x01FF;
 	const uint16_t maskNY  = vdp.isEVR()   ? 0x07FF : 0x03FF;
 	const uint8_t  maskARG = vdp.isECOM()  ? 0xFF   : 0x3F;
 
@@ -3131,6 +3131,13 @@ void VDPCmdEngine::setCmdReg(uint8_t index, uint8_t value, EmuTime time)
 		break;
 	case 0x0E: // command
 		CMD = value;
+		if (vdp.hasECOM() && (CMD & 0xF0) != 0x30) {
+			// Register Clipping at VDP Command Start for V9968
+			SX &= 0x01FF;
+			NX &= 0x01FF;
+			SY &= vdp.isEVR() ? 0x07FF : 0x03FF;
+			NY &= vdp.isEVR() ? 0x07FF : 0x03FF;
+		}
 		if (vdp.useHS()) {
 			executeCommandHs(time);
 		} else {
