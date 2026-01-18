@@ -70,7 +70,7 @@ public:
 	  */
 	void sync(EmuTime time) {
 		if (CMD) {
-			if (vdp.useHS()) {
+			if (useHS()) {
 				sync2Hs(time);
 			} else {
 				sync2(time);
@@ -402,6 +402,14 @@ private:
 	void reportVdpCommand() const;
 
 private:
+	bool useHS() {
+		return vdp.useHS() || cmdForceHsSetting.getBoolean();
+	}
+
+	bool isHS() {
+		return vdp.isHS() || cmdForceHsSetting.getBoolean();
+	}
+
 	int cachePriority;
 	CacheBuffer cacheBuffer[CACHE_BUFFER_COUNT];
 
@@ -484,6 +492,8 @@ private:
 	/** Flag that indicated whether extended VRAM is available
 	 */
 	const bool hasExtendedVRAM;
+
+	BooleanSetting cmdForceHsSetting;
 };
 SERIALIZE_CLASS_VERSION(VDPCmdEngine, 4);
 
