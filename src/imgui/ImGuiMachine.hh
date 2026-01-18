@@ -42,14 +42,24 @@ private:
 	[[nodiscard]] MachineInfo* findMachineInfo(std::string_view config);
 	[[nodiscard]] const std::string& getTestResult(MachineInfo& info);
 	bool printConfigInfo(MachineInfo& info);
-	enum class ViewMode { VIEW, SAVE, NO_CONTROLS };
-	void showSetupOverview(MSXMotherBoard& motherBoard, ViewMode = ViewMode::VIEW);
+	enum class Mode : uint8_t { VIEW, EDIT };
+	void showSetupOverviewView(MSXMotherBoard& motherBoard);
+	void showSetupOverviewSave(MSXMotherBoard& motherBoard);
+	void showSetupOverviewTooltip(MSXMotherBoard& motherBoard);
+	void showSetupOverviewEdit(MSXMotherBoard& motherBoard);
+	void showSetupOverviewMachine(MachineInfo& info);
+	void showSetupOverviewMachineEdit(MachineInfo& info);
+	void showSetupOverviewExtensions(MSXMotherBoard& motherBoard, Mode mode, ImGuiTreeNodeFlags flags = 0);
+	void showSetupOverviewConnectors(MSXMotherBoard& motherBoard, Mode mode, ImGuiTreeNodeFlags flags = 0);
+	void showSetupOverviewMedia(MSXMotherBoard& motherBoard, Mode mode, ImGuiTreeNodeFlags flags = 0);
+	void showSetupOverviewState(MSXMotherBoard& motherBoard, ImGuiTreeNodeFlags flags = 0);
 	void loadPreviewSetup();
 	void showNonExistingPreview();
 
 public:
 	bool showSelectMachine = false;
 	bool showTestHardware = false;
+	bool showQuickSetupEditor = true;
 
 private:
 	std::vector<MachineInfo> machineInfo; // sorted on displayName
@@ -80,6 +90,7 @@ private:
 
 	static constexpr auto persistentElements = std::tuple{
 		PersistentElement{"hideNonWorkingMachines", &ImGuiMachine::hideNonWorking},
+		PersistentElement{"showQuickSetupEditor", &ImGuiMachine::showQuickSetupEditor},
 		// manually handle "recentMachines"
 	};
 };

@@ -471,9 +471,6 @@
     <ClCompile Include="$(OpenMSXSrcDir)\file\MappedFile.cc">
       <Filter>file</Filter>
     </ClCompile>
-    <ClCompile Include="$(OpenMSXSrcDir)\file\PreCacheFile.cc">
-      <Filter>file</Filter>
-    </ClCompile>
     <ClCompile Include="$(OpenMSXSrcDir)\file\ZipFileAdapter.cc">
       <Filter>file</Filter>
     </ClCompile>
@@ -604,6 +601,9 @@
       <Filter>imgui</Filter>
     </ClCompile>
     <ClCompile Include="$(OpenMSXSrcDir)\imgui\ImGuiPlot.cc">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="$(OpenMSXSrcDir)\imgui\ImGuiRasterViewer.cc">
       <Filter>imgui</Filter>
     </ClCompile>
     <ClCompile Include="$(OpenMSXSrcDir)\imgui\ImGuiReverseBar.cc">
@@ -1977,9 +1977,6 @@
     <None Include="$(OpenMSXSrcDir)\file\MappedFile.hh">
       <Filter>file</Filter>
     </None>
-    <None Include="$(OpenMSXSrcDir)\file\PreCacheFile.hh">
-      <Filter>file</Filter>
-    </None>
     <None Include="$(OpenMSXSrcDir)\file\ReadDir.hh">
       <Filter>file</Filter>
     </None>
@@ -2128,6 +2125,9 @@
       <Filter>imgui</Filter>
     </None>
     <None Include="$(OpenMSXSrcDir)\imgui\ImGuiPart.hh">
+      <Filter>imgui</Filter>
+    </None>
+    <None Include="$(OpenMSXSrcDir)\imgui\ImGuiRasterViewer.hh">
       <Filter>imgui</Filter>
     </None>
     <None Include="$(OpenMSXSrcDir)\imgui\ImGuiReverseBar.hh">

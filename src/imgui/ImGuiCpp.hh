@@ -5,6 +5,7 @@
 #include "xrange.hh"
 
 #include <imgui.h>
+#include <imgui_internal.h>
 
 #include <concepts>
 
@@ -284,6 +285,7 @@ inline void ID(std::string_view str, std::invocable<> auto next)
 	ID(begin, end, next);
 }
 
+// Note: consider using im::ListClipperID()
 inline void ID_for_range(std::integral auto count, std::invocable<int> auto next)
 {
 	for (auto i : xrange(narrow<int>(count))) {
@@ -330,6 +332,21 @@ inline void TreeNode(const char* label, bool* p_open, std::invocable<> auto next
 		next();
 		ImGui::TreePop();
 	}
+}
+
+inline bool TreeNodeWithoutID(const char* label, ImGuiTreeNodeFlags flags, std::invocable<> auto next)
+{
+	ImGuiID id_before = ImGui::GetID(""); // capture the current ID stack top
+
+	// TreeNodeEx pushes its own ID(s)
+	bool open = ImGui::TreeNodeEx(label, flags);
+	if (open) {
+		ImGui::PushOverrideID(id_before); // restore ID stack for children (internal API)
+		next();
+		ImGui::PopID();
+		ImGui::TreePop();
+	}
+	return open;
 }
 
 // im::ListBox(): wrapper around ImGui::BeginListBox() / ImGui::EndListBox()

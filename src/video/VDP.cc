@@ -1798,6 +1798,16 @@ std::array<std::array<uint8_t, 3>, 16> VDP::getMSX1Palette() const
 	return tmsPalette;
 }
 
+const RawFrame* VDP::getWorkingFrame(EmuTime time)
+{
+	return renderer->getWorkingFrame(time);
+}
+
+const RawFrame* VDP::getLastFrame() const
+{
+	return renderer->getLastFrame();
+}
+
 // RegDebug
 
 VDP::RegDebug::RegDebug(const VDP& vdp_)
@@ -2178,7 +2188,7 @@ void VDP::serialize(Archive& ar, unsigned serVersion)
 	             "spriteChecker", *spriteChecker, // must come after displayMode
 	             "vram",          *vram); // must come after controlRegs and after spriteChecker
 	if constexpr (Archive::IS_LOADER) {
-		pendingCpuAccess = syncCpuVramAccess.pendingSyncPoint();
+		pendingCpuAccess = syncCpuVramAccess.isPending().has_value();
 		update(tooFastAccess);
 	}
 

@@ -144,6 +144,16 @@ PostProcessor* SDLRasterizer::getPostProcessor() const
 	return postProcessor.get();
 }
 
+const RawFrame* SDLRasterizer::getWorkingFrame() const
+{
+	return workFrame.get();
+}
+
+const RawFrame* SDLRasterizer::getLastFrame() const
+{
+	return postProcessor->getLastRawFrame();
+}
+
 bool SDLRasterizer::isActive()
 {
 	return postProcessor->needRender() &&
