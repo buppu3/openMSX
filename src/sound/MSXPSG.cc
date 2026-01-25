@@ -38,6 +38,7 @@ MSXPSG::MSXPSG(const DeviceConfig& config)
 	, ports(generate_array<2>([&](auto i) { return &getMotherBoard().getJoystickPort(unsigned(i)); }))
 	, keyLayout(getKeyboardLayout(*this))
 	, addressMask(config.getChildDataAsBool("mirrored_registers", true) ? 0x0f : 0xff)
+	, chipSelect(config.getChildDataAsInt("chip_select", -1))
 	, ay8910(getName(), *this, config, getCurrentTime())
 {
 	reset(getCurrentTime());
@@ -63,7 +64,12 @@ byte MSXPSG::readIO(uint16_t port, EmuTime time)
 {
 	switch (port & 0x03) {
 	case 2:
-		return ay8910.readRegister(registerLatch, time);
+		if (chipSelect == -1) {
+			return ay8910.readRegister(registerLatch, time);
+		} else if(chipSelect == ((registerLatch >> 4) & 0x0F)) {
+			return ay8910.readRegister(registerLatch & 0x0F, time);
+		}
+		return 0xFF;
 	default:
 		// nothing for 0, 1 and 3
 		return 0xFF;
@@ -82,7 +88,11 @@ void MSXPSG::writeIO(uint16_t port, byte value, EmuTime time)
 		registerLatch = value & addressMask;
 		break;
 	case 1:
-		ay8910.writeRegister(registerLatch, value, time);
+		if (chipSelect == -1) {
+			ay8910.writeRegister(registerLatch, value, time);
+		} else if(chipSelect == ((registerLatch >> 4) & 0x0F)) {
+			ay8910.writeRegister(registerLatch & 0x0F, value, time);
+		}
 		break;
 	}
 }

@@ -45,6 +45,7 @@ private:
 	byte prev = 255;
 	const byte keyLayout; // 0x40 or 0x00
 	const byte addressMask; // controls address mirroring
+	const int chipSelect;
 	AY8910 ay8910; // must come after initialisation of most stuff above
 };
 SERIALIZE_CLASS_VERSION(MSXPSG, 2);
