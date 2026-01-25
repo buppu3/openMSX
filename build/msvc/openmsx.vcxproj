@@ -706,6 +706,7 @@
     <ClCompile Include="$(OpenMSXSrcDir)\sound\YM2413Burczynski.cc" />
     <ClCompile Include="$(OpenMSXSrcDir)\sound\YM2413Okazaki.cc" />
     <ClCompile Include="$(OpenMSXSrcDir)\sound\YM2413NukeYKT.cc" />
+    <ClCompile Include="$(OpenMSXSrcDir)\sound\YM2413NukeYKTBanked.cc" />
     <ClCompile Include="$(OpenMSXSrcDir)\sound\YM2413OriginalNukeYKT.cc" />
     <ClCompile Include="$(OpenMSXSrcDir)\sound\opll.cc" />
     <ClCompile Include="$(OpenMSXSrcDir)\sound\YMF262.cc" />
@@ -1315,6 +1316,7 @@
     <None Include="$(OpenMSXSrcDir)\sound\YM2413Interface.hh" />
     <None Include="$(OpenMSXSrcDir)\sound\YM2413Okazaki.hh" />
     <None Include="$(OpenMSXSrcDir)\sound\YM2413NukeYKT.hh" />
+    <None Include="$(OpenMSXSrcDir)\sound\YM2413NukeYKTBanked.hh" />
     <None Include="$(OpenMSXSrcDir)\sound\YM2413NukeYktTables.ii" />
     <None Include="$(OpenMSXSrcDir)\sound\YM2413OriginalNukeYKT.hh" />
     <None Include="$(OpenMSXSrcDir)\sound\opll.hh" />

@@ -414,6 +414,7 @@ sources = files(
     'sound/YM2413.cc',
     'sound/YM2413Burczynski.cc',
     'sound/YM2413NukeYKT.cc',
+    'sound/YM2413NukeYKTBanked.cc',
     'sound/YM2413Okazaki.cc',
     'sound/YM2413OriginalNukeYKT.cc',
     'sound/YMF262.cc',
