@@ -10,8 +10,73 @@
     <type>sound expansion</type>
   </info>
   <devices>
-    <MSX-TIMER>
+    <MSX-TIMER id="y8960-timer">
       <io base="0xB0" num="4"/>
     </MSX-TIMER>
+    <PSG id="Y8960 PSG 1">
+      <io base="0xA0" num="4" type="O"/>
+      <mirrored_registers>false</mirrored_registers>
+      <chip_select>0</chip_select>
+      <sound>
+        <volume>21000</volume>
+      </sound>
+    </PSG>
+    <PSG id="Y8960 PSG 2">
+      <io base="0xA0" num="4" type="O"/>
+      <mirrored_registers>false</mirrored_registers>
+      <chip_select>1</chip_select>
+      <sound>
+        <volume>21000</volume>
+      </sound>
+    </PSG>
+    <SNPSG id="Y8960 DCSG 1">
+      <io base="0x48" num="2" type="O"/>
+      <sound>
+        <volume>21000</volume>
+      </sound>
+    </SNPSG>
+    <SNPSG id="Y8960 DCSG 2">
+      <io base="0x4A" num="2" type="O"/>
+      <sound>
+        <volume>21000</volume>
+      </sound>
+    </SNPSG>
+    <Y8960-OPLL id="Y8960 OPLL 1">
+      <io base="0x7C" num="2" type="O"/>
+      <sound>
+        <volume>13000</volume>
+      </sound>
+      <ym2413-core>NukeYKT-Banked</ym2413-core>
+    </Y8960-OPLL>
+    <Y8960-OPLL id="Y8960 OPLL 2">
+      <io base="0x7A" num="2" type="O"/>
+      <sound>
+        <volume>13000</volume>
+      </sound>
+      <ym2413-core>NukeYKT-Banked</ym2413-core>
+    </Y8960-OPLL>
+    <primary slot="any">
+      <secondary slot="any">
+        <ROM id="Y8960 SCC">
+          <mem base="0x4000" size="0x8000"/>
+          <sound>
+            <volume>11500</volume>
+          </sound>
+          <mappertype>SCC</mappertype>
+          <rom/>
+	        <opll1>Y8960 OPLL 1</opll1>
+      	  <opll2>Y8960 OPLL 2</opll2>
+        </ROM>
+      </secondary>
+    </primary>
+    <Y8960-MIXER id="y8960-mixer">
+      <io base="0x40" num="2"/>
+      <channel num="0" idref="Y8960 PSG 1"/>
+      <channel num="1" idref="Y8960 PSG 2"/>
+      <channel num="0" idref="Y8960 DCSG 1"/>
+      <channel num="1" idref="Y8960 DCSG 2"/>
+      <channel num="0" idref="Y8960 OPLL 1"/>
+      <channel num="1" idref="Y8960 OPLL 2"/>
+    </Y8960-MIXER>
   </devices>
 </msxconfig>
