@@ -410,6 +410,7 @@ sources = files(
     'sound/Y8950KeyboardConnector.cc',
     'sound/Y8950KeyboardDevice.cc',
     'sound/Y8950Periphery.cc',
+    'sound/Y8960OPLL.cc',
     'sound/YM2151.cc',
     'sound/YM2413.cc',
     'sound/YM2413Burczynski.cc',

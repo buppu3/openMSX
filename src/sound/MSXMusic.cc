@@ -167,4 +167,41 @@ void MSXMusicWX::serialize(Archive& ar, unsigned version)
 INSTANTIATE_SERIALIZE_METHODS(MSXMusicWX);
 REGISTER_MSXDEVICE(MSXMusicWX, "MSX-Music-WX");
 
+// class MSXMusicY8960
+
+MSXMusicY8960::MSXMusicY8960(DeviceConfig& config)
+	: MSXMusicBase(config)
+	, ym2413_2(getName() + " 2", config)
+{
+	reset(getCurrentTime());
+}
+
+void MSXMusicY8960::reset(EmuTime time)
+{
+	MSXMusicBase::reset(time);
+	ym2413_2.reset(time);
+}
+
+void MSXMusicY8960::writeIO(uint16_t port, byte value, EmuTime time)
+{
+	writePort((port & 2) != 0, port & 3, value, time);
+}
+
+void MSXMusicY8960::writePort(bool chipSelect, bool port, byte value, EmuTime time)
+{
+	if (chipSelect) {
+		ym2413_2.writePort(port, value, time);
+	} else {
+		ym2413.writePort(port, value, time);
+	}
+}
+
+template<typename Archive>
+void MSXMusicY8960::serialize(Archive& ar, unsigned version)
+{
+	ar.template serializeInlinedBase<MSXMusicBase>(*this, version);
+}
+INSTANTIATE_SERIALIZE_METHODS(MSXMusicY8960);
+REGISTER_MSXDEVICE(MSXMusicY8960, "MSX-Music-Y8960");
+
 } // namespace openmsx

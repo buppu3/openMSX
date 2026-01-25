@@ -94,6 +94,7 @@
 #include "YamahaFDC.hh"
 #include "YamahaSKW01.hh"
 #include "MSXTimer.hh"
+#include "Y8960OPLL.hh"
 
 #include "one_of.hh"
 
@@ -322,6 +323,8 @@ std::unique_ptr<MSXDevice> DeviceFactory::create(DeviceConfig& conf)
 		// Ignore for now. We might want to create a real device for it later.
 	} else if (type == "MSXPiDevice") {
 		result = std::make_unique<MSXPiDevice>(conf);
+	} else if (type == "Y8960-OPLL") {
+		result = std::make_unique<Y8960OPLL>(conf);
 	} else {
 		throw MSXException("Unknown device \"", type,
 		                   "\" specified in configuration");
