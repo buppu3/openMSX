@@ -576,7 +576,7 @@ NEVER_INLINE void YM2413::doRegWrite(uint8_t channel)
 		write_fm_cycle = uint8_t(-1);
 		doRegWrite(write_address & 0xf0, channel, fm_data);
 	} else {
-		write_address -= 0x40; // try again in 18 steps
+		write_address -= 0x50; // try again in 18 steps
 	}
 }
 
@@ -619,11 +619,11 @@ NEVER_INLINE void YM2413::doIO(uint32_t cycles_plus_1, Write& write)
 		// data
 		if (write_address < 0x10) {
 			doModeWrite(write_address, write.value);
-		} else if (write_address < 0x40) {
+		} else if (write_address < 0x50) {
 			write_fm_cycle = write_address & 0xf;
 			fm_data = write.value;
 			if (!fast_fm_rewrite && (write_fm_cycle == cycles_plus_1)) {
-				write_address += 0x40; // postpone for 18 steps
+				write_address += 0x50; // postpone for 18 steps
 			}
 			// First fm-register write takes one cycle longer than
 			// subsequent writes to the same register. When the address
