@@ -65,24 +65,6 @@ private:
 };
 SERIALIZE_CLASS_VERSION(MSXMusicWX, 3); // must be same as MSXMusicBase
 
-class MSXMusicY8960 : public MSXMusicBase
-{
-public:
-	explicit MSXMusicY8960(DeviceConfig& config);
-	void reset(EmuTime time) override;
-	void writeIO(uint16_t port, byte value, EmuTime time) override;
-
-	template<typename Archive>
-	void serialize(Archive& ar, unsigned version);
-
-protected:
-	void writePort(bool chipSelect, bool port, byte value, EmuTime time);
-
-protected:
-	YM2413 ym2413_2;
-};
-SERIALIZE_CLASS_VERSION(MSXMusicY8960, 3); // must be same as MSXMusicBase
-
 } // namespace openmsx
 
 #endif
