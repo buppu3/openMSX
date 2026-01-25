@@ -51,6 +51,7 @@ public:
 		dynarray<ChannelSettings> channelSettings;
 		float defaultVolume = 0.f;
 		float left1 = 0.f, right1 = 0.f, left2 = 0.f, right2 = 0.f;
+		bool externalOutput;
 	};
 
 public:
@@ -71,7 +72,7 @@ public:
 	 * 'regularly' called (see SoundDevice for more info).
 	 */
 	void registerSound(SoundDevice& device, float volume,
-	                   int balance, unsigned numChannels);
+	                   int balance, unsigned numChannels, bool externalOutput = false);
 
 	/**
 	 * Every SoundDevice must unregister before it is destructed
@@ -142,6 +143,10 @@ public:
 
 	void reInit();
 
+	void setBalance(std::string_view name, int balance);
+	void setExternal(std::string_view name, bool external);
+	void selectExternal(bool external);
+
 private:
 	void updateVolumeParams(SoundDeviceInfo& info) const;
 	void updateMasterVolume();
@@ -192,6 +197,8 @@ private:
 
 	unsigned muteCount = 1; // start muted
 	float tl0, tr0; // internal DC-filter state
+	int externalOutputCount = 0;
+	bool selectInput = false;
 };
 
 } // namespace openmsx
