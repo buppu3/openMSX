@@ -16,7 +16,7 @@ static constexpr byte WRITE_PROTECT = 0x0F;
 
 MusicalMemoryMapper::MusicalMemoryMapper(const DeviceConfig& config)
 	: MSXMemoryMapperBase(config)
-	, sn76489(config)
+	, sn76489(getName(), config)
 {
 }
 

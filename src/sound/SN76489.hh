@@ -26,7 +26,7 @@ namespace openmsx {
 class SN76489 final : public ResampledSoundDevice
 {
 public:
-	explicit SN76489(const DeviceConfig& config);
+	explicit SN76489(const std::string& name_, const DeviceConfig& config);
 	~SN76489();
 
 	// ResampledSoundDevice

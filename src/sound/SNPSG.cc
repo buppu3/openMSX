@@ -6,7 +6,7 @@ namespace openmsx {
 
 SNPSG::SNPSG(const DeviceConfig& config)
 	: MSXDevice(config)
-	, sn76489(config)
+	, sn76489(getName(), config)
 {
 }
 
