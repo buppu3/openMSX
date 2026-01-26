@@ -891,8 +891,28 @@ void MSXMixer::setBalance(std::string_view name, int balance)
 		std::string_view devName = device.getName();
 		if (name.compare(devName) == 0) {
 			found = true;
-			for (int ch = 0; ch < device.getNumChannels(); ch++) {
+			for (unsigned ch = 0; ch < device.getNumChannels(); ch++) {
 				device.setBalance(ch, fbalance);
+			}
+			device.postSetBalance();
+		}
+	}
+
+	if (!found) {
+		throw CommandException("Unknown sound device '", name, "'");
+	}
+}
+
+void MSXMixer::setBalance(std::string_view name, float leftGain, float rightGain)
+{
+	bool found = false;
+	for (auto& info : infos) {
+		SoundDevice& device = *info.device;
+		std::string_view devName = device.getName();
+		if (name.compare(devName) == 0) {
+			found = true;
+			for (unsigned ch = 0; ch < device.getNumChannels(); ch++) {
+				device.setBalance(ch, leftGain, rightGain);
 			}
 			device.postSetBalance();
 		}

@@ -38,7 +38,8 @@ void Y8960Mixer::reset(EmuTime time)
 	getMotherBoard().getMSXMixer().selectExternal(true);
 	registerLatch = 0;
 	for(int i = 0; i < ChannelCount; i++) {
-		regs[i] = 0;
+		regs[i * 2 + 0] = 63;
+		regs[i * 2 + 1] = 63;
 	}
 	for(int i = 0; i < ChannelCount; i++) {
 		for (std::string_view device : channelDevices[i]) {
@@ -72,19 +73,25 @@ void Y8960Mixer::writeIO(uint16_t port, byte value, EmuTime time)
 		registerLatch = value & 0x01;
 		break;
 	case 1:
-		if (registerLatch < ChannelCount) {
+		if (registerLatch < RegCount) {
 			regs[registerLatch] = value;
-			updateBalance(registerLatch);
+			updateBalance(convRegToChNum(registerLatch));
 		}
 		break;
 	}
 }
 
+int Y8960Mixer::convRegToChNum(uint8_t num)
+{
+	return num >> 1;
+}
+
 void Y8960Mixer::updateBalance(int ch)
 {
-	int balance = (regs[ch] & 0x02) ? ((regs[ch] & 0x01) ? 100 : -100) : 0;
+	float leftGain  = (float)regs[ch * 2 + 0] / 127.0;
+	float rightGain = (float)regs[ch * 2 + 1] / 127.0;
 	for (std::string_view device : channelDevices[ch]) {
-		getMotherBoard().getMSXMixer().setBalance(device, balance);
+		getMotherBoard().getMSXMixer().setBalance(device, leftGain, rightGain);
 	}
 }
 
@@ -94,7 +101,7 @@ void Y8960Mixer::serialize(Archive& ar, unsigned version)
 	ar.template serializeBase<MSXDevice>(*this);
 	ar.serialize("registerLatch", registerLatch);
 	for (int i = 0; i < ChannelCount; i++) {
-		ar.serialize("ch" + i, regs[i]);
+		ar.serialize("reg" + i, regs[i]);
 	}
 	if constexpr (Archive::IS_LOADER) {
 		for(int i = 0; i < ChannelCount; i++) {

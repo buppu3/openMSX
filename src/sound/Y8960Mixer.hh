@@ -13,7 +13,8 @@ namespace openmsx {
 class Y8960Mixer final : public MSXDevice
 {
 public:
-	static constexpr  int ChannelCount = 8;
+	static constexpr int ChannelCount = 10;
+	static constexpr int RegCount = ChannelCount * 2;
 
     explicit Y8960Mixer(const DeviceConfig& config);
 	~Y8960Mixer() override;
@@ -28,11 +29,12 @@ public:
 	void serialize(Archive& ar, unsigned version);
 
 private:
+	int convRegToChNum(uint8_t num);
     void updateBalance(int ch);
 
 private:
     std::array<std::vector<std::string_view>, ChannelCount> channelDevices;
-    std::array<byte, ChannelCount> regs;
+    std::array<byte, RegCount> regs;
     byte registerLatch;
 };
 SERIALIZE_CLASS_VERSION(Y8960Mixer, 1);

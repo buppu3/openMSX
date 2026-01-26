@@ -13,7 +13,7 @@
     <MSX-TIMER id="y8960-timer">
       <io base="0xB0" num="4"/>
     </MSX-TIMER>
-    <PSG id="Y8960 PSG 1">
+    <PSG id="Y8960 SSG 0">
       <io base="0xA0" num="4" type="O"/>
       <mirrored_registers>false</mirrored_registers>
       <chip_select>0</chip_select>
@@ -21,7 +21,7 @@
         <volume>21000</volume>
       </sound>
     </PSG>
-    <PSG id="Y8960 PSG 2">
+    <PSG id="Y8960 SSG 1">
       <io base="0xA0" num="4" type="O"/>
       <mirrored_registers>false</mirrored_registers>
       <chip_select>1</chip_select>
@@ -29,26 +29,26 @@
         <volume>21000</volume>
       </sound>
     </PSG>
-    <SNPSG id="Y8960 DCSG 1">
+    <SNPSG id="Y8960 DCSG 0">
       <io base="0x48" num="2" type="O"/>
       <sound>
         <volume>21000</volume>
       </sound>
     </SNPSG>
-    <SNPSG id="Y8960 DCSG 2">
+    <SNPSG id="Y8960 DCSG 1">
       <io base="0x4A" num="2" type="O"/>
       <sound>
         <volume>21000</volume>
       </sound>
     </SNPSG>
-    <Y8960-OPLL id="Y8960 OPLL 1">
+    <Y8960-OPLL id="Y8960 OPLL 0">
       <io base="0x7C" num="2" type="O"/>
       <sound>
         <volume>13000</volume>
       </sound>
       <ym2413-core>NukeYKT-Banked</ym2413-core>
     </Y8960-OPLL>
-    <Y8960-OPLL id="Y8960 OPLL 2">
+    <Y8960-OPLL id="Y8960 OPLL 1">
       <io base="0x7A" num="2" type="O"/>
       <sound>
         <volume>13000</volume>
@@ -57,26 +57,30 @@
     </Y8960-OPLL>
     <primary slot="any">
       <secondary slot="any">
-        <ROM id="Y8960 SCC">
+        <ROM id="Y8960">
           <mem base="0x4000" size="0x8000"/>
           <sound>
             <volume>11500</volume>
           </sound>
           <mappertype>SCC</mappertype>
           <rom/>
-	        <opll1>Y8960 OPLL 1</opll1>
-      	  <opll2>Y8960 OPLL 2</opll2>
+          <opll1>Y8960 OPLL 0</opll1>
+          <opll2>Y8960 OPLL 1</opll2>
         </ROM>
       </secondary>
     </primary>
     <Y8960-MIXER id="y8960-mixer">
       <io base="0x40" num="2"/>
-      <channel num="0" idref="Y8960 PSG 1"/>
-      <channel num="1" idref="Y8960 PSG 2"/>
-      <channel num="0" idref="Y8960 DCSG 1"/>
-      <channel num="1" idref="Y8960 DCSG 2"/>
-      <channel num="0" idref="Y8960 OPLL 1"/>
-      <channel num="1" idref="Y8960 OPLL 2"/>
+      <channel num="0" idref="Y8960 OPLL 0"/>
+      <channel num="1" idref="Y8960 OPLL 1"/>
+      <!-- channel num="2" idref="Y8960 OPL2 0"/ -->
+      <!-- channel num="3" idref="Y8960 OPL2 1"/ -->
+      <channel num="4" idref="Y8960 SSG 0"/>
+      <channel num="5" idref="Y8960 SSG 1"/>
+      <channel num="6" idref="Y8960 DCSG 0"/>
+      <channel num="7" idref="Y8960 DCSG 1"/>
+      <!-- channel num="8" idref="Y8960 ADPCM"/ -->
+      <channel num="9" idref="Y8960 SCC"/>
     </Y8960-MIXER>
   </devices>
 </msxconfig>

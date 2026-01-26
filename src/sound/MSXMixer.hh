@@ -144,6 +144,7 @@ public:
 	void reInit();
 
 	void setBalance(std::string_view name, int balance);
+	void setBalance(std::string_view name, float leftGain, float rightGain);
 	void setExternal(std::string_view name, bool external);
 	void selectExternal(bool external);
 
