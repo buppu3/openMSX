@@ -24,18 +24,36 @@ Y8960Mixer::Y8960Mixer(const DeviceConfig& config)
 
 		channelDevices[num].push_back(idRef);
 	}
+
+	if (config.getChildDataAsBool("external", false)) {
+		cmdExternalSoundSetting = std::make_unique<BooleanSetting>(
+			getCommandController(),
+			"enable_" + getName() + "_sound_output", "Switch to Y8960 external sound.",
+			true);
+		cmdExternalSoundSetting->attach(*this);
+	} else {
+		cmdExternalSoundSetting = nullptr;
+	}
+
 	reset(getCurrentTime());
 }
 
 Y8960Mixer::~Y8960Mixer()
 {
+	if (cmdExternalSoundSetting != nullptr) {
+		cmdExternalSoundSetting->detach(*this);
+		cmdExternalSoundSetting = nullptr;
+	}
+
 	getMotherBoard().getMSXMixer().selectExternal(false);
+
 	for(int i = 0; i < ChannelCount; i++) channelDevices[i].clear();
 }
 
 void Y8960Mixer::reset(EmuTime time)
 {
-	getMotherBoard().getMSXMixer().selectExternal(true);
+	updateSelector();
+
 	registerLatch = 0;
 	for(int i = 0; i < ChannelCount; i++) {
 		regs[i * 2 + 0] = 63;
@@ -43,7 +61,7 @@ void Y8960Mixer::reset(EmuTime time)
 	}
 	for(int i = 0; i < ChannelCount; i++) {
 		for (std::string_view device : channelDevices[i]) {
-			getMotherBoard().getMSXMixer().setExternal(device, true);
+			getMotherBoard().getMSXMixer().setExternal(device, cmdExternalSoundSetting != nullptr);
 		}
 		updateBalance(i);
 	}
@@ -93,6 +111,19 @@ void Y8960Mixer::updateBalance(int ch)
 	for (std::string_view device : channelDevices[ch]) {
 		getMotherBoard().getMSXMixer().setBalance(device, leftGain, rightGain);
 	}
+}
+
+void Y8960Mixer::updateSelector()
+{
+	getMotherBoard().getMSXMixer().selectExternal(
+		cmdExternalSoundSetting == nullptr ?
+		false :
+		cmdExternalSoundSetting->getBoolean());
+}
+
+void Y8960Mixer::update(const Setting& setting) noexcept
+{
+	updateSelector();
 }
 
 template<typename Archive>

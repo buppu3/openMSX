@@ -71,6 +71,7 @@
     </primary>
     <Y8960-MIXER id="y8960-mixer">
       <io base="0x40" num="2"/>
+      <external>true</external>
       <channel num="0" idref="Y8960 OPLL 0"/>
       <channel num="1" idref="Y8960 OPLL 1"/>
       <!-- channel num="2" idref="Y8960 OPL2 0"/ -->

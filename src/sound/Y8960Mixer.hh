@@ -4,13 +4,14 @@
 #include "MSXDevice.hh"
 #include "serialize_meta.hh"
 #include "XMLElement.hh"
+#include "BooleanSetting.hh"
 
 #include <array>
 #include <vector>
 
 namespace openmsx {
 
-class Y8960Mixer final : public MSXDevice
+class Y8960Mixer final : public MSXDevice, private Observer<Setting>
 {
 public:
 	static constexpr int ChannelCount = 10;
@@ -31,11 +32,15 @@ public:
 private:
 	int convRegToChNum(uint8_t num);
     void updateBalance(int ch);
+	void updateSelector();
+
+	void update(const Setting& setting) noexcept override;
 
 private:
     std::array<std::vector<std::string_view>, ChannelCount> channelDevices;
     std::array<byte, RegCount> regs;
     byte registerLatch;
+	std::unique_ptr<BooleanSetting> cmdExternalSoundSetting;
 };
 SERIALIZE_CLASS_VERSION(Y8960Mixer, 1);
 
