@@ -31,6 +31,7 @@ public:
 
 private:
 	int convRegToChNum(uint8_t num);
+	float convRegToGain(uint8_t val);
     void updateBalance(int ch);
 	void updateSelector();
 

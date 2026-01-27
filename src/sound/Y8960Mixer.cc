@@ -56,8 +56,8 @@ void Y8960Mixer::reset(EmuTime time)
 
 	registerLatch = 0;
 	for(int i = 0; i < ChannelCount; i++) {
-		regs[i * 2 + 0] = 63;
-		regs[i * 2 + 1] = 63;
+		regs[i * 2 + 0] = 0x80 | (11 - 1);		// sqrt(0.5) * 16 = 11
+		regs[i * 2 + 1] = 0x80 | (11 - 1);
 	}
 	for(int i = 0; i < ChannelCount; i++) {
 		for (std::string_view device : channelDevices[i]) {
@@ -104,10 +104,16 @@ int Y8960Mixer::convRegToChNum(uint8_t num)
 	return num >> 1;
 }
 
+float Y8960Mixer::convRegToGain(uint8_t val)
+{
+	if (val & 0x80 == 0) return 0.0f;
+	return 	(float)((val & 15) + 1) / (float)(15 + 1);
+}
+
 void Y8960Mixer::updateBalance(int ch)
 {
-	float leftGain  = (float)regs[ch * 2 + 0] / 127.0;
-	float rightGain = (float)regs[ch * 2 + 1] / 127.0;
+	float leftGain  = convRegToGain(regs[ch * 2 + 0]);
+	float rightGain = convRegToGain(regs[ch * 2 + 1]);
 	for (std::string_view device : channelDevices[ch]) {
 		getMotherBoard().getMSXMixer().setBalance(device, leftGain, rightGain);
 	}
