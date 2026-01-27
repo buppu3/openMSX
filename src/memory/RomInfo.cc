@@ -80,6 +80,7 @@ static constexpr auto romTypeInfoArray = [] {
 	r[NEO8]            = {0x2000, "NEO-8",           "NEO-8 mapper"};
 	r[NEO16]           = {0x4000, "NEO-16",          "NEO-16 mapper"};
 	r[WONDERKID]       = {0x4000, "WonderKid",       "Wonder Kid mapper"};
+	r[Y8960]           = {0x2000, "Y8960",       	 "Y8960 mapper"};
 
 	// ROM mapper types used for system ROMs in machines
 	r[PANASONIC]       = {0x2000, "Panasonic",       "Panasonic internal mapper"};

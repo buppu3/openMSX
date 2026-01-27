@@ -2,6 +2,7 @@
 #define ROMY8960_HH
 
 #include "RomBlocks.hh"
+#include "Ram.hh"
 #include "SCC.hh"
 #include "Y8960OPLL.hh"
 
@@ -10,6 +11,9 @@ namespace openmsx {
 class RomY8960 final : public Rom8kBBlocks
 {
 public:
+	static constexpr int RomBankCounts = 16;
+	static constexpr int RamBankCounts = 16;
+
 	RomY8960(const DeviceConfig& config, Rom&& rom);
 
 	void powerUp(EmuTime time) override;
@@ -25,12 +29,20 @@ public:
 
 private:
 	void bankSwitch(unsigned page, unsigned block);
+	bool isRamRegion(unsigned int region) const;
+	uint8_t getBank(unsigned int region) const;
+	void setBank(unsigned int region, uint8_t bank);
+	const unsigned int getRamAddress(uint16_t address) const;
+	unsigned int convAddressToRegion(uint16_t address) const;
 
 private:
 	Y8960OPLL *opll_1;
 	Y8960OPLL *opll_2;
 	SCC scc;
+	Ram ram;
 	bool sccEnabled;
+	bool ramEnabled;
+	std::array<uint8_t, 4> bankReg;
 };
 
 } // namespace openmsx

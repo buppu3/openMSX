@@ -24,12 +24,13 @@ namespace openmsx {
 
 RomY8960::RomY8960(const DeviceConfig& config, Rom&& rom_)
 	: Rom8kBBlocks(config, std::move(rom_))
+	, ram(config, getName() + " ram", "ram", 8192 * RamBankCounts)
 	, scc(getName(), config, getCurrentTime())
 {
 	// warn if a ROM is used that would not work on a real KonamiSCC mapper
-	if (rom.size() > 512 * 1024) {
+	if (rom.size() > 8192 * RomBankCounts) {
 		getMotherBoard().getMSXCliComm().printWarning(
-			"The size of this ROM image is larger than 512kB, "
+			"The size of this ROM image is larger than ", 8 * RomBankCounts, "kB, "
 			"which is not supported on real Konami SCC mapper "
 			"chips!");
 	}
@@ -81,22 +82,53 @@ void RomY8960::bankSwitch(unsigned page, unsigned block)
 	}
 }
 
+bool RomY8960::isRamRegion(unsigned int region) const
+{
+	uint8_t bank = bankReg[region];
+	if ((bank & 0x3F) == 0x3F) return false;	// SCC bank
+	return bank >= RomBankCounts;
+}
+
+uint8_t RomY8960::getBank(unsigned int region) const
+{
+	return bankReg[(region - 2) & 3];
+}
+
+void RomY8960::setBank(unsigned int region, uint8_t bank)
+{
+	bankReg[(region - 2) & 3] = bank;
+}
+
+const unsigned int RomY8960::getRamAddress(uint16_t address) const
+{
+	uint8_t bank = getBank(convAddressToRegion(address)) - RomBankCounts; 
+	assert(bank >= 0);
+	assert(bank < RamBankCounts);
+	return (bank * 0x2000) + (address & 0x1FFF);
+}
+
+unsigned int RomY8960::convAddressToRegion(uint16_t address) const
+{
+	return address >> 13;
+}
+
 void RomY8960::reset(EmuTime time)
 {
 	for (auto i : xrange(2, 6)) {
 		bankSwitch(i, i - 2);
+		setBank(i, i - 2);
 	}
 
 	sccEnabled = false;
 	scc.reset(time);
-	//if(opll_1 != nullptr) opll_1->reset(time);
-	//if(opll_2 != nullptr) opll_2->reset(time);
 }
 
 byte RomY8960::peekMem(uint16_t address, EmuTime time) const
 {
 	if (sccEnabled && (0x9800 <= address) && (address < 0xA000)) {
 		return scc.peekMem(narrow_cast<uint8_t>(address & 0xFF), time);
+	} else if (isRamRegion(convAddressToRegion(address))) {
+		return ram[getRamAddress(address)];
 	} else {
 		return Rom8kBBlocks::peekMem(address, time);
 	}
@@ -106,6 +138,8 @@ byte RomY8960::readMem(uint16_t address, EmuTime time)
 {
 	if (sccEnabled && (0x9800 <= address) && (address < 0xA000)) {
 		return scc.readMem(narrow_cast<uint8_t>(address & 0xFF), time);
+	} else if (isRamRegion(convAddressToRegion(address))) {
+		return ram[getRamAddress(address)];
 	} else {
 		return Rom8kBBlocks::readMem(address, time);
 	}
@@ -116,52 +150,90 @@ const byte* RomY8960::getReadCacheLine(uint16_t address) const
 	if (sccEnabled && (0x9800 <= address) && (address < 0xA000)) {
 		// don't cache SCC
 		return nullptr;
+	} else if (isRamRegion(convAddressToRegion(address))) {
+		// read from ram
+		return &ram[getRamAddress(address)];
 	} else {
+		// read from rom
 		return Rom8kBBlocks::getReadCacheLine(address);
 	}
 }
 
 void RomY8960::writeMem(uint16_t address, byte value, EmuTime time)
 {
-	if ((address < 0x5000) || (address >= 0xC000)) {
+	if ((address < 0x4800) || (address >= 0xC000)) {
 		return;
 	}
-	if ((address & 0xFFFE) == 0x3FF2) {
-		if(opll_2 != nullptr) opll_2->writePort(address & 1, value, time);
-	}
-	if ((address & 0xFFFE) == 0x3FF4) {
-		if(opll_1 != nullptr) opll_1->writePort(address & 1, value, time);
-	}
+
+	// write to SCC
 	if (sccEnabled && (0x9800 <= address) && (address < 0xA000)) {
-		// write to SCC
 		scc.writeMem(narrow_cast<uint8_t>(address & 0xFF), value, time);
 		return;
 	}
-	if ((address & 0xF800) == 0x9000) {
-		// SCC enable/disable
-		bool newSccEnabled = ((value & 0x3F) == 0x3F);
-		if (newSccEnabled != sccEnabled) {
-			sccEnabled = newSccEnabled;
-			invalidateDeviceRWCache(0x9800, 0x0800);
-		}
+
+	// write to RAM
+	if (isRamRegion(convAddressToRegion(address))) {
+		ram[getRamAddress(address)] = value;
 	}
+
+	// write to OPLL1
+	if ((address & 0xFFFE) == 0x3FF2) {
+		if(opll_2 != nullptr) opll_2->writePort(address & 1, value, time);
+	}
+
+	// write to OPLL2
+	if ((address & 0xFFFE) == 0x3FF4) {
+		if(opll_1 != nullptr) opll_1->writePort(address & 1, value, time);
+	}
+
+	// write to ramEnable register
+	if ((address & 0xF8FF) == 0x48FB) {
+		ramEnabled = value & 1;
+	}
+
+	// write to bank register
+	unsigned int region = 0;
+	bool pageSelect = false;
 	if ((address & 0x1800) == 0x1000) {
-		// page selection
-		auto region = address >> 13;
-		bankSwitch(region, value);
-		if ((region == 4) && sccEnabled) {
-			invalidateDeviceRCache(0x9800, 0x0800);
+		pageSelect = true;
+		region = convAddressToRegion(address);
+	} else if (ramEnabled && (address & 0xF8FC) == 0x48FC) {
+		pageSelect = true;
+		region = (address & 3) + 2;
+	}
+	if (pageSelect) {
+		uint8_t oldBank = getBank(region);
+		setBank(region, value);
+
+		// invaildate cache
+		if (value != oldBank) {
+			invalidateDeviceRWCache(region << 13, 8192);
 		}
+
+		// SCC enable/disable
+		bool newSccEnabled = sccEnabled;
+		if (region == 4) {
+			newSccEnabled = ((value & 0x3F) == 0x3F);
+			if (newSccEnabled != sccEnabled) {
+				sccEnabled = newSccEnabled;
+			}
+		}
+
+		// switch rom bank
+		bankSwitch(region, value);
 	}
 }
 
 byte* RomY8960::getWriteCacheLine(uint16_t address)
 {
-	if ((address < 0x5000) || (address >= 0xC000)) {
+	if ((address < 0x4800) || (address >= 0xC000)) {
 		return unmappedWrite.data();
-	} else if (0x7F00 <= address && address < 0x8000) {
-		// write to OPLL
+	} else if (address < 0x5000) {
+		// page selection(0x4800~0x4FFF)
 		return nullptr;
+	} else if (ramEnabled && isRamRegion(convAddressToRegion(address)) && address >= 0x6000) {
+		// write to RAM
+		return &ram[getRamAddress(address)];
 	} else if (sccEnabled && (0x9800 <= address) && (address < 0xA000)) {
 		// write to SCC
 		return nullptr;
@@ -181,7 +253,10 @@ void RomY8960::serialize(Archive& ar, unsigned /*version*/)
 {
 	ar.template serializeBase<Rom8kBBlocks>(*this);
 	ar.serialize("scc",        scc,
-	             "sccEnabled", sccEnabled);
+	             "sccEnabled", sccEnabled,
+				 "bankReg",	   bankReg,
+				 "ramEnabled", ramEnabled,
+				 "ram",		   ram);
 }
 INSTANTIATE_SERIALIZE_METHODS(RomY8960);
 REGISTER_MSXDEVICE(RomY8960, "RomY8960");
