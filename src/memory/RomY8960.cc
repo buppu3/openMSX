@@ -1,15 +1,48 @@
-// KONAMI 8kB cartridges with SCC
+// Y8960 mapper
 //
-// this type is used by Konami cartridges that do have an SCC and some others
-// examples of cartridges: Nemesis 2, Nemesis 3, King's Valley 2, Space Manbow
-// Solid Snake, Quarth, Ashguine 1, Animal, Arkanoid 2, ...
-// Those last 3 were probably modified ROM images, they should be ASCII8
+// memory mapped I/O
+//    Always-valid register:
+//  	RamEnable:  0x48FB, 0x49FB, 0x4AFB, 0x4BFB, 0x4CFB, 0x4DFB, 0x4EFB, 0x4FFB
+//					Enable RAM write control
 //
-// The address to change banks:
-//  bank 1: 0x5000 - 0x57ff (0x5000 used)
-//  bank 2: 0x7000 - 0x77ff (0x7000 used)
-//  bank 3: 0x9000 - 0x97ff (0x9000 used)
-//  bank 4: 0xB000 - 0xB7ff (0xB000 used)
+//  	OPLL0:      0x7FF4 - 0x7FF5
+//					tunnel to OPLL0 I/O port
+//
+//  	OPLL1: 		0x7FF2 - 0x7FF3
+//					tunnel to OPLL1 I/O port
+//
+//  	SCC:		0x9800 - 0x9FFF(bank#63)
+//					SCC sound register
+//
+//    Registers available when RamEnable is 0:
+//  	bank 1: 	0x5000 - 0x57ff
+//					Bank switch for 0x4000-0x5FFF
+//
+//  	bank 2: 	0x7000 - 0x77ff
+//					Bank switch for 0x6000-0x7FFF
+//
+//  	bank 3: 	0x9000 - 0x97ff
+//					Bank switch for 0x8000-0x9FFF
+//
+//  	bank 4: 	0xB000 - 0xB7ff
+//					Bank switch for 0xA000-0xBFFF
+//
+//    Registers available when RamEnable is 1:
+//  	bank 1: 	0x48FC, 0x49FC, 0x4AFC, 0x4BFC, 0x4CFC, 0x4DFC, 0x4EFC, 0x4FFC
+//					Bank switch for 0x4000-0x5FFF
+//
+//  	bank 2: 	0x48FD, 0x49FD, 0x4AFD, 0x4BFD, 0x4CFD, 0x4DFD, 0x4EFD, 0x4FFD
+//					Bank switch for 0x6000-0x7FFF
+//
+//  	bank 3: 	0x48FE, 0x49FE, 0x4AFE, 0x4BFE, 0x4CFE, 0x4DFE, 0x4EFE, 0x4FFE
+//					Bank switch for 0x8000-0x9FFF
+//
+//  	bank 4: 	0x48FF, 0x49FF, 0x4AFF, 0x4BFF, 0x4CFF, 0x4DFF, 0x4EFF, 0x4FFF
+//					Bank switch for 0xA000-0xBFFF
+// bank
+//		 0 - 15		ROM bank
+//		16 - 31		RAM bank
+//		63			SCC sound register
 
 #include "RomY8960.hh"
 
@@ -35,25 +68,25 @@ RomY8960::RomY8960(const DeviceConfig& config, Rom&& rom_)
 			"chips!");
 	}
 
-	std::string_view devName1 = config.getChildData("opll1", "");
+	std::string_view devName1 = config.getChildData("opll0", "");
 	if (devName1 == "") {
-		opll_1 = nullptr;
+		opll_0 = nullptr;
 	} else {
-		opll_1 = dynamic_cast<Y8960OPLL*>(getMotherBoard().findDevice(devName1));
+		opll_0 = getMotherBoard().findDevice(devName1);
 	}
 
-	if (opll_1 == nullptr) {
+	if (opll_0 == nullptr) {
 		getMotherBoard().getMSXCliComm().printWarning("can not found device '", devName1, "'.");
 	}
 
-	std::string_view devName2 = config.getChildData("opll2", "");
+	std::string_view devName2 = config.getChildData("opll1", "");
 	if (devName2 == "") {
-		opll_2 = nullptr;
+		opll_1 = nullptr;
 	} else {
-		opll_2 = dynamic_cast<Y8960OPLL*>(getMotherBoard().findDevice(devName2));
+		opll_1 = getMotherBoard().findDevice(devName2);
 	}
 
-	if (opll_2 == nullptr) {
+	if (opll_1 == nullptr) {
 		getMotherBoard().getMSXCliComm().printWarning("can not found device '", devName2, "'.");
 	}
 
@@ -171,19 +204,19 @@ void RomY8960::writeMem(uint16_t address, byte value, EmuTime time)
 		return;
 	}
 
-	// write to RAM
-	if (isRamRegion(convAddressToRegion(address))) {
+	// write to RAM(0x4000-0x5FFF is write-protected)
+	if (ramEnabled && isRamRegion(convAddressToRegion(address)) && address >= 0x6000) {
 		ram[getRamAddress(address)] = value;
 	}
 
 	// write to OPLL1
-	if ((address & 0xFFFE) == 0x3FF2) {
-		if(opll_2 != nullptr) opll_2->writePort(address & 1, value, time);
+	if ((address & 0xFFFE) == 0x7FF4) {
+		if(opll_0 != nullptr) opll_0->writeIO(address & 1, value, time);
 	}
 
 	// write to OPLL2
-	if ((address & 0xFFFE) == 0x3FF4) {
-		if(opll_1 != nullptr) opll_1->writePort(address & 1, value, time);
+	if ((address & 0xFFFE) == 0x7FF2) {
+		if(opll_1 != nullptr) opll_1->writeIO(address & 1, value, time);
 	}
 
 	// write to ramEnable register
@@ -194,7 +227,7 @@ void RomY8960::writeMem(uint16_t address, byte value, EmuTime time)
 	// write to bank register
 	unsigned int region = 0;
 	bool pageSelect = false;
-	if ((address & 0x1800) == 0x1000) {
+	if (!ramEnabled && (address & 0x1800) == 0x1000) {
 		pageSelect = true;
 		region = convAddressToRegion(address);
 	} else if (ramEnabled && (address & 0xF8FC) == 0x48FC) {
@@ -231,9 +264,9 @@ byte* RomY8960::getWriteCacheLine(uint16_t address)
 	} else if (address < 0x5000) {
 		// page selection(0x4800~0x4FFF)
 		return nullptr;
-	} else if (ramEnabled && isRamRegion(convAddressToRegion(address)) && address >= 0x6000) {
-		// write to RAM
-		return &ram[getRamAddress(address)];
+	} else if ((address & 0xFF00) == (0x7FF0 & CacheLine::HIGH)) {
+		// write to OPLL(0x7F00~0x7FFF)
+		return nullptr;
 	} else if (sccEnabled && (0x9800 <= address) && (address < 0xA000)) {
 		// write to SCC
 		return nullptr;
@@ -243,6 +276,9 @@ byte* RomY8960::getWriteCacheLine(uint16_t address)
 	} else if ((address & 0x1800) == (0x1000 & CacheLine::HIGH)) {
 		// page selection
 		return nullptr;
+	} else if (ramEnabled && isRamRegion(convAddressToRegion(address)) && address >= 0x6000) {
+		// write to RAM
+		return &ram[getRamAddress(address)];
 	} else {
 		return unmappedWrite.data();
 	}

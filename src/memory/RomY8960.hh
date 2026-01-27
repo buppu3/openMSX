@@ -36,8 +36,8 @@ private:
 	unsigned int convAddressToRegion(uint16_t address) const;
 
 private:
-	Y8960OPLL *opll_1;
-	Y8960OPLL *opll_2;
+	MSXDevice *opll_0;
+	MSXDevice *opll_1;
 	SCC scc;
 	Ram ram;
 	bool sccEnabled;

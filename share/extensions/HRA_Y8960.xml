@@ -64,8 +64,8 @@
           </sound>
           <mappertype>Y8960</mappertype>
           <rom/>
-          <opll1>Y8960 OPLL 0</opll1>
-          <opll2>Y8960 OPLL 1</opll2>
+          <opll0>Y8960 OPLL 0</opll0> <!-- I/O tunnel from 7FF4h -->
+          <opll1>Y8960 OPLL 1</opll1> <!-- I/O tunnel from 7FF2h -->
         </ROM>
       </secondary>
     </primary>
