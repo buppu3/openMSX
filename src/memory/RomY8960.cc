@@ -73,21 +73,20 @@ RomY8960::RomY8960(const DeviceConfig& config, Rom&& rom_)
 		opll_0 = nullptr;
 	} else {
 		opll_0 = getMotherBoard().findDevice(devName1);
+		if (opll_0 == nullptr) {
+			getMotherBoard().getMSXCliComm().printWarning("can not found device '", devName1, "'.");
+		}
 	}
 
-	if (opll_0 == nullptr) {
-		getMotherBoard().getMSXCliComm().printWarning("can not found device '", devName1, "'.");
-	}
 
 	std::string_view devName2 = config.getChildData("opll1", "");
 	if (devName2 == "") {
 		opll_1 = nullptr;
 	} else {
 		opll_1 = getMotherBoard().findDevice(devName2);
-	}
-
-	if (opll_1 == nullptr) {
-		getMotherBoard().getMSXCliComm().printWarning("can not found device '", devName2, "'.");
+		if (opll_1 == nullptr) {
+			getMotherBoard().getMSXCliComm().printWarning("can not found device '", devName2, "'.");
+		}
 	}
 
 	powerUp(getCurrentTime());
@@ -101,6 +100,7 @@ void RomY8960::powerUp(EmuTime time)
 
 void RomY8960::bankSwitch(unsigned page, unsigned block)
 {
+	block %= RomBankCounts;
 	setRom(page, block);
 
 	// Note: the mirror behavior is different from RomKonami !
@@ -118,7 +118,6 @@ void RomY8960::bankSwitch(unsigned page, unsigned block)
 bool RomY8960::isRamRegion(unsigned int region) const
 {
 	uint8_t bank = bankReg[region];
-	if ((bank & 0x3F) == 0x3F) return false;	// SCC bank
 	return bank >= RomBankCounts;
 }
 
@@ -160,7 +159,7 @@ byte RomY8960::peekMem(uint16_t address, EmuTime time) const
 {
 	if (sccEnabled && (0x9800 <= address) && (address < 0xA000)) {
 		return scc.peekMem(narrow_cast<uint8_t>(address & 0xFF), time);
-	} else if (isRamRegion(convAddressToRegion(address))) {
+	} else if (ramEnabled && isRamRegion(convAddressToRegion(address))) {
 		return ram[getRamAddress(address)];
 	} else {
 		return Rom8kBBlocks::peekMem(address, time);
@@ -171,7 +170,7 @@ byte RomY8960::readMem(uint16_t address, EmuTime time)
 {
 	if (sccEnabled && (0x9800 <= address) && (address < 0xA000)) {
 		return scc.readMem(narrow_cast<uint8_t>(address & 0xFF), time);
-	} else if (isRamRegion(convAddressToRegion(address))) {
+	} else if (ramEnabled && isRamRegion(convAddressToRegion(address))) {
 		return ram[getRamAddress(address)];
 	} else {
 		return Rom8kBBlocks::readMem(address, time);
@@ -183,7 +182,7 @@ const byte* RomY8960::getReadCacheLine(uint16_t address) const
 	if (sccEnabled && (0x9800 <= address) && (address < 0xA000)) {
 		// don't cache SCC
 		return nullptr;
-	} else if (isRamRegion(convAddressToRegion(address))) {
+	} else if (ramEnabled && isRamRegion(convAddressToRegion(address))) {
 		// read from ram
 		return &ram[getRamAddress(address)];
 	} else {
@@ -211,12 +210,16 @@ void RomY8960::writeMem(uint16_t address, byte value, EmuTime time)
 
 	// write to OPLL1
 	if ((address & 0xFFFE) == 0x7FF4) {
-		if(opll_0 != nullptr) opll_0->writeIO(address & 1, value, time);
+		if(opll_0 != nullptr) {
+			opll_0->writeIO(address & 1, value, time);
+		}
 	}
 
 	// write to OPLL2
 	if ((address & 0xFFFE) == 0x7FF2) {
-		if(opll_1 != nullptr) opll_1->writeIO(address & 1, value, time);
+		if(opll_1 != nullptr) {
+			opll_1->writeIO(address & 1, value, time);
+		}
 	}
 
 	// write to ramEnable register
