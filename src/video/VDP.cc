@@ -352,12 +352,39 @@ void VDP::resetInit()
 	irqCommandEnd.reset();
 
 	// From appendix 8 of the V9938 data book (page 148).
-	const std::array<uint16_t, 256> V9938_PALETTE = {
+	const std::array<uint16_t, 16> V9938_PALETTE = {
 		0x000, 0x000, 0x611, 0x733, 0x117, 0x327, 0x151, 0x627,
 		0x171, 0x373, 0x661, 0x664, 0x411, 0x265, 0x555, 0x777
 	};
+	// From vdp_color_palette.v
+	std::array<uint16_t, 16> V9968_PALETTE = {
+		(0b00000 << 5) | (0b00000 << 0) | (0b00000 << 10), // color#0
+		(0b00000 << 5) | (0b00000 << 0) | (0b00000 << 10), // color#1
+		(0b00100 << 5) | (0b00100 << 0) | (0b11011 << 10), // color#2
+		(0b01101 << 5) | (0b01101 << 0) | (0b11111 << 10), // color#3
+		(0b00100 << 5) | (0b11111 << 0) | (0b00100 << 10), // color#4
+		(0b01001 << 5) | (0b11111 << 0) | (0b01101 << 10), // color#5
+		(0b10110 << 5) | (0b00100 << 0) | (0b00100 << 10), // color#6
+		(0b01001 << 5) | (0b11111 << 0) | (0b11011 << 10), // color#7
+		(0b11111 << 5) | (0b00100 << 0) | (0b00100 << 10), // color#8
+		(0b11111 << 5) | (0b01101 << 0) | (0b01101 << 10), // color#9
+		(0b11011 << 5) | (0b00100 << 0) | (0b11011 << 10), // color#10
+		(0b11011 << 5) | (0b01101 << 0) | (0b11011 << 10), // color#11
+		(0b00100 << 5) | (0b00100 << 0) | (0b10010 << 10), // color#12
+		(0b11011 << 5) | (0b10110 << 0) | (0b01001 << 10), // color#13
+		(0b10110 << 5) | (0b10110 << 0) | (0b10110 << 10), // color#14
+		(0b11111 << 5) | (0b11111 << 0) | (0b11111 << 10)  // color#15
+	};
 	// Init the palette.
-	palette = V9938_PALETTE;
+	if (hasEPAL()) {
+		for (auto i : xrange(256)) {
+			palette[i] = V9968_PALETTE[i & 15];
+		}
+	} else {
+		for (auto i : xrange(16)) {
+			palette[i] = V9938_PALETTE[i];
+		}
+	}
 	//
 	spsTopPlane = 0;
 }

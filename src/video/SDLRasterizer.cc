@@ -172,9 +172,14 @@ void SDLRasterizer::reset()
 
 void SDLRasterizer::resetPalette()
 {
-	if (!vdp.isMSX1VDP()) {
+	if (vdp.hasEPAL()) {
 		// Reset the palette.
 		for (auto i : xrange(256)) {
+			setPalette(i, vdp.getPalette(i));
+		}
+	} else if (!vdp.isMSX1VDP()) {
+		// Reset the palette.
+		for (auto i : xrange(16)) {
 			setPalette(i, vdp.getPalette(i));
 		}
 	}
