@@ -2762,7 +2762,12 @@ void VDPCmdEngine::startLfmc(EmuTime time)
 	transfer = false;
 	setStatusChangeTime(EmuTime::zero());
 	status |= TR;
-	nextAccessSlot(time);
+	if (useHS()) {
+		bool dstExt  = getMXD(ARG, vdp.canEVR());
+		nextAccessSlotHs(time, 1, isHS() ? 0 : waitLfmc, checkCache(true, Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt, vdp.isPlanar())));
+	} else {
+		nextAccessSlot(time);
+	}
 	phase = 0;
 }
 
@@ -2824,8 +2829,14 @@ loop:	if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 	default:
 		UNREACHABLE;
 	}
-	engineTime = calculator.getTime();
-	this->calcFinishTime(tmpNX, tmpNY, 64 + 32 + 24);
+
+	if (CMD) {
+		if (useHS()) {
+			nextAccessSlotHs(limit, 1, isHS() ? 0 : waitLfmc, checkCache(true, Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt, vdp.isPlanar())));
+		} else {
+			nextAccessSlot(limit);
+		}
+	}
 }
 
 /** Logical rotate VRAM -> VRAM.
