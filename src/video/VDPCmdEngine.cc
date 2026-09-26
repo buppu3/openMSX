@@ -2764,7 +2764,7 @@ void VDPCmdEngine::startLfmc(EmuTime time)
 	status |= TR;
 	if (useHS()) {
 		bool dstExt  = getMXD(ARG, vdp.canEVR());
-		nextAccessSlotHs(time, 1, isHS() ? 0 : waitLfmc, checkCache(true, Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt, vdp.isPlanar())));
+		nextAccessSlotHs(time, 1, isHS() ? 0 : waitLfmc, checkCache(false, Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt, vdp.isPlanar())));
 	} else {
 		nextAccessSlot(time);
 	}
@@ -2784,10 +2784,11 @@ void VDPCmdEngine::executeLfmc(EmuTime limit)
 	bool doPset  = !dstExt || hasExtendedVRAM;
 	unsigned dstAddr = Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt, vdp.isPlanar());
 	auto calculator = getSlotCalculator(limit);
+	bool vramWrite = false;
 
 	switch (phase) {
 	case 0:
-loop:	if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
+loop:	if (calculator.limitReached()) [[unlikely]] { vramWrite = false; phase = 0; break; }
 		if (fontWidthCount <= 0) {
 			if (!transfer) { phase = 0; break; }
 			transfer = false;
@@ -2796,14 +2797,14 @@ loop:	if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 		}
 		[[fallthrough]];
 	case 1:
-		if (calculator.limitReached()) [[unlikely]] { phase = 1; break; }
+		if (calculator.limitReached()) [[unlikely]] { vramWrite = false; phase = 1; break; }
 		if (doPset) [[likely]] {
 			tmpDst = vram.cmdWriteWindow.readNP(dstAddr);
 		}
 		calculator.next(Delta::D1);
 		[[fallthrough]];
 	case 2: {
-		if (calculator.limitReached()) [[unlikely]] { phase = 2; break; }
+		if (calculator.limitReached()) [[unlikely]] { vramWrite = true; phase = 2; break; }
 		if (doPset) [[likely]] {
 			uint8_t col = (tmpSrc & 0x80) ? fontColor : vdp.getFontBackgroundColor();
 			col &= Mode::COLOR_MASK;
@@ -2832,7 +2833,7 @@ loop:	if (calculator.limitReached()) [[unlikely]] { phase = 0; break; }
 
 	if (CMD) {
 		if (useHS()) {
-			nextAccessSlotHs(limit, 1, isHS() ? 0 : waitLfmc, checkCache(true, Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt, vdp.isPlanar())));
+			nextAccessSlotHs(limit, 1, isHS() ? 0 : waitLfmc, checkCache(vramWrite, Mode::addressOf(ADX, DY, vdp.isEVR(), dstExt, vdp.isPlanar())));
 		} else {
 			nextAccessSlot(limit);
 		}
