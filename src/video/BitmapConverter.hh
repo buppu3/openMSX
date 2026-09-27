@@ -118,7 +118,7 @@ private:
 	void renderBogus(   std::span<Pixel, 256> buf) const;
 
 	void renderGraphic6_NonPlanar(	std::span<Pixel, 512> buf,
-	                    			std::span<const uint8_t, 256> vramPtr0) const;
+	                    			std::span<const uint8_t, 256> vramPtr0);
 	void renderGraphic7_NonPlanar(	std::span<Pixel, 256> buf,
 	                    			std::span<const uint8_t, 256> vramPtr0) const;
 	void renderYJK_NonPlanar(		std::span<Pixel, 256> buf,

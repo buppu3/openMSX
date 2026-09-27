@@ -241,15 +241,28 @@ void BitmapConverter::renderGraphic6(
 
 void BitmapConverter::renderGraphic6_NonPlanar(
 	std::span<Pixel, 512> buf,
-	std::span<const uint8_t, 256> vramPtr0) const
+	std::span<const uint8_t, 256> vramPtr0)
 {
 	Pixel* __restrict pixelPtr = buf.data();
-	for (auto i : xrange(256)) {
-		unsigned data = vramPtr0[i];
-		pixelPtr[4 * i + 0] = palette16   [ (data >> 6)     ];
-		pixelPtr[4 * i + 1] = palette16odd[((data >> 4) & 3)];
-		pixelPtr[4 * i + 2] = palette16   [((data >> 2) & 3)];
-		pixelPtr[4 * i + 3] = palette16odd[((data >> 0) & 3)];
+	if (!dPaletteValid) [[unlikely]] {
+		calcDPalette();
+	}
+	      auto* out = std::bit_cast<DPixel*>(pixelPtr);
+	const auto* in0 = std::bit_cast<const unsigned*>(vramPtr0.data());
+	for (auto i : xrange(512 / 8)) {
+		// 8 pixels per iteration
+		unsigned data0 = in0[i];
+		if constexpr (Endian::BIG) {
+			out[4 * i + 0] = dPalette[(data0 >> 24) & 0xFF];
+			out[4 * i + 1] = dPalette[(data0 >> 16) & 0xFF];
+			out[4 * i + 2] = dPalette[(data0 >>  8) & 0xFF];
+			out[4 * i + 3] = dPalette[(data0 >>  0) & 0xFF];
+		} else {
+			out[4 * i + 0] = dPalette[(data0 >>  0) & 0xFF];
+			out[4 * i + 1] = dPalette[(data0 >>  8) & 0xFF];
+			out[4 * i + 2] = dPalette[(data0 >> 16) & 0xFF];
+			out[4 * i + 3] = dPalette[(data0 >> 24) & 0xFF];
+		}
 	}
 }
 
