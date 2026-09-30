@@ -286,8 +286,8 @@ static constexpr auto registerDescriptionsV9968_New = std::array{
 	RD{{"AII", " 0 ", "RS5", "RS4", "RS3", "RS2", "RS1", "RS0"}, "Control register pointer"}, // R#17
 	RD{{"V3 ", "V2 ", "V1 ", "V0 ", "H3 ", "H2 ", "H1 ", "H0 "}, "Display adjust register"}, // R#18
 	RD{{"IL7", "IL6", "IL5", "IL4", "IL3", "IL2", "IL1", "IL0"}, "Interrupt line register"}, // R#19
-	RD{{"S16", " 0 ", " 0 ","EPAL", "SP3","ILNS","SVNS", "HS "}, "Ext mode register 1"}, // R#20
-	RD{{"CEIE","FIL", " 1 ", " 1 ", " 1 ", " 0 ", " 1 ", "V58"}, "Ext mode register 2"}, // R#21
+	RD{{"S16", "CEIE","FIL","EPAL", "SP3","ILNS","SVNS", "HS "}, "Ext mode register 1"}, // R#20
+	RD{{" 0 ", " 0 ", " 1 ", " 1 ", " 1 ", " 0 ", " 1 ", " 1 "}, "Color burst register 2"}, // R#21
 	RD{{" 0 ", " 0 ", " 0 ", " 0 ", " 0 ", " 1 ", " 0 ", " 1 "}, "Color burst register 3"}, // R#22
 	RD{{"DO7", "DO6", "DO5", "DO4", "DO3", "DO2", "DO1", "DO0"}, "Display offset register"}, // R#23
 
@@ -518,8 +518,10 @@ static constexpr auto regFunctions = std::array{
 	R{VER_V9968_OLD,{S{20, 0x20}}, "Ext Command", [](uint32_t v) { return tmpStrCat("Ext. command: ", (v & 0x01) ? "enable" : "disable", "\n"); }},
 	R{VER_V9968_OLD,{S{20, 0x40}}, "VRAM size", [](uint32_t v) { return tmpStrCat("VRAM size: ", (v & 0x01) ? "256k" : "128k", "\n"); }},
 	R{VER_V9968,{S{20, 0x80}}, "Up to 16-sprites par line", [](uint32_t v) { return tmpStrCat("Sprite per line: ", (v & 0x01) ? "16-planes" : "4/8-planes", "\n"); }},
-	R{VER_V9968,{S{21, 0x80}}, "Command End Interrupt Enable", [](uint32_t v) { return tmpStrCat("Command end interrupt: ", (v & 0x01) ? "enable" : "disable", "\n"); }},
-	R{VER_V9968,{S{21, 0x40}}, "Flat Interlace mode", [](uint32_t v) { return tmpStrCat("Interlace style: ", (v & 0x01) ? "flat" : "interleave", "\n"); }},
+	R{VER_V9968_OLD,{S{21, 0x80}}, "Command End Interrupt Enable", [](uint32_t v) { return tmpStrCat("Command end interrupt: ", (v & 0x01) ? "enable" : "disable", "\n"); }},
+	R{VER_V9968_NEW,{S{20, 0x40}}, "Command End Interrupt Enable", [](uint32_t v) { return tmpStrCat("Command end interrupt: ", (v & 0x01) ? "enable" : "disable", "\n"); }},
+	R{VER_V9968_OLD,{S{21, 0x40}}, "Flat Interlace mode", [](uint32_t v) { return tmpStrCat("Interlace style: ", (v & 0x01) ? "flat" : "interleave", "\n"); }},
+	R{VER_V9968_NEW,{S{20, 0x20}}, "Flat Interlace mode", [](uint32_t v) { return tmpStrCat("Interlace style: ", (v & 0x01) ? "flat" : "interleave", "\n"); }},
 	R{VER_V9968_OLD,{S{21, 0x01}}, "Fake chip ID", [](uint32_t v) { return tmpStrCat("chip ID: ", (v & 0x01) ? "V9958" : "V9968", "\n"); }},
 	R{VER_V9968_NEW,{S{21, 0x01}}, "V9958 compatible mode", [](uint32_t v) { return tmpStrCat("mode: ", (v & 0x01) ? "V9958 compatible" : "V9968", "\n"); }},
 	R{VER_ALL  ,{S{7, 0}}, "", &spacing},

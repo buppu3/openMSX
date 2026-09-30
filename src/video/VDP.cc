@@ -214,10 +214,18 @@ VDP::VDP(const DeviceConfig& config)
 		controlValueMasks[20] |= 0x80;
 	}
 	if (hasFIL()) {
-		controlValueMasks[21] |= 0x40;
+		if (hasV58()) {
+			controlValueMasks[20] |= 0x20;
+		} else {
+			controlValueMasks[21] |= 0x40;
+		}
 	}
-	if (hasISR()) {
-		controlValueMasks[21] |= 0x80;
+	if (hasCEIE()) {
+		if (hasV58()) {
+			controlValueMasks[20] |= 0x40;
+		} else {
+			controlValueMasks[21] |= 0x80;
+		}
 	}
 	if (hasSPS()) {
 		controlValueMasks[25] |= 0x80;
@@ -399,6 +407,7 @@ void VDP::resetInit()
 	}
 	//
 	spsTopPlane = 0;
+	commandEndIntr = false;
 }
 
 void VDP::resetMasks(EmuTime time)
@@ -558,10 +567,6 @@ void VDP::execCpuVramAccess(EmuTime time)
 void VDP::execSyncCmdDone(EmuTime time)
 {
 	cmdEngine->sync(time);
-
-	if (controlRegs[21] & 0x80) {
-		irqCommandEnd.set();
-	}
 }
 
 // TODO: This approach assumes that an overscan-like approach can be used
@@ -874,7 +879,7 @@ void VDP::writeIO(uint16_t port, uint8_t value, EmuTime time_)
 			}
 			if (value & 0x04) {
 				// clear CEI bit
-				irqCommandEnd.reset();
+				clrCommandEndIntr();
 			}
 		}
 		break;
@@ -1182,7 +1187,7 @@ uint8_t VDP::readIO(uint16_t port, EmuTime time_)
 		if (hasISR()) {
 			return ((statusReg0 & 0x80) ? 0x01 : 0x00)					// F
 				   | ((peekStatusReg(1, time) & 0x01) ? 0x02 : 0x00)	// FH
-				   | (irqCommandEnd.getState() ? 0x04 : 0x00);			// CEI
+				   | (getCommandEndIntr() ? 0x04 : 0x00);			// CEI
 		}
 		return 0xFF;
 	}
@@ -1339,6 +1344,9 @@ void VDP::changeRegister(uint8_t reg, uint8_t val, EmuTime time)
 		if (hasS16()  && (change & 0x80)) {
 			syncAtNextLine(syncSetSprites, time);
 		}
+		if (hasV58() && hasCEIE() && ((change & 0x40) != 0x00)) {
+			updateCEIE((val & 0x40) != 0x00);	
+		}
 		break;
 	case 21:
 		if (hasFID() && (change & 0x01)) {
@@ -1349,6 +1357,9 @@ void VDP::changeRegister(uint8_t reg, uint8_t val, EmuTime time)
 			bool v9968 = (val & 0x01) == 0;
 			updateChipVersion(v9968);
 			updateEVRMode(v9968, time);
+		}
+		if (!hasV58() && hasCEIE() && ((change & 0x80) != 0x00)) {
+			updateCEIE((val & 0x80) != 0x00);	
 		}
 		break;
 	case 23:

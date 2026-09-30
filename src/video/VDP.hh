@@ -163,7 +163,11 @@ public:
 	}
 
 	[[nodiscard]] bool isFIL() const {
-		return hasFIL() & ((controlRegs[21] & 0x40) != 0);
+		return hasFIL() && (hasV58() ? ((controlRegs[20] & 0x20) != 0) : ((controlRegs[21] & 0x40) != 0));
+	}
+
+	[[nodiscard]] bool isCEIE() const {
+		return hasCEIE() && (hasV58() ? ((controlRegs[20] & 0x40) != 0) : ((controlRegs[21] & 0x80) != 0));
 	}
 
 	[[nodiscard]] bool isSPS() const {
@@ -278,6 +282,10 @@ public:
 	}
 
 	[[nodiscard]] bool hasFIL() const {
+		return (version & VM_V9968) != 0;
+	}
+
+	[[nodiscard]] bool hasCEIE() const {
 		return (version & VM_V9968) != 0;
 	}
 
@@ -920,6 +928,28 @@ public:
 
 	/** The last completed frame, could be nullptr. */
 	[[nodiscard]] const RawFrame* getLastFrame() const;
+
+	bool getCommandEndIntr() {
+		return commandEndIntr;
+	}
+
+	void reqCommandEndIntr() {
+		commandEndIntr = true;
+		updateCEIE(isCEIE());
+	}
+
+	void clrCommandEndIntr() {
+		commandEndIntr = false;
+		updateCEIE(isCEIE());
+	}
+
+	void updateCEIE(bool ena) {
+		if (ena && commandEndIntr && hasCEIE()) {
+			irqCommandEnd.set();
+		} else {
+			irqCommandEnd.reset();
+		}
+	}
 
 	template<typename Archive>
 	void serialize(Archive& ar, unsigned version);
@@ -1573,7 +1603,7 @@ private:
 	/** Cached CPU reference */
 	MSXCPU& cpu;
 	const uint8_t fixedVDPIOdelayCycles;
-
+	bool commandEndIntr;
 	int spsTopPlane;
 	bool compatibleMemoryTiming;	// Use V9968 timing only in HS mode;
 };

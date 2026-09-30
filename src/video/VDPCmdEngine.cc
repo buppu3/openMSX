@@ -4962,6 +4962,7 @@ void VDPCmdEngine::commandDone(EmuTime time)
 	setStatusChangeTime(EmuTime::infinity());
 	vram.cmdReadWindow.disable(time);
 	vram.cmdWriteWindow.disable(time);
+	vdp.reqCommandEndIntr();
 }
 
 
