@@ -407,6 +407,7 @@ void VDP::resetInit()
 	}
 	//
 	spsTopPlane = 0;
+	lockExtReg = true;
 	commandEndIntr = false;
 }
 
@@ -867,6 +868,9 @@ void VDP::writeIO(uint16_t port, uint8_t value, EmuTime time_)
 		break;
 	}
 	case 4: {	// interrupt clear register
+		if (hasLockExtReg()) {
+			lockExtReg = (value & 0x80) != 0x00;
+		}
 		if (hasISR()) {
 			if (value & 0x01) {
 				// clear H bit
@@ -1184,12 +1188,16 @@ uint8_t VDP::readIO(uint16_t port, EmuTime time_)
 	case 3:
 		return 0xFF;
 	case 4: {
-		if (hasISR()) {
-			return ((statusReg0 & 0x80) ? 0x01 : 0x00)					// F
-				   | ((peekStatusReg(1, time) & 0x01) ? 0x02 : 0x00)	// FH
-				   | (getCommandEndIntr() ? 0x04 : 0x00);			// CEI
+		uint8_t result = (hasLockExtReg() || hasISR()) ? 0x00 : 0xFF;
+		if (hasLockExtReg()) {
+			if (isLockExtReg())				   result |= 0x80;	// LockExtReg
 		}
-		return 0xFF;
+		if (hasISR()) {
+			if (statusReg0 & 0x80)             result |= 0x01;	// F
+			if (peekStatusReg(1, time) & 0x01) result |= 0x02;	// FH
+			if (irqCommandEnd.getState())	   result |= 0x04;	// CEI
+		}
+		return result;
 	}
 	default:
 		UNREACHABLE;
@@ -1222,6 +1230,13 @@ void VDP::changeRegister(uint8_t reg, uint8_t val, EmuTime time)
 	if (reg == 14) {
 		if (canEVR() && !isEVR()) {
 			val &= 0x07;
+		}
+	}
+
+	// lock_ext_regs
+	if (reg == 20 || reg == 21) {
+		if (isLockExtReg()) {
+			return;
 		}
 	}
 

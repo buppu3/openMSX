@@ -126,6 +126,10 @@ public:
 	 */
 	[[nodiscard]] PostProcessor* getPostProcessor() const;
 
+	[[nodiscard]] bool isLockExtReg() const {
+		return hasLockExtReg() ? lockExtReg : false;
+	}
+
 	[[nodiscard]] bool useHS() const {
 		return compatibleMemoryTiming ? isHS() : hasHS();
 	}
@@ -247,6 +251,10 @@ public:
 	  */
 	[[nodiscard]] bool hasYJK() const {
 		return (version & VM_YJK) != 0;
+	}
+
+	[[nodiscard]] bool hasLockExtReg() const {
+		return (version & VM_V9968_NEW) != 0;
 	}
 
 	[[nodiscard]] bool hasHS() const {
@@ -1603,8 +1611,9 @@ private:
 	/** Cached CPU reference */
 	MSXCPU& cpu;
 	const uint8_t fixedVDPIOdelayCycles;
-	bool commandEndIntr;
-	int spsTopPlane;
+	bool commandEndIntr;			// ToDo: add serializer
+	int spsTopPlane;				// ToDo: add serializer
+	bool lockExtReg;				// ToDo: add serializer
 	bool compatibleMemoryTiming;	// Use V9968 timing only in HS mode;
 };
 SERIALIZE_CLASS_VERSION(VDP, 10);
