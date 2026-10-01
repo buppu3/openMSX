@@ -1217,6 +1217,14 @@ void VDP::changeRegister(uint8_t reg, uint8_t val, EmuTime time)
 		return;
 	}
 
+	// In V9968, R#14 is masked only during writes.
+	// R#14 is not masked during V58 register switches, increments, or reads.
+	if (reg == 14) {
+		if (canEVR() && !isEVR()) {
+			val &= 0x07;
+		}
+	}
+
 	// Make sure only bits that actually exist are written.
 	val &= controlValueMasks[reg];
 	// Determine the difference between new and old value.
@@ -1677,16 +1685,22 @@ void VDP::updateDisplayMode(DisplayMode newMode, bool cmdBit, bool sp3Bit, EmuTi
 
 void VDP::updateAddressMask(bool evr)
 {
-	controlValueMasks[ 2] = evr ? 0xFF : 0xFF;
-	controlValueMasks[ 4] = evr ? 0x7F : 0x7F;
-	controlValueMasks[ 6] = evr ? 0x7F : 0x7F;
-	controlValueMasks[10] = evr ? 0x0F : 0x0F;
-	controlValueMasks[11] = evr ? 0x07 : 0x07;
-	controlValueMasks[14] = evr ? 0x0F : 0x07;
+	controlValueMasks[ 2] = evr ? 0xFF : 0x7F;
+	controlValueMasks[ 4] = evr ? 0x7F : 0x3F;
+	controlValueMasks[ 6] = evr ? 0x7F : 0x3F;
+	controlValueMasks[10] = evr ? 0x0F : 0x03;
+	controlValueMasks[11] = evr ? 0x07 : 0x03;
+	controlValueMasks[14] = evr ? 0x0F : 0x0F;	// The most significant bit of R#14 is not reset
 }
 
 void VDP::updateEVRMode(bool evr, EmuTime time) {
 	updateAddressMask(evr);
+	changeRegister( 2, controlRegs[ 2], time);
+	changeRegister( 4, controlRegs[ 4], time);
+	changeRegister( 6, controlRegs[ 6], time);
+	changeRegister(10, controlRegs[10], time);
+	changeRegister(11, controlRegs[11], time);
+	changeRegister(14, controlRegs[14], time);
 	vram->updateEVRMode(evr, time);
 }
 
