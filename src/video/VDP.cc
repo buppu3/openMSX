@@ -1195,7 +1195,7 @@ uint8_t VDP::readIO(uint16_t port, EmuTime time_)
 		if (hasISR()) {
 			if (statusReg0 & 0x80)             result |= 0x01;	// F
 			if (peekStatusReg(1, time) & 0x01) result |= 0x02;	// FH
-			if (irqCommandEnd.getState())	   result |= 0x04;	// CEI
+			if (getCommandEndIntr())		   result |= 0x04;	// CEI
 		}
 		return result;
 	}
