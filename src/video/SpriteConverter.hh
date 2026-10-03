@@ -241,6 +241,7 @@ public:
 	  * @param maxX Maximum X coordinate to draw (exclusive).
 	  * @param pixelPtr Pointer to memory to draw to.
 	  */
+	template<unsigned MODE>
 	void drawMode3(int absLine, int minX, int maxX, std::span<Pixel> pixelPtr) const
 	{
 		// Determine sprites visible on this line.
@@ -281,7 +282,12 @@ public:
 
 			// draw pattern
 			uint8_t *prioPtr = &priority[dstX];
-			Pixel *dstPtr = &pixelPtr[dstX];
+			Pixel *dstPtr;
+			if constexpr (MODE == DisplayMode::GRAPHIC5 || MODE == DisplayMode::GRAPHIC6) {
+				dstPtr = &pixelPtr[dstX << 1];
+			} else {
+				dstPtr = &pixelPtr[dstX];
+			}
 			while (nx > 0) {
 				if (*prioPtr == 0) {
 					// pattern position
@@ -292,15 +298,27 @@ public:
 
 					// draw pixel
 					if (color != 0) {
-						*dstPtr = pixel_transparent(*dstPtr, palette[(si.paletteSet << 4) | color], si.transparent);
+						if constexpr (MODE == DisplayMode::GRAPHIC5) {
+							dstPtr[0] = pixel_transparent(dstPtr[0], palette[(si.paletteSet << 4) | ((color >> 2) & 3)], si.transparent);
+							dstPtr[1] = pixel_transparent(dstPtr[1], palette[(si.paletteSet << 4) | ( color       & 3)], si.transparent);
+						} else if constexpr (MODE == DisplayMode::GRAPHIC6) {
+							dstPtr[0] = pixel_transparent(dstPtr[0], palette[(si.paletteSet << 4) | color], si.transparent);
+							dstPtr[1] = pixel_transparent(dstPtr[1], palette[(si.paletteSet << 4) | color], si.transparent);
+						} else {
+							*dstPtr = pixel_transparent(*dstPtr, palette[(si.paletteSet << 4) | color], si.transparent);
+						}
 						*prioPtr = 1;
 					}
 				}
 				// next position
 				prioPtr++;
-				dstPtr++;
 				srcX++;
 				nx--;
+				if constexpr (MODE == DisplayMode::GRAPHIC5 || MODE == DisplayMode::GRAPHIC6) {
+					dstPtr += 2;
+				} else {
+					dstPtr++;
+				}
 			}
 		}
 	}

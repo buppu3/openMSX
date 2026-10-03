@@ -710,9 +710,22 @@ void SDLRasterizer::drawSprites(
 		vdp.getLeftSprites(),
 		vdp.getDisplayMode().getLineWidth() == 512);
 	if (spriteMode == 3) {
-		for (int y = fromY; y < limitY; y++, screenY++) {
-			auto dst = workFrame->getLineDirect(screenY).subspan(screenX);
-			spriteConverter.drawMode3(y, displayX, displayLimitX, dst);
+		uint8_t mode = vdp.getDisplayMode().getByte();
+		if (mode == DisplayMode::GRAPHIC5) {
+			for (int y = fromY; y < limitY; y++, screenY++) {
+				auto dst = workFrame->getLineDirect(screenY).subspan(screenX);
+				spriteConverter.template drawMode3<DisplayMode::GRAPHIC5>(y, displayX, displayLimitX, dst);
+			}
+		} else if (mode == DisplayMode::GRAPHIC6) {
+			for (int y = fromY; y < limitY; y++, screenY++) {
+				auto dst = workFrame->getLineDirect(screenY).subspan(screenX);
+				spriteConverter.template drawMode3<DisplayMode::GRAPHIC6>(y, displayX, displayLimitX, dst);
+			}
+		} else {
+			for (int y = fromY; y < limitY; y++, screenY++) {
+				auto dst = workFrame->getLineDirect(screenY).subspan(screenX);
+				spriteConverter.template drawMode3<DisplayMode::GRAPHIC4>(y, displayX, displayLimitX, dst);
+			}
 		}
 	} else if (spriteMode == 1) {
 		for (int y = fromY; y < limitY; y++, screenY++) {
